@@ -165,7 +165,7 @@ const hasChildren = children.length > 0;
 </style>
 
 <script>
-	document.addEventListener("DOMContentLoaded", () => {
+	function initDropdownMenu() {
 		const dropdowns = document.querySelectorAll("[data-dropdown]");
 
 		dropdowns.forEach((dropdown) => {
@@ -233,4 +233,8 @@ const hasChildren = children.length > 0;
 			});
 		});
 	});
+	}
+
+	document.addEventListener("DOMContentLoaded", initDropdownMenu);
+	document.addEventListener("swup:contentReplace", initDropdownMenu);
 </script>

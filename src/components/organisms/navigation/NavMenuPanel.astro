@@ -163,7 +163,7 @@ const processedLinks: ProcessedNavBarLink[] = (
 </style>
 
 <script>
-	document.addEventListener("DOMContentLoaded", function () {
+	function initMobileMenu() {
 		const mobileDropdowns = document.querySelectorAll(
 			"[data-mobile-dropdown]",
 		);
@@ -201,4 +201,8 @@ const processedLinks: ProcessedNavBarLink[] = (
 			});
 		});
 	});
+	}
+
+	document.addEventListener("DOMContentLoaded", initMobileMenu);
+	document.addEventListener("swup:contentReplace", initMobileMenu);
 </script>

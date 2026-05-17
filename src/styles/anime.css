@@ -120,7 +120,7 @@
 }
 
 .anime-grid-container [data-anime-status].anime-hidden {
-  display: none !important;
+  display: none;
 }
 
 .anime-grid-container [data-anime-status] {
