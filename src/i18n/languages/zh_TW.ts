@@ -348,9 +348,85 @@ export const zh_TW: Translation = {
 	[Key.switchToGridMode]: "切換到網格模式",
 	[Key.switchToListMode]: "切換到列表模式",
 
+	// Series
+	[Key.series]: "系列",
+	[Key.seriesNav]: "系列導航",
+	[Key.prevInSeries]: "系列上一篇",
+	[Key.nextInSeries]: "系列下一篇",
+	[Key.allSeries]: "所有系列",
+	[Key.seriesCount]: "個系列",
+	[Key.seriesTotalPosts]: "篇系列文章",
+	[Key.seriesLatestUpdate]: "最近更新",
+	[Key.seriesNoSeries]: "暫無系列",
+	[Key.seriesArticlesShort]: "篇",
+	[Key.seriesMoreArticles]: "更多文章",
+	[Key.seriesDesc]: "{name} 系列文章",
+
+	// Repost
+	[Key.reposts]: "轉載",
+	[Key.allReposts]: "所有轉載",
+	[Key.repostFrom]: "轉載自",
+	[Key.originalArticle]: "原文連結",
+	[Key.repostNotice]: "本文為轉載文章，版權歸原作者所有。",
+	[Key.repostOriginalSite]: "來源站點",
+	[Key.repostLicense]: "授權條款",
+
+	// Copyright / License
+	[Key.copyrightNotice]: "版權聲明",
+	[Key.copyrightLicense]: "授權條款",
+	[Key.copyrightAuthor]: "作者",
+	[Key.copyrightPublishedAt]: "發佈於",
+	[Key.copyrightLink]: "連結",
+	[Key.copyOgImage]: "複製分享圖",
+
+	// 贊賞
+	[Key.reward]: "贊賞",
+	[Key.rewardMessage]: "感謝您的支持，寫作不易，您的鼓勵是我最大的動力",
+	[Key.rewardAliPay]: "支付寶",
+	[Key.rewardWeChat]: "微信",
+
+	// 留言板
+	[Key.messageBoard]: "留言板",
+	[Key.messageBoardDesc]: "歡迎在這裡留下你的想法和回饋",
+
+	// 朋友圈
+	[Key.friendsCircle]: "朋友圈",
+	[Key.friendsCircleSubtitle]: "發現更多優秀網站的最新動態",
+	[Key.friendsCircleEmpty]: "暫無動態",
+	[Key.friendsCircleAgo]: "前",
+	[Key.friendsCircleDay]: "天",
+	[Key.friendsCircleHour]: "小時",
+	[Key.friendsCircleMinute]: "分鐘",
+	[Key.friendsCircleLoading]: "載入中...",
+	[Key.friendsCircleError]: "取得資料失敗",
+
+	// 說說/動態
+	[Key.talking]: "說說",
+	[Key.talkingSubtitle]: "隨時隨地，分享生活",
+	[Key.talkingEmpty]: "暫無說說",
+	[Key.talkingTags]: "標籤",
+	[Key.talkingFilterAll]: "全部",
+
 	// 相关文章与随机文章
 	[Key.relatedPosts]: "相關文章",
 	[Key.randomPosts]: "隨機文章",
 	[Key.smartRecommend]: "智能推薦",
 	[Key.randomRecommend]: "隨機推薦",
+
+	// 標籤雲 & 分類頁面
+	[Key.tagsPage]: "標籤雲",
+	[Key.tagsPageSubtitle]: "瀏覽所有標籤",
+	[Key.categoriesPage]: "分類",
+	[Key.categoriesPageSubtitle]: "瀏覽所有分類",
+	[Key.tagSearchPlaceholder]: "搜尋標籤...",
+	[Key.categorySearchPlaceholder]: "搜尋分類...",
+	[Key.totalTags]: "個標籤",
+	[Key.totalCategories]: "個分類",
+	[Key.viewAll]: "查看全部",
+	[Key.postsInTag]: "篇文章",
+	[Key.postsInCategory]: "篇文章",
+
+	// 歸檔頁面過濾
+	[Key.filtering]: "篩選",
+	[Key.clearFilter]: "清除篩選",
 };

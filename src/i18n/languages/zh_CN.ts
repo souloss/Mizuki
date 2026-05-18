@@ -346,9 +346,85 @@ export const zh_CN: Translation = {
 	[Key.switchToGridMode]: "切换到网格模式",
 	[Key.switchToListMode]: "切换到列表模式",
 
+	// Series
+	[Key.series]: "系列",
+	[Key.seriesNav]: "系列导航",
+	[Key.prevInSeries]: "系列上一篇",
+	[Key.nextInSeries]: "系列下一篇",
+	[Key.allSeries]: "所有系列",
+	[Key.seriesCount]: "个系列",
+	[Key.seriesTotalPosts]: "篇系列文章",
+	[Key.seriesLatestUpdate]: "最近更新",
+	[Key.seriesNoSeries]: "暂无系列",
+	[Key.seriesArticlesShort]: "篇",
+	[Key.seriesMoreArticles]: "更多文章",
+	[Key.seriesDesc]: "{name} 系列文章",
+
+	// Repost
+	[Key.reposts]: "转载",
+	[Key.allReposts]: "所有转载",
+	[Key.repostFrom]: "转载自",
+	[Key.originalArticle]: "原文链接",
+	[Key.repostNotice]: "本文为转载文章，版权归原作者所有。",
+	[Key.repostOriginalSite]: "来源站点",
+	[Key.repostLicense]: "许可协议",
+
+	// Copyright / License
+	[Key.copyrightNotice]: "版权声明",
+	[Key.copyrightLicense]: "许可协议",
+	[Key.copyrightAuthor]: "作者",
+	[Key.copyrightPublishedAt]: "发布于",
+	[Key.copyrightLink]: "链接",
+	[Key.copyOgImage]: "复制分享图",
+
+	// 赞赏
+	[Key.reward]: "赞赏",
+	[Key.rewardMessage]: "感谢您的支持，写作不易，您的鼓励是我最大的动力",
+	[Key.rewardAliPay]: "支付宝",
+	[Key.rewardWeChat]: "微信",
+
+	// 留言板
+	[Key.messageBoard]: "留言板",
+	[Key.messageBoardDesc]: "欢迎在这里留下你的想法和反馈",
+
+	// 朋友圈
+	[Key.friendsCircle]: "朋友圈",
+	[Key.friendsCircleSubtitle]: "发现更多优秀网站的最新动态",
+	[Key.friendsCircleEmpty]: "暂无动态",
+	[Key.friendsCircleAgo]: "前",
+	[Key.friendsCircleDay]: "天",
+	[Key.friendsCircleHour]: "小时",
+	[Key.friendsCircleMinute]: "分钟",
+	[Key.friendsCircleLoading]: "加载中...",
+	[Key.friendsCircleError]: "获取数据失败",
+
+	// 说说/动态
+	[Key.talking]: "说说",
+	[Key.talkingSubtitle]: "随时随地，分享生活",
+	[Key.talkingEmpty]: "暂无说说",
+	[Key.talkingTags]: "标签",
+	[Key.talkingFilterAll]: "全部",
+
 	// 相关文章与随机文章
 	[Key.relatedPosts]: "相关文章",
 	[Key.randomPosts]: "随机文章",
 	[Key.smartRecommend]: "智能推荐",
 	[Key.randomRecommend]: "随机推荐",
+
+	// 标签云 & 分类页面
+	[Key.tagsPage]: "标签云",
+	[Key.tagsPageSubtitle]: "浏览所有标签",
+	[Key.categoriesPage]: "分类",
+	[Key.categoriesPageSubtitle]: "浏览所有分类",
+	[Key.tagSearchPlaceholder]: "搜索标签...",
+	[Key.categorySearchPlaceholder]: "搜索分类...",
+	[Key.totalTags]: "个标签",
+	[Key.totalCategories]: "个分类",
+	[Key.viewAll]: "查看全部",
+	[Key.postsInTag]: "篇文章",
+	[Key.postsInCategory]: "篇文章",
+
+	// 归档页面过滤
+	[Key.filtering]: "筛选",
+	[Key.clearFilter]: "清除筛选",
 };

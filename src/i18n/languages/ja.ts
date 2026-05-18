@@ -362,9 +362,85 @@ export const ja: Translation = {
 	[Key.switchToGridMode]: "グリッド表示に切り替え",
 	[Key.switchToListMode]: "リスト表示に切り替え",
 
+	// Series
+	[Key.series]: "シリーズ",
+	[Key.seriesNav]: "シリーズナビ",
+	[Key.prevInSeries]: "シリーズ前の記事",
+	[Key.nextInSeries]: "シリーズ次の記事",
+	[Key.allSeries]: "全シリーズ",
+	[Key.seriesCount]: "シリーズ",
+	[Key.seriesTotalPosts]: "シリーズ記事数",
+	[Key.seriesLatestUpdate]: "最新更新",
+	[Key.seriesNoSeries]: "シリーズなし",
+	[Key.seriesArticlesShort]: "記事",
+	[Key.seriesMoreArticles]: "もっと見る",
+	[Key.seriesDesc]: "{name} シリーズの記事",
+
+	// Repost
+	[Key.reposts]: "転載",
+	[Key.allReposts]: "すべての転載",
+	[Key.repostFrom]: "転載元",
+	[Key.originalArticle]: "原文リンク",
+	[Key.repostNotice]: "この記事は転載です。著作権は原著者に帰属します。",
+	[Key.repostOriginalSite]: "転載元サイト",
+	[Key.repostLicense]: "ライセンス",
+
+	// Copyright / License
+	[Key.copyrightNotice]: "著作権表示",
+	[Key.copyrightLicense]: "ライセンス",
+	[Key.copyrightAuthor]: "作者",
+	[Key.copyrightPublishedAt]: "公開日",
+	[Key.copyrightLink]: "リンク",
+	[Key.copyOgImage]: "OG画像をコピー",
+
+	// 投げ銭
+	[Key.reward]: "投げ銭",
+	[Key.rewardMessage]: "この記事が役に立ったら、コーヒーをご馳走してください！",
+	[Key.rewardAliPay]: "Alipay",
+	[Key.rewardWeChat]: "WeChat",
+
+	// メッセージボード
+	[Key.messageBoard]: "メッセージボード",
+	[Key.messageBoardDesc]: "ここに感想やフィードバックをお残しください",
+
+	// 友達サークル
+	[Key.friendsCircle]: "友達サークル",
+	[Key.friendsCircleSubtitle]: "友達のブログの最新更新を発見",
+	[Key.friendsCircleEmpty]: "更新はまだありません",
+	[Key.friendsCircleAgo]: "前",
+	[Key.friendsCircleDay]: "日",
+	[Key.friendsCircleHour]: "時間",
+	[Key.friendsCircleMinute]: "分",
+	[Key.friendsCircleLoading]: "読み込み中...",
+	[Key.friendsCircleError]: "データの取得に失敗しました",
+
+	// つぶやき
+	[Key.talking]: "つぶやき",
+	[Key.talkingSubtitle]: "いつでも、どこでも生活を共有",
+	[Key.talkingEmpty]: "つぶやきはありません",
+	[Key.talkingTags]: "タグ",
+	[Key.talkingFilterAll]: "すべて",
+
 	// 関連した投稿とランダムな投稿
 	[Key.relatedPosts]: "関連した投稿",
 	[Key.randomPosts]: "ランダムな投稿",
 	[Key.smartRecommend]: "スマート",
 	[Key.randomRecommend]: "ランダム",
+
+	// タグクラウド & カテゴリページ
+	[Key.tagsPage]: "タグクラウド",
+	[Key.tagsPageSubtitle]: "すべてのタグを閲覧",
+	[Key.categoriesPage]: "カテゴリ",
+	[Key.categoriesPageSubtitle]: "すべてのカテゴリを閲覧",
+	[Key.tagSearchPlaceholder]: "タグを検索...",
+	[Key.categorySearchPlaceholder]: "カテゴリを検索...",
+	[Key.totalTags]: "個のタグ",
+	[Key.totalCategories]: "個のカテゴリ",
+	[Key.viewAll]: "すべて表示",
+	[Key.postsInTag]: "件の投稿",
+	[Key.postsInCategory]: "件の投稿",
+
+	// アーカイブページフィルター
+	[Key.filtering]: "フィルタリング",
+	[Key.clearFilter]: "フィルターをクリア",
 };

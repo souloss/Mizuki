@@ -336,11 +336,87 @@ enum I18nKey {
 	switchToGridMode = "switchToGridMode",
 	switchToListMode = "switchToListMode",
 
+	// Series
+	series = "series",
+	seriesNav = "seriesNav",
+	prevInSeries = "prevInSeries",
+	nextInSeries = "nextInSeries",
+	allSeries = "allSeries",
+	seriesCount = "seriesCount",
+	seriesTotalPosts = "seriesTotalPosts",
+	seriesLatestUpdate = "seriesLatestUpdate",
+	seriesNoSeries = "seriesNoSeries",
+	seriesArticlesShort = "seriesArticlesShort",
+	seriesMoreArticles = "seriesMoreArticles",
+	seriesDesc = "seriesDesc",
+
+	// Repost
+	reposts = "reposts",
+	allReposts = "allReposts",
+	repostFrom = "repostFrom",
+	originalArticle = "originalArticle",
+	repostNotice = "repostNotice",
+	repostOriginalSite = "repostOriginalSite",
+	repostLicense = "repostLicense",
+
+	// Copyright / License
+	copyrightNotice = "copyrightNotice",
+	copyrightLicense = "copyrightLicense",
+	copyrightAuthor = "copyrightAuthor",
+	copyrightPublishedAt = "copyrightPublishedAt",
+	copyrightLink = "copyrightLink",
+	copyOgImage = "copyOgImage",
+
+	// 赞赏/打赏
+	reward = "reward",
+	rewardMessage = "rewardMessage",
+	rewardAliPay = "rewardAliPay",
+	rewardWeChat = "rewardWeChat",
+
+	// 留言板
+	messageBoard = "messageBoard",
+	messageBoardDesc = "messageBoardDesc",
+
+	// 朋友圈
+	friendsCircle = "friendsCircle",
+	friendsCircleSubtitle = "friendsCircleSubtitle",
+	friendsCircleEmpty = "friendsCircleEmpty",
+	friendsCircleAgo = "friendsCircleAgo",
+	friendsCircleDay = "friendsCircleDay",
+	friendsCircleHour = "friendsCircleHour",
+	friendsCircleMinute = "friendsCircleMinute",
+	friendsCircleLoading = "friendsCircleLoading",
+	friendsCircleError = "friendsCircleError",
+
+	// 说说/动态
+	talking = "talking",
+	talkingSubtitle = "talkingSubtitle",
+	talkingEmpty = "talkingEmpty",
+	talkingTags = "talkingTags",
+	talkingFilterAll = "talkingFilterAll",
+
 	// 相关文章与随机文章
 	relatedPosts = "relatedPosts",
 	randomPosts = "randomPosts",
 	smartRecommend = "smartRecommend",
 	randomRecommend = "randomRecommend",
+
+	// 标签云 & 分类页面
+	tagsPage = "tagsPage",
+	tagsPageSubtitle = "tagsPageSubtitle",
+	categoriesPage = "categoriesPage",
+	categoriesPageSubtitle = "categoriesPageSubtitle",
+	tagSearchPlaceholder = "tagSearchPlaceholder",
+	categorySearchPlaceholder = "categorySearchPlaceholder",
+	totalTags = "totalTags",
+	totalCategories = "totalCategories",
+	viewAll = "viewAll",
+	postsInTag = "postsInTag",
+	postsInCategory = "postsInCategory",
+
+	// 归档页面过滤
+	filtering = "filtering",
+	clearFilter = "clearFilter",
 }
 
 export default I18nKey;

@@ -359,9 +359,85 @@ export const en: Translation = {
 	[Key.switchToGridMode]: "Switch to Grid Mode",
 	[Key.switchToListMode]: "Switch to List Mode",
 
+	// Series
+	[Key.series]: "Series",
+	[Key.seriesNav]: "Series Navigation",
+	[Key.prevInSeries]: "Previous in series",
+	[Key.nextInSeries]: "Next in series",
+	[Key.allSeries]: "All Series",
+	[Key.seriesCount]: "series",
+	[Key.seriesTotalPosts]: "posts in series",
+	[Key.seriesLatestUpdate]: "Latest update",
+	[Key.seriesNoSeries]: "No series yet",
+	[Key.seriesArticlesShort]: "articles",
+	[Key.seriesMoreArticles]: "more articles",
+	[Key.seriesDesc]: "Posts in the {name} series",
+
+	// Repost
+	[Key.reposts]: "Reposts",
+	[Key.allReposts]: "All Reposts",
+	[Key.repostFrom]: "Repost from",
+	[Key.originalArticle]: "Original article",
+	[Key.repostNotice]: "This is a repost. The original content belongs to the original author.",
+	[Key.repostOriginalSite]: "Original site",
+	[Key.repostLicense]: "License",
+
+	// Copyright / License
+	[Key.copyrightNotice]: "Copyright Notice",
+	[Key.copyrightLicense]: "License",
+	[Key.copyrightAuthor]: "Author",
+	[Key.copyrightPublishedAt]: "Published",
+	[Key.copyrightLink]: "Link",
+	[Key.copyOgImage]: "Copy share image",
+
+	// Reward
+	[Key.reward]: "Reward",
+	[Key.rewardMessage]: "If you enjoyed this article, consider buying me a coffee!",
+	[Key.rewardAliPay]: "Alipay",
+	[Key.rewardWeChat]: "WeChat",
+
+	// Message Board
+	[Key.messageBoard]: "Message Board",
+	[Key.messageBoardDesc]: "Leave your thoughts and feedback here",
+
+	// Friends Circle
+	[Key.friendsCircle]: "Friends Circle",
+	[Key.friendsCircleSubtitle]: "Discover latest updates from friends' blogs",
+	[Key.friendsCircleEmpty]: "No updates yet",
+	[Key.friendsCircleAgo]: "ago",
+	[Key.friendsCircleDay]: "day",
+	[Key.friendsCircleHour]: "hour",
+	[Key.friendsCircleMinute]: "minute",
+	[Key.friendsCircleLoading]: "Loading...",
+	[Key.friendsCircleError]: "Failed to fetch data",
+
+	// Talking/Moments
+	[Key.talking]: "Moments",
+	[Key.talkingSubtitle]: "Share your life, anytime, anywhere",
+	[Key.talkingEmpty]: "No moments yet",
+	[Key.talkingTags]: "Tags",
+	[Key.talkingFilterAll]: "All",
+
 	// Related Posts & Random Posts
 	[Key.relatedPosts]: "Related Posts",
 	[Key.randomPosts]: "Random Posts",
 	[Key.smartRecommend]: "Smart",
 	[Key.randomRecommend]: "Random",
+
+	// Tags Cloud & Categories Page
+	[Key.tagsPage]: "Tags",
+	[Key.tagsPageSubtitle]: "Browse all tags",
+	[Key.categoriesPage]: "Categories",
+	[Key.categoriesPageSubtitle]: "Browse all categories",
+	[Key.tagSearchPlaceholder]: "Search tags...",
+	[Key.categorySearchPlaceholder]: "Search categories...",
+	[Key.totalTags]: "total tags",
+	[Key.totalCategories]: "total categories",
+	[Key.viewAll]: "View All",
+	[Key.postsInTag]: "posts",
+	[Key.postsInCategory]: "posts",
+
+	// Archive page filter
+	[Key.filtering]: "Filtering",
+	[Key.clearFilter]: "Clear filter",
 };
