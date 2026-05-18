@@ -261,12 +261,13 @@ const { class: className } = Astro.props;
 		}
 
 		regenerateTOC(retryCount = 0) {
-			const isPostPage =
+			const isContentPage =
 				window.location.pathname.includes("/posts/") ||
+				window.location.pathname.includes("/docs/") ||
 				document.querySelector(".custom-md, .markdown-content") !==
 					null;
 
-			if (!isPostPage) {
+			if (!isContentPage) {
 				this.innerHTML = "";
 				delete this.dataset.loaded;
 				return;

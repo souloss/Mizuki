@@ -1,0 +1,219 @@
+---
+import DocsHome from "@components/features/docs/DocsHome.astro";
+import Markdown from "@components/misc/Markdown.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import DocsLayout from "@layouts/DocsLayout.astro";
+import {
+	docsMizukiHome,
+	getDocAvailableLangs,
+	getDocDefaultLang,
+	getDocPageUrl,
+	getDocPrevNextLinks,
+	getDocProjectSlugs,
+	getDocSidebarData,
+} from "@utils/docs-utils";
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
+import { Icon } from "astro-icon/components";
+
+function formatDocDate(value: unknown): string {
+	if (!value) {return "";}
+	if (value instanceof Date) {return value.toISOString().slice(0, 10);}
+	if (typeof value === "string") {return value.split(/[ T]/)[0]?.replace(/\//g, "-") || value;}
+	return "";
+}
+
+function getEntryTitle(entry: any): string {
+	if (entry.data.title) {return entry.data.title;}
+	const basename = entry.id.replace(/\.(md|mdx)$/i, "").split("/").pop() || "Untitled";
+	return basename
+		.split(/[-_]/g)
+		.map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
+		.join(" ");
+}
+
+function hasTopLevelMarkdownH1(entry: CollectionEntry<"docs"> | undefined, renderedHeadings: MarkdownHeading[]): boolean {
+	const body = (entry as { body?: string } | undefined)?.body;
+	if (typeof body !== "string") {
+		return renderedHeadings.some((heading) => heading.depth === 1);
+	}
+
+	let inFence = false;
+	let directiveDepth = 0;
+
+	for (const line of body.split(/\r?\n/)) {
+		const trimmed = line.trim();
+		if (/^(```|~~~)/.test(trimmed)) {
+			inFence = !inFence;
+			continue;
+		}
+		if (inFence) {continue;}
+
+		if (/^:{3,}\s*$/.test(trimmed)) {
+			directiveDepth = Math.max(0, directiveDepth - 1);
+			continue;
+		}
+		if (/^:{3,}\s*[A-Za-z][\w-]*/.test(trimmed)) {
+			directiveDepth += 1;
+			continue;
+		}
+		if (directiveDepth === 0 && /^#\s+\S/.test(trimmed)) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+export async function getStaticPaths() {
+	const docSlugs = await getDocProjectSlugs();
+	const paths: Array<{ params: { slug: string }; props: Record<string, unknown> }> = [];
+
+	for (const docSlug of docSlugs) {
+		const defaultLang = await getDocDefaultLang(docSlug);
+		const availableLangs = await getDocAvailableLangs(docSlug);
+
+		if (docSlug === "mizuki") {
+			const sidebarData = await getDocSidebarData(docSlug, "", defaultLang, defaultLang);
+			paths.push({
+				params: { slug: docSlug },
+				props: {
+					isHome: true,
+					docSlug,
+					currentLang: defaultLang,
+					defaultLang,
+					availableLangs,
+					sidebarData,
+				},
+			});
+		}
+
+		const pages = await getCollection("docs", (entry) => {
+			const entryDocSlug = entry.data.docSlug || entry.id.replace(/\\/g, "/").split("/")[0];
+			return entryDocSlug === docSlug;
+		});
+
+		for (const page of pages) {
+			const pageLang = page.data.lang || "";
+			const url = getDocPageUrl(docSlug, page.id, pageLang, defaultLang, page.data.permalink);
+			const slug = url.replace(/^\/docs\/?/, "").replace(/\/$/, "");
+			const { Content, headings, remarkPluginFrontmatter } = await render(page);
+			const sidebarData = await getDocSidebarData(docSlug, page.id, pageLang || defaultLang, defaultLang);
+			const prevNextLinks = await getDocPrevNextLinks(docSlug, page.id, pageLang || defaultLang, defaultLang);
+
+			paths.push({
+				params: { slug },
+				props: {
+					entry: page,
+					docSlug,
+					currentLang: pageLang || defaultLang,
+					defaultLang,
+					availableLangs,
+					isFallback: false,
+					Content,
+					headings,
+					sidebarData,
+					prevNextLinks,
+					wordCount: remarkPluginFrontmatter?.words ?? 0,
+					readingTime: remarkPluginFrontmatter?.minutes ?? 0,
+				},
+			});
+		}
+	}
+
+	return paths;
+}
+
+const {
+	isHome = false,
+	entry,
+	docSlug,
+	currentLang,
+	defaultLang,
+	availableLangs,
+	isFallback = false,
+	Content,
+	headings = [],
+	sidebarData,
+	prevNextLinks,
+	wordCount = 0,
+	readingTime = 0,
+} = Astro.props as {
+	isHome?: boolean;
+	entry?: CollectionEntry<"docs">;
+	docSlug: string;
+	currentLang: string;
+	defaultLang: string;
+	availableLangs: string[];
+	isFallback?: boolean;
+	Content?: any;
+	headings?: MarkdownHeading[];
+	sidebarData: Awaited<ReturnType<typeof getDocSidebarData>>;
+	prevNextLinks?: Awaited<ReturnType<typeof getDocPrevNextLinks>>;
+	wordCount?: number;
+	readingTime?: number;
+};
+
+const docEntry = entry as CollectionEntry<"docs"> | undefined;
+const ContentComponent = Content;
+const title = isHome || !docEntry ? docsMizukiHome.name : getEntryTitle(docEntry);
+const description = isHome || !docEntry ? docsMizukiHome.text : docEntry.data.description;
+const currentPageId = isHome || !docEntry ? "" : docEntry.id;
+const hasContentH1 = !isHome && hasTopLevelMarkdownH1(docEntry, headings);
+const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime) : "";
+---
+
+<DocsLayout
+	title={title}
+	description={description}
+	docSlug={docSlug}
+	currentPageId={currentPageId}
+	currentLang={currentLang}
+	defaultLang={defaultLang}
+	availableLangs={availableLangs}
+	sidebarData={sidebarData}
+	headings={headings}
+	isFallback={isFallback}
+	isHomePage={isHome}
+	prevNextLinks={prevNextLinks}
+	breadcrumbTitle={isHome ? undefined : title}
+>
+	{isHome ? (
+		<DocsHome home={docsMizukiHome} />
+	) : (
+		<article class="docs-article" data-pagefind-body data-pagefind-filter={`docSlug:${docSlug}`}>
+			{!hasContentH1 && (
+				<h1 class="docs-article-title" data-pagefind-weight="10" data-pagefind-meta="title">
+					{title}
+				</h1>
+			)}
+			{(wordCount > 0 || readingTime > 0 || createTime) && (
+				<div class="docs-meta">
+					{wordCount > 0 && (
+						<span class="docs-meta-item">
+							<Icon name="material-symbols:notes-rounded" class="text-base" />
+							{wordCount} {i18n(I18nKey.docsWordCount)}
+						</span>
+					)}
+					{readingTime > 0 && (
+						<span class="docs-meta-item">
+							<Icon name="material-symbols:schedule-rounded" class="text-base" />
+							{readingTime} {readingTime === 1 ? i18n(I18nKey.minuteCount) : i18n(I18nKey.minutesCount)}
+						</span>
+					)}
+					{createTime && (
+						<span class="docs-meta-item">
+							<Icon name="material-symbols:calendar-month-rounded" class="text-base" />
+							{createTime}
+						</span>
+					)}
+				</div>
+			)}
+			<Markdown class="markdown-content docs-markdown">
+				{ContentComponent && <ContentComponent />}
+			</Markdown>
+		</article>
+	)}
+</DocsLayout>

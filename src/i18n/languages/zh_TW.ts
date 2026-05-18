@@ -429,4 +429,16 @@ export const zh_TW: Translation = {
 	// 歸檔頁面過濾
 	[Key.filtering]: "篩選",
 	[Key.clearFilter]: "清除篩選",
+
+	// 文檔
+	[Key.docs]: "文檔",
+	[Key.docsSearchPlaceholder]: "搜尋文檔...",
+	[Key.docsTableOfContents]: "目錄",
+	[Key.docsFallbackNotice]: "此頁面在所選語言中不可用，正在顯示預設語言版本。",
+	[Key.docsToggleSidebar]: "切換側邊欄",
+	[Key.docsPrevPage]: "上一頁",
+	[Key.docsNextPage]: "下一頁",
+	[Key.docsLastUpdated]: "最後更新於",
+	[Key.docsWordCount]: "字",
+	[Key.docsReadingTime]: "閱讀時間",
 };

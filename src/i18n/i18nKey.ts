@@ -417,6 +417,18 @@ enum I18nKey {
 	// 归档页面过滤
 	filtering = "filtering",
 	clearFilter = "clearFilter",
+
+	// 文档页面
+	docs = "docs",
+	docsSearchPlaceholder = "docsSearchPlaceholder",
+	docsTableOfContents = "docsTableOfContents",
+	docsFallbackNotice = "docsFallbackNotice",
+	docsToggleSidebar = "docsToggleSidebar",
+	docsPrevPage = "docsPrevPage",
+	docsNextPage = "docsNextPage",
+	docsLastUpdated = "docsLastUpdated",
+	docsWordCount = "docsWordCount",
+	docsReadingTime = "docsReadingTime",
 }
 
 export default I18nKey;

@@ -27,11 +27,14 @@ import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
 import { rehypeLazyImage } from "./src/plugins/rehype-lazy-image.mjs";
 import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
 import { rehypeWrapTable } from "./src/plugins/rehype-wrap-table.mjs";
+import { remarkCodeLangAliases } from "./src/plugins/remark-code-lang-aliases.js";
 import { remarkContent } from "./src/plugins/remark-content.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
+import { remarkMark } from "./src/plugins/remark-mark.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 import { remarkRelativeLinks } from "./src/plugins/remark-relative-links.mjs";
+import { remarkPlumeCompat } from "./src/plugins/remark-plume-compat.js";
 
 // https://astro.build/config
 export default defineConfig({
@@ -129,6 +132,9 @@ export default defineConfig({
 			remarkMath,
 			remarkContent,
 			remarkFixGithubAdmonitions,
+			remarkMark,
+			remarkPlumeCompat,
+			remarkCodeLangAliases,
 			remarkDirective,
 			remarkSectionize,
 			parseDirectiveNode,

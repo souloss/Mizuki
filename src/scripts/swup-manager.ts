@@ -131,6 +131,7 @@ export class SwupManager {
 
 		// 如果 Swup 已经就绪，直接设置钩子
 		if (window?.swup?.hooks) {
+			this.setupCrossLayoutReload();
 			initFancybox();
 		initLazyImages();
 		initLivePhoto();
@@ -139,6 +140,7 @@ export class SwupManager {
 		} else {
 			// 监听 Swup 就绪事件
 			document.addEventListener("swup:enable", () => {
+				this.setupCrossLayoutReload();
 				if (this.hooksManager) {
 					this.hooksManager.registerHooks();
 				}
@@ -157,6 +159,39 @@ export class SwupManager {
 				checkKatex();
 			}
 		}
+	}
+
+	/**
+	 * 跨布局导航时强制整页刷新
+	 * DocsLayout 和 MainGridLayout 在 <main> 外部有完全不同的结构
+	 * （docs 侧边栏、body class 等），Swup 只替换 <main> 内容，
+	 * 导致这些外部结构残留。因此在两种布局之间切换时跳过 Swup，
+	 * 让浏览器执行完整的页面加载。
+	 */
+	private setupCrossLayoutReload(): void {
+		if (!window.swup) {return;}
+
+		const originalIgnoreVisit = window.swup.options.ignoreVisit;
+		const isDocsPage = () => !!document.querySelector(".docs-layout-container");
+
+		window.swup.options.ignoreVisit = (url: string, opts: { el?: Element; event?: Event } = {}) => {
+			// 先检查原始的 ignoreVisit 逻辑
+			if (typeof originalIgnoreVisit === "function" && originalIgnoreVisit(url, opts)) {
+				return true;
+			}
+
+			// 判断目标 URL 是否为 docs 页面
+			const targetPath = new URL(url, window.location.origin).pathname;
+			const targetIsDocs = targetPath.startsWith("/docs/");
+			const currentIsDocs = isDocsPage();
+
+			// 跨布局切换时跳过 Swup，强制整页刷新
+			if (targetIsDocs !== currentIsDocs) {
+				return true;
+			}
+
+			return false;
+		};
 	}
 
 	/**

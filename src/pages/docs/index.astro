@@ -1,0 +1,69 @@
+---
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getDocProjectMeta, getDocProjectSlugs } from "@utils/docs-utils";
+import { Icon } from "astro-icon/components";
+
+export async function getStaticPaths() {
+	return [{}];
+}
+
+const docSlugs = await getDocProjectSlugs();
+const docProjects = await Promise.all(
+	docSlugs.map((slug) => getDocProjectMeta(slug)),
+);
+---
+
+<MainGridLayout title={i18n(I18nKey.docs)} description="Documentation">
+	<div class="px-4 md:px-8 py-6 docs-index-content">
+		<h1 class="docs-index-title">{i18n(I18nKey.docs)}</h1>
+		<p class="docs-index-subtitle">Browse documentation projects</p>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 docs-index-grid">
+			{docProjects.map((project) => (
+				<a
+					href={`/docs/${project.slug}/`}
+					class="docs-index-card"
+				>
+					<div class="docs-index-card-header">
+						<div class="docs-index-card-icon">
+							<Icon name="material-symbols:book-2" class="text-xl" />
+						</div>
+						<h2 class="docs-index-card-title">
+							{project.title}
+						</h2>
+					</div>
+
+					{project.description && (
+						<p class="docs-index-card-desc">{project.description}</p>
+					)}
+
+					<div class="docs-index-card-meta">
+						<div class="docs-index-card-meta-item">
+							<Icon name="material-symbols:article" class="text-base" />
+							<span>{project.pageCount} pages</span>
+						</div>
+						{project.sections.length > 0 && (
+							<div class="docs-index-card-meta-item">
+								<Icon name="material-symbols:folder" class="text-base" />
+								<span>{project.sections.join(", ")}</span>
+							</div>
+						)}
+						{project.availableLangs.length > 1 && (
+							<div class="docs-index-card-meta-item">
+								<Icon name="material-symbols:translate" class="text-base" />
+								<span>{project.availableLangs.join(", ")}</span>
+							</div>
+						)}
+					</div>
+
+					<div class="docs-index-card-action">
+						<span>Read docs</span>
+						<Icon name="material-symbols:arrow-forward" class="ml-1 text-base" />
+					</div>
+				</a>
+			))}
+		</div>
+	</div>
+</MainGridLayout>

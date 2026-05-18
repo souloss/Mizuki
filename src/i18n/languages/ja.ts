@@ -443,4 +443,16 @@ export const ja: Translation = {
 	// アーカイブページフィルター
 	[Key.filtering]: "フィルタリング",
 	[Key.clearFilter]: "フィルターをクリア",
+
+	// ドキュメント
+	[Key.docs]: "ドキュメント",
+	[Key.docsSearchPlaceholder]: "ドキュメントを検索...",
+	[Key.docsTableOfContents]: "目次",
+	[Key.docsFallbackNotice]: "このページは選択した言語では利用できません。デフォルト言語版を表示しています。",
+	[Key.docsToggleSidebar]: "サイドバーを切り替え",
+	[Key.docsPrevPage]: "前のページ",
+	[Key.docsNextPage]: "次のページ",
+	[Key.docsLastUpdated]: "最終更新",
+	[Key.docsWordCount]: "文字",
+	[Key.docsReadingTime]: "読了時間",
 };

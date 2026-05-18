@@ -1,0 +1,1258 @@
+/* ================================================================
+ * Docs Layout — Full-screen VitePress-style layout
+ *
+ * Architecture:
+ *   - Full-viewport background using --docs-bg (no white borders in dark mode)
+ *   - position:fixed sidebar extending from viewport left edge
+ *   - position:fixed TOC extending from viewport right edge
+ *   - Content area uses padding-left/right to offset fixed panels
+ *   - Navbar is full-width with flat styling (no card-base)
+ *
+ * Breakpoints:
+ *   - <768px:  Mobile — sidebar as overlay, no TOC
+ *   - 768-1279px: Tablet — sidebar visible, no TOC
+ *   - >=1280px: Desktop — both sidebar and TOC visible
+ * ================================================================ */
+
+/* ================================================================
+ * CSS Custom Properties — VitePress-inspired design tokens
+ * ================================================================ */
+:root {
+	/* Backgrounds */
+	--docs-bg: #ffffff;
+	--docs-bg-sidebar: #f6f6f7;
+	--docs-bg-toc: #ffffff;
+	--docs-bg-mute: #f6f6f7;
+	--docs-bg-soft: #f9fafb;
+	--docs-bg-alt: #f5f5f5;
+
+	/* Text */
+	--docs-text-100: rgba(60, 60, 67);
+	--docs-text-75: rgba(60, 60, 67, 0.78);
+	--docs-text-50: rgba(60, 60, 67, 0.55);
+	--docs-text-25: rgba(60, 60, 67, 0.28);
+	--docs-text-12: rgba(60, 60, 67, 0.12);
+
+	/* Brand */
+	--docs-brand: #5b3cc4;
+	--docs-brand-dim: rgba(91, 60, 196, 0.08);
+	--docs-brand-soft: rgba(91, 60, 196, 0.14);
+
+	/* Borders & dividers */
+	--docs-divider: rgba(60, 60, 67, 0.12);
+	--docs-border: rgba(60, 60, 67, 0.12);
+
+	/* Shadows */
+	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+	--docs-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--docs-shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+
+	/* Layout dimensions */
+	--docs-navbar-height: 56px;
+	--docs-sidebar-width: 268px;
+	--docs-toc-width: 220px;
+	--docs-content-max-width: 768px;
+
+	/* Transitions */
+	--docs-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+	--docs-bg: #1b1b1f;
+	--docs-bg-sidebar: #1b1b1f;
+	--docs-bg-toc: #1b1b1f;
+	--docs-bg-mute: #2e2e32;
+	--docs-bg-soft: #252529;
+	--docs-bg-alt: #252529;
+
+	--docs-text-100: rgba(235, 235, 245, 0.86);
+	--docs-text-75: rgba(235, 235, 245, 0.6);
+	--docs-text-50: rgba(235, 235, 245, 0.38);
+	--docs-text-25: rgba(235, 235, 245, 0.18);
+	--docs-text-12: rgba(235, 235, 245, 0.08);
+
+	--docs-brand: #a78bfa;
+	--docs-brand-dim: rgba(167, 139, 250, 0.12);
+	--docs-brand-soft: rgba(167, 139, 250, 0.18);
+
+	--docs-divider: rgba(82, 82, 96, 0.32);
+	--docs-border: rgba(82, 82, 96, 0.32);
+
+	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.2);
+	--docs-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+	--docs-shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+ * Full-screen page background
+ * — overrides the blog theme's constrained page-width
+ * ================================================================ */
+html.docs-page {
+	background: var(--docs-bg) !important;
+	color: var(--docs-text-100);
+}
+
+body.docs-page {
+	background: var(--docs-bg);
+}
+
+/* /docs/ index page uses MainGridLayout — override its background too */
+body.docs-page .page-container,
+body.docs-page .main-grid-container {
+	background: var(--docs-bg) !important;
+}
+
+/* /docs/ index page content area — uses MainGridLayout so needs scoped overrides */
+.docs-index-content {
+	background: var(--docs-bg);
+}
+
+.docs-index-grid {
+	/* Override card-base on grid items if present */
+}
+
+.docs-index-grid .card-base {
+	background: var(--docs-bg) !important;
+	border: 1px solid var(--docs-divider) !important;
+	border-radius: 12px !important;
+	box-shadow: none !important;
+}
+
+/* ================================================================
+ * Navbar — full-width, flat, VitePress-style
+ * ================================================================ */
+.docs-navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 50;
+	height: var(--docs-navbar-height);
+	background: var(--docs-bg);
+	border-bottom: 1px solid var(--docs-divider);
+	transition: background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* DocsNavbar — simplified navbar for docs pages */
+.docs-navbar-inner {
+	height: var(--docs-navbar-height);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	max-width: none !important;
+	padding: 0 1rem !important;
+}
+
+.docs-navbar-inner > div {
+	max-width: none !important;
+}
+
+/* Override blog theme's Navbar card-base styling on docs pages */
+body.docs-page #navbar-wrapper {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+	backdrop-filter: none !important;
+	position: static !important;
+}
+
+body.docs-page #navbar-wrapper > div,
+body.docs-page #navbar-wrapper nav {
+	max-width: none !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+body.docs-page #navbar-wrapper .card-base {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
+
+/* ================================================================
+ * Layout container — full-screen, padding for fixed sidebar/TOC
+ * ================================================================ */
+.docs-layout-container {
+	position: relative;
+	min-height: calc(100vh - var(--docs-navbar-height));
+	margin-top: var(--docs-navbar-height);
+	background: var(--docs-bg);
+}
+
+/* ================================================================
+ * Left Sidebar — fixed position, extends to viewport left edge
+ * ================================================================ */
+.docs-sidebar-wrapper {
+	position: fixed;
+	top: var(--docs-navbar-height);
+	left: 0;
+	bottom: 0;
+	width: var(--docs-sidebar-width);
+	background: var(--docs-bg-sidebar);
+	border-right: 1px solid var(--docs-divider);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	z-index: 40;
+	transition: transform var(--docs-transition), background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* Desktop: sidebar always visible */
+@media (min-width: 768px) {
+	.docs-sidebar-wrapper {
+		transform: translateX(0);
+	}
+
+	.docs-layout-container {
+		padding-left: var(--docs-sidebar-width);
+	}
+}
+
+/* Mobile: sidebar off-screen by default */
+@media (max-width: 767px) {
+	.docs-sidebar-wrapper {
+		transform: translateX(-100%);
+		width: 280px;
+		box-shadow: none;
+	}
+
+	.docs-sidebar-wrapper.docs-sidebar-open {
+		transform: translateX(0);
+		box-shadow: var(--docs-shadow-3);
+	}
+
+	.docs-layout-container {
+		padding-left: 0;
+	}
+}
+
+/* Scrollbar styling */
+.docs-sidebar-wrapper::-webkit-scrollbar {
+	width: 4px;
+}
+
+.docs-sidebar-wrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.docs-sidebar-wrapper::-webkit-scrollbar-thumb {
+	background: var(--docs-text-25);
+	border-radius: 4px;
+}
+
+.docs-sidebar-wrapper:hover::-webkit-scrollbar-thumb {
+	background: var(--docs-text-50);
+}
+
+/* ================================================================
+ * Sidebar inner content
+ * ================================================================ */
+.docs-sidebar-inner {
+	padding: 12px 12px 32px;
+}
+
+/* ================================================================
+ * Right Sidebar / TOC — fixed position, extends to viewport right edge
+ * ================================================================ */
+.docs-toc-wrapper {
+	position: fixed;
+	top: var(--docs-navbar-height);
+	right: 0;
+	bottom: 0;
+	width: var(--docs-toc-width);
+	background: var(--docs-bg-toc);
+	border-left: 1px solid var(--docs-divider);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	z-index: 40;
+	transition: background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* Desktop: TOC visible */
+@media (min-width: 1280px) {
+	.docs-layout-container {
+		padding-right: var(--docs-toc-width);
+	}
+}
+
+/* Below desktop: hide TOC */
+@media (max-width: 1279px) {
+	.docs-toc-wrapper {
+		display: none;
+	}
+}
+
+/* TOC inner content */
+.docs-toc-inner {
+	padding: 16px 16px 32px;
+}
+
+/* ================================================================
+ * TOC title
+ * ================================================================ */
+.docs-toc-title {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--docs-text-75);
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+	padding-left: 8px;
+}
+
+/* ================================================================
+ * Content wrapper — centered, max-width constrained
+ * ================================================================ */
+.docs-content-wrapper {
+	min-height: calc(100vh - var(--docs-navbar-height));
+	display: flex;
+	justify-content: center;
+}
+
+.docs-content-wrapper #content-wrapper {
+	width: 100%;
+	max-width: var(--docs-content-max-width);
+	padding: 2rem 2.5rem 4rem;
+	margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+	.docs-content-wrapper #content-wrapper {
+		padding: 1.5rem 1rem 3rem;
+	}
+}
+
+/* ================================================================
+ * Sidebar toggle button (mobile only)
+ * ================================================================ */
+.docs-sidebar-toggle {
+	position: fixed;
+	bottom: 1.5rem;
+	right: 1.5rem;
+	z-index: 45;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--docs-bg);
+	color: var(--docs-text-75);
+	border: 1px solid var(--docs-divider);
+	box-shadow: var(--docs-shadow-2);
+	cursor: pointer;
+	transition: background var(--docs-transition), color var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-sidebar-toggle:hover {
+	background: var(--docs-bg-mute);
+	color: var(--docs-text-100);
+	box-shadow: var(--docs-shadow-3);
+}
+
+@media (max-width: 767px) {
+	.docs-sidebar-toggle {
+		display: flex;
+	}
+}
+
+/* ================================================================
+ * Sidebar overlay (mobile)
+ * ================================================================ */
+.docs-sidebar-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 35;
+	background: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--docs-transition);
+}
+
+.docs-sidebar-overlay.docs-sidebar-overlay-active {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Show overlay when sidebar is open on mobile */
+.docs-sidebar-wrapper.docs-sidebar-open ~ .docs-sidebar-overlay,
+.docs-sidebar-wrapper.docs-sidebar-open + .docs-sidebar-overlay {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Actually the overlay is before sidebar in DOM for mobile, let's handle via JS class */
+@media (min-width: 768px) {
+	.docs-sidebar-overlay {
+		display: none;
+	}
+}
+
+/* ================================================================
+ * Sidebar navigation — sections and items
+ * ================================================================ */
+.docs-sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+/* Sidebar section */
+.docs-sidebar-section {
+	border-radius: 6px;
+}
+
+.docs-sidebar-section-active {
+	background: var(--docs-brand-dim);
+}
+
+/* Section title (collapsible group header) */
+.docs-sidebar-section-title {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	padding: 8px 10px;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
+	background: none;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background var(--docs-transition), color var(--docs-transition);
+	text-align: left;
+}
+
+.docs-sidebar-section-title:hover {
+	background: var(--docs-bg-mute);
+	color: var(--docs-brand);
+}
+
+.docs-sidebar-section-icon {
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+	opacity: 0.8;
+}
+
+.docs-sidebar-section-arrow {
+	margin-left: auto;
+	transition: transform var(--docs-transition);
+	flex-shrink: 0;
+}
+
+.docs-sidebar-section-collapsed .docs-sidebar-section-arrow {
+	transform: rotate(-90deg);
+}
+
+/* Section items container */
+.docs-sidebar-section-items {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-left: 8px;
+	overflow: hidden;
+	transition: max-height 0.3s ease;
+}
+
+.docs-sidebar-section-items-hidden {
+	max-height: 0 !important;
+	overflow: hidden;
+	opacity: 0;
+}
+
+/* Sidebar item link */
+.docs-sidebar-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--docs-text-75);
+	text-decoration: none;
+	border-radius: 4px;
+	transition: background var(--docs-transition), color var(--docs-transition);
+}
+
+.docs-sidebar-item:hover {
+	color: var(--docs-text-100);
+	background: var(--docs-bg-mute);
+}
+
+.docs-sidebar-item-active {
+	color: var(--docs-brand) !important;
+	font-weight: 500;
+	background: var(--docs-brand-dim);
+}
+
+.docs-sidebar-item-icon {
+	flex-shrink: 0;
+	width: 14px;
+	height: 14px;
+	opacity: 0.7;
+}
+
+.docs-sidebar-item-text {
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.docs-sidebar-item-arrow {
+	flex-shrink: 0;
+	opacity: 0.3;
+}
+
+/* Sidebar badge */
+.docs-sidebar-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 1px 6px;
+	font-size: 0.6875rem;
+	font-weight: 500;
+	border-radius: 8px;
+	line-height: 1.4;
+}
+
+.docs-sidebar-badge-info {
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
+}
+
+.docs-sidebar-badge-new {
+	background: rgba(34, 197, 94, 0.12);
+	color: #16a34a;
+}
+
+.dark .docs-sidebar-badge-new {
+	background: rgba(74, 222, 128, 0.12);
+	color: #4ade80;
+}
+
+.docs-sidebar-badge-beta {
+	background: rgba(234, 179, 8, 0.12);
+	color: #ca8a04;
+}
+
+.dark .docs-sidebar-badge-beta {
+	background: rgba(250, 204, 21, 0.12);
+	color: #facc15;
+}
+
+.docs-sidebar-badge-warning {
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
+}
+
+.dark .docs-sidebar-badge-warning {
+	background: rgba(248, 113, 113, 0.12);
+	color: #f87171;
+}
+
+/* Nested sidebar groups */
+.docs-sidebar-nested-group {
+	margin-left: 4px;
+}
+
+.docs-sidebar-nested-title {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+	padding: 5px 8px;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--docs-text-75);
+	background: none;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background var(--docs-transition), color var(--docs-transition);
+	text-align: left;
+}
+
+.docs-sidebar-nested-title:hover {
+	color: var(--docs-text-100);
+	background: var(--docs-bg-mute);
+}
+
+.docs-sidebar-nested-arrow {
+	transition: transform var(--docs-transition);
+	flex-shrink: 0;
+}
+
+.docs-sidebar-nested-open .docs-sidebar-nested-arrow {
+	transform: rotate(90deg);
+}
+
+.docs-sidebar-nested-items {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-left: 16px;
+	overflow: hidden;
+}
+
+.docs-sidebar-nested-items-hidden {
+	max-height: 0 !important;
+	overflow: hidden;
+	opacity: 0;
+}
+
+.docs-sidebar-nested-item {
+	font-size: 0.8125rem;
+	padding: 4px 10px;
+}
+
+/* ================================================================
+ * Breadcrumb — VitePress-inspired
+ * ================================================================ */
+.docs-breadcrumb {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-bottom: 1.25rem;
+	padding: 8px 0;
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	border-bottom: 1px solid var(--docs-divider);
+}
+
+.docs-breadcrumb-item {
+	color: var(--docs-text-50);
+	text-decoration: none;
+	transition: color var(--docs-transition);
+}
+
+.docs-breadcrumb-item[href]:hover {
+	color: var(--docs-brand);
+}
+
+.docs-breadcrumb-separator {
+	color: var(--docs-text-25);
+	margin: 0 2px;
+	user-select: none;
+}
+
+.docs-breadcrumb-current {
+	color: var(--docs-text-100);
+	font-weight: 500;
+}
+
+/* ================================================================
+ * Prev/Next navigation
+ * ================================================================ */
+.docs-prev-next-nav {
+	display: flex;
+	gap: 1rem;
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--docs-divider);
+}
+
+.docs-prev-next-link {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1;
+	padding: 12px 16px;
+	border: 1px solid var(--docs-divider);
+	border-radius: 8px;
+	text-decoration: none;
+	transition: border-color var(--docs-transition), background var(--docs-transition);
+}
+
+.docs-prev-next-link:hover {
+	border-color: var(--docs-brand);
+	background: var(--docs-brand-dim);
+}
+
+.docs-prev-next-label {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--docs-text-50);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.docs-prev-next-title {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--docs-text-100);
+}
+
+.docs-prev-next-placeholder {
+	flex: 1;
+}
+
+/* ================================================================
+ * Fallback notice
+ * ================================================================ */
+.docs-fallback-notice {
+	padding: 12px 16px;
+	margin-bottom: 1rem;
+	background: rgba(234, 179, 8, 0.1);
+	border: 1px solid rgba(234, 179, 8, 0.3);
+	border-radius: 8px;
+	color: var(--docs-text-100);
+	font-size: 0.875rem;
+}
+
+/* ================================================================
+ * TOC overrides for docs pages — VitePress-style
+ * ================================================================ */
+body.docs-page .docs-toc-container {
+	--toc-badge-bg: var(--docs-brand-dim);
+	--toc-btn-hover: var(--docs-bg-mute);
+	--toc-btn-active: var(--docs-brand-dim);
+	--btn-content: var(--docs-brand);
+}
+
+body.docs-page table-of-contents {
+	font-size: 0.8125rem;
+}
+
+body.docs-page table-of-contents a {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--docs-text-50);
+	border-radius: 4px;
+	padding: 4px 8px;
+}
+
+body.docs-page table-of-contents a:hover {
+	color: var(--docs-text-75);
+	background: var(--docs-bg-mute);
+}
+
+body.docs-page table-of-contents a.visible {
+	color: var(--docs-brand);
+	font-weight: 500;
+}
+
+body.docs-page #active-indicator {
+	border-color: var(--docs-brand-dim) !important;
+	background: var(--docs-brand-dim) !important;
+}
+
+/* ================================================================
+ * Prose / Markdown content overrides for docs pages
+ * ================================================================ */
+body.docs-page .prose,
+body.docs-page .markdown-content,
+body.docs-page .custom-md {
+	--tw-prose-body: var(--docs-text-100);
+	--tw-prose-headings: var(--docs-text-100);
+	--tw-prose-links: var(--docs-brand);
+	--tw-prose-bold: var(--docs-text-100);
+	--tw-prose-code: var(--docs-text-100);
+	--tw-prose-quotes: var(--docs-text-75);
+	color: var(--docs-text-100);
+}
+
+body.docs-page .prose a,
+body.docs-page .markdown-content a,
+body.docs-page .custom-md a {
+	color: var(--docs-brand);
+	text-decoration: none;
+	transition: color var(--docs-transition);
+}
+
+body.docs-page .prose a:hover,
+body.docs-page .markdown-content a:hover,
+body.docs-page .custom-md a:hover {
+	color: var(--docs-brand);
+	text-decoration: underline;
+}
+
+body.docs-page .prose h1,
+body.docs-page .prose h2,
+body.docs-page .prose h3,
+body.docs-page .prose h4 {
+	color: var(--docs-text-100);
+	border-bottom-color: var(--docs-divider);
+}
+
+/* ================================================================
+ * Admonition / Callout styles for docs
+ * ================================================================ */
+body.docs-page .admonition,
+body.docs-page [class*="admonition-"],
+body.docs-page .callout {
+	border-radius: 8px;
+	border: 1px solid var(--docs-divider);
+}
+
+body.docs-page .admonition-note,
+body.docs-page .callout-note {
+	border-left: 3px solid var(--docs-brand);
+	background: var(--docs-brand-dim);
+}
+
+body.docs-page .admonition-tip,
+body.docs-page .callout-tip {
+	border-left: 3px solid #16a34a;
+	background: rgba(34, 197, 94, 0.08);
+}
+
+body.docs-page .admonition-warning,
+body.docs-page .callout-warning {
+	border-left: 3px solid #ca8a04;
+	background: rgba(234, 179, 8, 0.08);
+}
+
+body.docs-page .admonition-caution,
+body.docs-page .callout-caution {
+	border-left: 3px solid #dc2626;
+	background: rgba(239, 68, 68, 0.08);
+}
+
+body.docs-page .admonition-important,
+body.docs-page .callout-important {
+	border-left: 3px solid #7c3aed;
+	background: rgba(124, 58, 237, 0.08);
+}
+
+/* ================================================================
+ * Footer overrides for docs pages
+ * ================================================================ */
+body.docs-page .footer {
+	background: var(--docs-bg);
+	border-top: 1px solid var(--docs-divider);
+}
+
+/* ================================================================
+ * Docs Home page specific
+ * ================================================================ */
+.docs-home {
+	max-width: var(--docs-content-max-width);
+	margin: 0 auto;
+	padding: 2rem 2.5rem;
+}
+
+.docs-home-hero {
+	display: flex;
+	align-items: center;
+	gap: 3rem;
+	padding: 4rem 0;
+}
+
+.docs-home-hero-copy {
+	flex: 1;
+}
+
+.docs-home-kicker {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--docs-brand);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	margin-bottom: 0.75rem;
+}
+
+.docs-home-hero h1 {
+	font-size: 2.5rem;
+	font-weight: 800;
+	line-height: 1.1;
+	color: var(--docs-text-100);
+	margin-bottom: 1rem;
+}
+
+.docs-home-text {
+	font-size: 1.125rem;
+	color: var(--docs-text-75);
+	line-height: 1.6;
+	margin-bottom: 1.5rem;
+}
+
+.docs-home-actions {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.docs-home-action {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.625rem 1.25rem;
+	border-radius: 8px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: none;
+	transition: background var(--docs-transition), color var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-home-action-brand {
+	background: var(--docs-brand);
+	color: #ffffff;
+}
+
+.docs-home-action-brand:hover {
+	opacity: 0.9;
+	box-shadow: var(--docs-shadow-2);
+}
+
+.docs-home-action-alt {
+	background: var(--docs-bg-mute);
+	color: var(--docs-text-100);
+	border: 1px solid var(--docs-divider);
+}
+
+.docs-home-action-alt:hover {
+	border-color: var(--docs-brand);
+	color: var(--docs-brand);
+}
+
+.docs-home-hero-art {
+	position: relative;
+	flex-shrink: 0;
+	width: 280px;
+	height: 280px;
+}
+
+.docs-home-glow {
+	position: absolute;
+	inset: -20px;
+	background: radial-gradient(circle, var(--docs-brand-dim) 0%, transparent 70%);
+	border-radius: 50%;
+}
+
+.docs-home-hero-art img {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.docs-home-features {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+	padding: 2rem 0 3rem;
+}
+
+.docs-home-feature {
+	padding: 1.5rem;
+	border: 1px solid var(--docs-divider);
+	border-radius: 12px;
+	transition: border-color var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-home-feature:hover {
+	border-color: var(--docs-brand);
+	box-shadow: var(--docs-shadow-1);
+}
+
+.docs-home-feature-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
+	font-size: 1.25rem;
+	margin-bottom: 0.75rem;
+}
+
+.docs-home-feature h2 {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
+	margin-bottom: 0.375rem;
+}
+
+.docs-home-feature p {
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+	line-height: 1.6;
+}
+
+.docs-home-start {
+	padding: 2rem 0;
+	text-align: center;
+}
+
+.docs-home-start-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.75rem 1.5rem;
+	background: var(--docs-brand);
+	color: #ffffff;
+	border-radius: 8px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: opacity var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-home-start-link:hover {
+	opacity: 0.9;
+	box-shadow: var(--docs-shadow-2);
+}
+
+/* Mobile home adjustments */
+@media (max-width: 767px) {
+	.docs-home {
+		padding: 1.5rem 1rem;
+	}
+
+	.docs-home-hero {
+		flex-direction: column;
+		gap: 2rem;
+		padding: 2rem 0;
+		text-align: center;
+	}
+
+	.docs-home-hero h1 {
+		font-size: 1.75rem;
+	}
+
+	.docs-home-hero-art {
+		width: 200px;
+		height: 200px;
+	}
+
+	.docs-home-features {
+		grid-template-columns: 1fr;
+	}
+
+	.docs-home-actions {
+		justify-content: center;
+	}
+}
+
+/* ================================================================
+ * /docs/ index page — dark-mode-safe styles
+ * (This page uses MainGridLayout, so we must override blog theme)
+ * ================================================================ */
+.docs-index-title {
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	color: var(--docs-text-100);
+}
+
+@media (min-width: 768px) {
+	.docs-index-title {
+		font-size: 2.25rem;
+	}
+}
+
+.docs-index-subtitle {
+	color: var(--docs-text-50);
+	margin-bottom: 2rem;
+}
+
+.docs-index-card {
+	display: block;
+	padding: 1.5rem;
+	border: 1px solid var(--docs-divider);
+	border-radius: 12px;
+	background: var(--docs-bg);
+	transition: border-color var(--docs-transition), box-shadow var(--docs-transition);
+	text-decoration: none;
+}
+
+.docs-index-card:hover {
+	border-color: var(--docs-brand);
+	box-shadow: var(--docs-shadow-2);
+}
+
+.docs-index-card-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.docs-index-card-icon {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 8px;
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.docs-index-card-title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
+	transition: color var(--docs-transition);
+}
+
+.docs-index-card:hover .docs-index-card-title {
+	color: var(--docs-brand);
+}
+
+.docs-index-card-desc {
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+	margin-bottom: 0.75rem;
+	line-height: 1.5;
+}
+
+.docs-index-card-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+}
+
+.docs-index-card-meta-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.docs-index-card-action {
+	margin-top: 1rem;
+	display: flex;
+	align-items: center;
+	color: var(--docs-brand);
+	font-size: 0.875rem;
+	font-weight: 500;
+	opacity: 0;
+	transition: opacity var(--docs-transition);
+}
+
+.docs-index-card:hover .docs-index-card-action {
+	opacity: 1;
+}
+
+/* ================================================================
+ * Doc article — VitePress-style title and metadata
+ * ================================================================ */
+.docs-article {
+	max-width: 100%;
+}
+
+/* Article title — VitePress: 28px/1.4 bold, with bottom border */
+.docs-article-title {
+	font-size: 1.75rem;
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--docs-text-100);
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--docs-divider);
+}
+
+@media (min-width: 768px) {
+	.docs-article-title {
+		font-size: 2rem;
+	}
+}
+
+/* Article metadata — VitePress: small text below title, muted color */
+.docs-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-bottom: 2rem;
+	font-size: 0.8125rem;
+	color: var(--docs-text-50);
+}
+
+.docs-meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.docs-meta-separator {
+	color: var(--docs-text-25);
+}
+
+/* ================================================================
+ * Docs Floating Controls — simplified for docs pages
+ * ================================================================ */
+.docs-floating-controls {
+	position: fixed;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	right: 1rem;
+	bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+	.docs-floating-controls {
+		right: 1.5rem;
+		bottom: 6rem;
+	}
+}
+
+/* ================================================================
+ * FOUC / Style instability fix
+ *
+ * The blog theme's onload-animation starts with opacity:0 and
+ * transitions to opacity:1. On docs pages, this can cause a flash
+ * where the layout is briefly visible then hidden then shown again.
+ * We disable this animation on docs pages for stable rendering.
+ *
+ * NOTE: We are more targeted now to avoid interfering with Svelte
+ * component hydration which can cause "Cannot read properties of
+ * undefined (reading 'call')" errors.
+ * ================================================================ */
+body.docs-page #content-wrapper.onload-animation {
+	opacity: 1;
+	animation: none;
+}
+
+body.docs-page .footer.onload-animation {
+	opacity: 1;
+	animation: none;
+}
+
+/* Navbar onload animation handled separately */
+body.docs-page #navbar.onload-animation {
+	opacity: 1;
+	animation: none;
+	transform: none !important;
+}
+
+/* Prevent OverlayScrollbars from interfering with docs layout */
+body.docs-page [data-overlayscrollbars-viewport] {
+	overflow: visible;
+}
+
+body.docs-page .docs-sidebar-wrapper[data-overlayscrollbars-viewport],
+body.docs-page .docs-toc-wrapper[data-overlayscrollbars-viewport] {
+	overflow-y: auto;
+}
+
+/* ================================================================
+ * Print styles
+ * ================================================================ */
+@media print {
+	.docs-sidebar-wrapper,
+	.docs-toc-wrapper,
+	.docs-sidebar-toggle,
+	.docs-sidebar-overlay {
+		display: none !important;
+	}
+
+	.docs-layout-container {
+		padding: 0 !important;
+	}
+
+	.docs-content-wrapper {
+		padding: 0 !important;
+	}
+}

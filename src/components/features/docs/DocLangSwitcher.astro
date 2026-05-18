@@ -1,0 +1,94 @@
+---
+interface Props {
+	currentLang: string;
+	defaultLang: string;
+	availableLangs: string[];
+	currentPagePath: string;
+	docSlug: string;
+}
+
+const { currentLang, defaultLang, availableLangs, currentPagePath, docSlug } = Astro.props;
+
+// Language display names
+const langNames: Record<string, string> = {
+	"zh_CN": "中文",
+	"en": "English",
+	"ja": "日本語",
+	"ko": "한국어",
+	"fr": "Français",
+	"de": "Deutsch",
+	"es": "Español",
+	"ru": "Русский",
+};
+
+// Build URL for a target language
+function getLangUrl(targetLang: string): string {
+	let cleanPath = currentPagePath.replace(/\.(md|mdx)$/, "");
+
+	if (cleanPath.startsWith(docSlug + "/")) {
+		cleanPath = cleanPath.slice(docSlug.length + 1);
+	} else if (cleanPath === docSlug) {
+		cleanPath = "";
+	}
+
+	if (currentLang && currentLang !== defaultLang) {
+		if (cleanPath === currentLang) {
+			cleanPath = "";
+		} else if (cleanPath.startsWith(currentLang + "/")) {
+			cleanPath = cleanPath.slice(currentLang.length + 1);
+		}
+	}
+
+	if (targetLang === defaultLang) {
+		return cleanPath === "" ? `/docs/${docSlug}/` : `/docs/${docSlug}/${cleanPath}/`;
+	} else {
+		return `/docs/${docSlug}/${targetLang}/${cleanPath === "" ? "" : cleanPath + "/"}`;
+	}
+}
+
+if (availableLangs.length <= 1) {return;}
+---
+
+<div class="docs-lang-switcher">
+	{availableLangs.map((lang) => (
+		<a
+			href={getLangUrl(lang)}
+			class:list={[
+				"docs-lang-switcher-item",
+				{ active: lang === currentLang },
+			]}
+		>
+			{langNames[lang] || lang}
+		</a>
+	))}
+</div>
+
+<style>
+	.docs-lang-switcher {
+		display: flex;
+		gap: 0.25rem;
+		padding: 0.5rem 0.75rem;
+		border-bottom: 1px solid var(--docs-divider, rgba(0, 0, 0, 0.08));
+		margin-bottom: 0.5rem;
+	}
+
+	.docs-lang-switcher-item {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.75rem;
+		border-radius: 0.375rem;
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		text-decoration: none;
+		transition: all 0.2s;
+	}
+
+	.docs-lang-switcher-item:hover {
+		background: var(--docs-bg-mute, #f2f2f3);
+		color: var(--docs-text-75, rgba(0, 0, 0, 0.75));
+	}
+
+	.docs-lang-switcher-item.active {
+		background: var(--docs-brand-dim, rgba(99, 102, 241, 0.08));
+		color: var(--docs-brand, #6366f1);
+		font-weight: 500;
+	}
+</style>
