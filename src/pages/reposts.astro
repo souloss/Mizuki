@@ -1,0 +1,129 @@
+---
+import I18nKey from "@i18n/i18nKey"
+import { i18n } from "@i18n/translation"
+import MainGridLayout from "@layouts/MainGridLayout.astro"
+import { formatDateToYYYYMMDD } from "@utils/date-utils"
+import { getPostUrl } from "@utils/url-utils"
+import { getCollection } from "astro:content"
+import { Icon } from "astro-icon/components"
+
+import { siteConfig } from "@/config"
+
+if (!siteConfig.featurePages.reposts) {
+	return Astro.redirect("/404/")
+}
+
+const allPosts = await getCollection("posts", ({ data }) => !data.draft && data.repost)
+const repostPosts = allPosts.sort(
+	(a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
+)
+---
+
+<MainGridLayout
+	title={i18n(I18nKey.reposts)}
+	description={i18n(I18nKey.allReposts)}
+>
+	<div class="card-base px-6 md:px-9 pt-6 pb-4 rounded-[var(--radius-large)] mb-4">
+		<!-- Header -->
+		<div class="flex items-center gap-2 mb-6 onload-animation">
+			<Icon name="material-symbols:content-copy" class="text-2xl text-[var(--primary)]" />
+			<h1 class="text-2xl font-bold transition text-black/90 dark:text-white/90">
+				{i18n(I18nKey.allReposts)}
+			</h1>
+			<span class="ml-auto text-sm transition text-black/30 dark:text-white/30">
+				{repostPosts.length} {i18n(I18nKey.reposts)}
+			</span>
+		</div>
+
+		{repostPosts.length === 0 ? (
+			<div class="text-center py-12 transition text-black/30 dark:text-white/30">
+				{i18n(I18nKey.repostNotice)}
+			</div>
+		) : (
+			<div class="grid gap-4 sm:grid-cols-2">
+				{repostPosts.map((post, index) => {
+					const repost = post.data.repost!
+					const href = getPostUrl(post)
+					const desc = post.data.description || ""
+					const delay = Math.min(index * 60, 400)
+
+					return (
+						<article
+							class="onload-animation group flex flex-col rounded-xl border border-black/5 dark:border-white/10 p-5 transition-all duration-300 hover:border-[var(--primary)]/25 hover:-translate-y-1"
+							style={`animation-delay: ${delay}ms`}
+						>
+							{/* Source Badge */}
+							<div class="mb-3 flex items-center gap-2">
+								<span class="inline-flex items-center gap-1.5 rounded-lg bg-[var(--primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--primary)]">
+									<Icon name="material-symbols:content-copy" class="text-sm" />
+									{i18n(I18nKey.repostFrom)} {repost.originalAuthor}
+								</span>
+								{repost.originalSite && (
+									<span class="inline-flex items-center gap-1 rounded-lg bg-black/5 dark:bg-white/10 px-2 py-1 text-xs transition text-black/50 dark:text-white/50">
+										{repost.originalSite}
+									</span>
+								)}
+							</div>
+
+							{/* Title */}
+							<a href={href} class="mb-1 text-lg font-bold transition text-black/75 dark:text-white/75 hover:text-[var(--primary)]">
+								{post.data.title}
+							</a>
+							{repost.originalTitle && repost.originalTitle !== post.data.title && (
+								<p class="mb-2 text-sm transition text-black/40 dark:text-white/40">
+									{repost.originalTitle}
+								</p>
+							)}
+
+							{/* Description */}
+							{desc && (
+								<p class="mb-4 line-clamp-3 text-sm leading-relaxed transition text-black/50 dark:text-white/50">
+									{desc}
+								</p>
+							)}
+
+							{/* Meta Info */}
+							<div class="mb-3 flex flex-wrap items-center gap-3 text-xs transition text-black/30 dark:text-white/30">
+								<span class="flex items-center gap-1">
+									<Icon name="material-symbols:person-outline-rounded" class="text-sm" />
+									{repost.originalAuthor}
+								</span>
+								<a
+									href={repost.originalUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="flex items-center gap-1 text-[var(--primary)] hover:underline"
+								>
+									<Icon name="material-symbols:open-in-new-rounded" class="text-sm" />
+									{i18n(I18nKey.originalArticle)}
+								</a>
+								<span class="flex items-center gap-1">
+									<Icon name="material-symbols:calendar-today-outline-rounded" class="text-sm" />
+									{formatDateToYYYYMMDD(post.data.published)}
+								</span>
+							</div>
+
+							{/* Tags */}
+							{post.data.tags && post.data.tags.length > 0 && (
+								<div class="mb-3 flex flex-wrap gap-1.5">
+									{post.data.tags.map((tag) => (
+										<span class="inline-flex items-center rounded-lg bg-[var(--primary)]/10 px-2.5 py-1 text-xs font-medium text-[var(--primary)]">
+											{tag}
+										</span>
+									))}
+								</div>
+							)}
+
+							{/* License Note */}
+							{post.data.copyright && (
+								<p class="mt-auto border-t border-black/5 dark:border-white/10 pt-3 text-[11px] transition text-black/30 dark:text-white/30">
+									{i18n(I18nKey.repostLicense)}: {post.data.copyright}
+								</p>
+							)}
+						</article>
+					)
+				})}
+			</div>
+		)}
+	</div>
+</MainGridLayout>

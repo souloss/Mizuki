@@ -33,6 +33,7 @@ interface Props {
 	postSlug?: string;
 	headings?: MarkdownHeading[];
 	coverImage?: string;
+	canonicalUrl?: string;
 }
 
 // 获取 banner 图片
@@ -47,6 +48,7 @@ const {
 	postSlug,
 	coverImage,
 	headings = [],
+	canonicalUrl,
 } = Astro.props;
 const hasBannerCredit = siteConfig.banner.credit.enable;
 const hasBannerLink = !!siteConfig.banner.credit.url;
@@ -98,6 +100,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 	setOGTypeArticle={setOGTypeArticle}
 	postSlug={postSlug}
 	coverImage={coverImage}
+	canonicalUrl={canonicalUrl}
 >
 	<GridScripts
 		navbarTransparentMode={siteConfig.banner?.navbar?.transparentMode ||

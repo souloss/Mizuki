@@ -1,0 +1,174 @@
+---
+import { PageHeader } from "@components/features/page-header";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getTagList } from "@utils/content-utils";
+import { getTagUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+
+const tags = await getTagList();
+
+const maxCount = Math.max(...tags.map((t) => t.count));
+const minCount = Math.min(...tags.map((t) => t.count));
+const range = maxCount - minCount || 1;
+
+const title = i18n(I18nKey.tagsPage);
+const subtitle = i18n(I18nKey.tagsPageSubtitle);
+
+// Curated hue palette for pastel tag backgrounds
+const TAG_HUES = [0, 25, 50, 85, 140, 175, 210, 255, 290, 330];
+
+function getTagHue(name: string): number {
+	let hash = 0;
+	for (const ch of name) {
+		hash = ((hash << 5) - hash + ch.charCodeAt(0)) | 0;
+	}
+	return TAG_HUES[Math.abs(hash) % TAG_HUES.length];
+}
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../../scripts/right-sidebar-layout.js");
+		import { loadIconify } from "../../utils/icon-loader";
+
+		loadIconify().catch((e) => {
+			console.error("Failed to load Iconify:", e);
+		});
+	</script>
+
+	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
+			<!-- Stats & Search -->
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+				<p class="text-black/60 dark:text-white/60">
+					<span class="text-2xl font-bold text-[var(--primary)]">{tags.length}</span>
+					{i18n(I18nKey.totalTags)}
+				</p>
+				<div class="relative">
+					<Icon
+						name="material-symbols:search-rounded"
+						class="absolute left-3 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40"
+					/>
+					<input
+						id="tag-search"
+						type="text"
+						placeholder={i18n(I18nKey.tagSearchPlaceholder)}
+						class="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg bg-[var(--card-bg)]
+							border border-[var(--line-divider)] text-black/80 dark:text-white/80
+							placeholder:text-black/30 dark:placeholder:text-white/30
+							focus:outline-none focus:border-[var(--primary)] transition-colors"
+					/>
+				</div>
+			</div>
+
+			<!-- Tag Cloud -->
+			<div id="tag-cloud" class="flex flex-wrap gap-4 items-center justify-center py-6">
+				{tags.map((tag, i) => {
+					const ratio = (tag.count - minCount) / range;
+					const fontSize = 0.875 + ratio * 1.125;
+					const hue = getTagHue(tag.name);
+					return (
+						<a
+							href={getTagUrl(tag.name)}
+							class="tag-item tag-capsule"
+							style={`--tag-hue: ${hue}; font-size: ${fontSize}rem; animation-delay: ${i * 30}ms`}
+							data-name={tag.name.trim().toLowerCase()}
+							data-count={tag.count}
+						>
+							{tag.name.trim()}
+							<span class="tag-count">{tag.count}</span>
+						</a>
+					);
+				})}
+			</div>
+
+			<!-- No Results -->
+			<div id="tag-no-results" class="hidden text-center py-16">
+				<Icon
+					name="material-symbols:search-off-rounded"
+					class="text-6xl text-black/15 dark:text-white/15 mb-4"
+				/>
+				<p class="text-black/40 dark:text-white/40 text-lg">
+					{i18n(I18nKey.noTags)}
+				</p>
+			</div>
+		</div>
+	</div>
+</MainGridLayout>
+
+<style is:global>
+.tag-capsule {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.375rem 0.875rem;
+	border-radius: 9999px;
+	background: hsl(var(--tag-hue), 70%, 94%);
+	color: hsl(var(--tag-hue), 55%, 38%);
+	font-weight: 500;
+	text-decoration: none;
+	transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+	animation: tag-fade-in 0.4s ease both;
+}
+
+.tag-capsule:hover {
+	transform: scale(1.08);
+	box-shadow: 0 4px 14px hsla(var(--tag-hue), 60%, 60%, 0.25);
+	background: hsl(var(--tag-hue), 70%, 88%);
+}
+
+.tag-capsule .tag-count {
+	font-size: 0.7rem;
+	opacity: 0.5;
+	font-weight: 400;
+}
+
+.dark .tag-capsule {
+	background: hsl(var(--tag-hue), 30%, 18%);
+	color: hsl(var(--tag-hue), 50%, 72%);
+}
+
+.dark .tag-capsule:hover {
+	background: hsl(var(--tag-hue), 35%, 24%);
+	box-shadow: 0 4px 14px hsla(var(--tag-hue), 50%, 30%, 0.25);
+}
+
+@keyframes tag-fade-in {
+	from {
+		opacity: 0;
+		transform: scale(0.85) translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+</style>
+
+<script>
+	const searchInput = document.getElementById("tag-search") as HTMLInputElement;
+	const tagCloud = document.getElementById("tag-cloud");
+	const noResults = document.getElementById("tag-no-results");
+	const tagItems = document.querySelectorAll(".tag-item");
+
+	if (searchInput && tagCloud && noResults) {
+		searchInput.addEventListener("input", () => {
+			const query = searchInput.value.trim().toLowerCase();
+			let visibleCount = 0;
+
+			tagItems.forEach((item) => {
+				const name = (item as HTMLElement).dataset.name || "";
+				const match = !query || name.includes(query);
+				(item as HTMLElement).style.display = match ? "" : "none";
+				if (match) visibleCount++;
+			});
+
+			tagCloud.style.display = visibleCount > 0 ? "" : "none";
+			noResults.classList.toggle("hidden", visibleCount > 0);
+		});
+	}
+</script>

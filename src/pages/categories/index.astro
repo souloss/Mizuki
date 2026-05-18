@@ -1,0 +1,438 @@
+---
+import { PageHeader } from "@components/features/page-header";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getCategoryList } from "@utils/content-utils";
+import { getCategoryUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+
+const categories = await getCategoryList();
+
+// Build hierarchy from "/" separated categories
+interface CategoryNode {
+	name: string;
+	fullName: string;
+	count: number;
+	children: CategoryNode[];
+}
+
+const rootNodes: CategoryNode[] = [];
+const nodeMap = new Map<string, CategoryNode>();
+
+// First pass: create nodes for all categories and their parent segments
+categories.forEach((cat) => {
+	const segments = cat.name.split("/");
+	let currentPath = "";
+
+	segments.forEach((segment, index) => {
+		currentPath = currentPath ? `${currentPath}/${segment}` : segment;
+		if (!nodeMap.has(currentPath)) {
+			nodeMap.set(currentPath, {
+				name: segment,
+				fullName: currentPath,
+				count: 0,
+				children: [],
+			});
+		}
+		// Only set count on leaf node (the full category path)
+		if (index === segments.length - 1) {
+			nodeMap.get(currentPath)!.count = cat.count;
+		}
+	});
+});
+
+// Second pass: build tree structure
+nodeMap.forEach((node) => {
+	const lastSlash = node.fullName.lastIndexOf("/");
+	if (lastSlash === -1) {
+		rootNodes.push(node);
+	} else {
+		const parentPath = node.fullName.substring(0, lastSlash);
+		const parent = nodeMap.get(parentPath);
+		if (parent) {
+			parent.children.push(node);
+		} else {
+			rootNodes.push(node);
+		}
+	}
+});
+
+// Calculate total count for parent nodes (sum of children)
+function getTotalCount(node: CategoryNode): number {
+	if (node.children.length === 0) {return node.count;}
+	return node.children.reduce((sum, child) => sum + getTotalCount(child), 0);
+}
+
+rootNodes.forEach((node) => {
+	if (node.children.length > 0) {
+		node.count = getTotalCount(node);
+	}
+});
+
+rootNodes.sort((a, b) => b.count - a.count);
+
+const title = i18n(I18nKey.categoriesPage);
+const subtitle = i18n(I18nKey.categoriesPageSubtitle);
+
+// Max count for progress bar scaling
+const maxCount = Math.max(...rootNodes.map((n) => n.count), 1);
+
+// Curated hue palette
+const CAT_HUES = [0, 25, 50, 85, 140, 175, 210, 255, 290, 330];
+
+function getCatHue(name: string): number {
+	let hash = 0;
+	for (const ch of name) {
+		hash = ((hash << 5) - hash + ch.charCodeAt(0)) | 0;
+	}
+	return CAT_HUES[Math.abs(hash) % CAT_HUES.length];
+}
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../../scripts/right-sidebar-layout.js");
+		import { loadIconify } from "../../utils/icon-loader";
+
+		loadIconify().catch((e) => {
+			console.error("Failed to load Iconify:", e);
+		});
+	</script>
+
+	<div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+		<div class="card-base z-10 px-6 sm:px-9 py-6 relative w-full">
+			<PageHeader title={title} subtitle={subtitle} />
+
+			<!-- Stats & Search -->
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+				<p class="text-black/60 dark:text-white/60">
+					<span class="text-2xl font-bold text-[var(--primary)]">{categories.length}</span>
+					{i18n(I18nKey.totalCategories)}
+				</p>
+				<div class="relative">
+					<Icon
+						name="material-symbols:search-rounded"
+						class="absolute left-3 top-1/2 -translate-y-1/2 text-black/40 dark:text-white/40"
+					/>
+					<input
+						id="category-search"
+						type="text"
+						placeholder={i18n(I18nKey.categorySearchPlaceholder)}
+						class="w-full sm:w-64 pl-10 pr-4 py-2 rounded-lg bg-[var(--card-bg)]
+							border border-[var(--line-divider)] text-black/80 dark:text-white/80
+							placeholder:text-black/30 dark:placeholder:text-white/30
+							focus:outline-none focus:border-[var(--primary)] transition-colors"
+					/>
+				</div>
+			</div>
+
+			<!-- Category Grid -->
+			<div id="category-tree" class="grid gap-4 sm:grid-cols-2">
+				{rootNodes.map((node, i) => {
+					const hue = getCatHue(node.name);
+					const barWidth = Math.max(8, (node.count / maxCount) * 100);
+					return (
+						<div
+							class="category-group cat-card"
+							style={`--cat-hue: ${hue}; animation-delay: ${i * 50}ms`}
+							data-name={node.fullName.toLowerCase()}
+						>
+							<a
+								href={getCategoryUrl(node.fullName)}
+								class="flex items-center justify-between group"
+							>
+								<div class="flex items-center gap-3 min-w-0">
+									<span class="cat-icon-wrap">
+										<Icon
+											name={node.children.length > 0
+												? "material-symbols:folder"
+												: "material-symbols:folder-outline"}
+											class="cat-icon"
+										/>
+									</span>
+									<span class="cat-name">
+										{node.name}
+									</span>
+									{node.children.length > 0 && (
+										<span class="cat-badge">
+											{node.children.length}
+										</span>
+									)}
+								</div>
+								<span class="cat-count">
+									{node.count}
+								</span>
+							</a>
+
+							<!-- Progress bar -->
+							<div class="cat-bar-track">
+								<div class="cat-bar-fill" style={`width: ${barWidth}%`}></div>
+							</div>
+
+							{node.children.length > 0 && (
+								<div class="cat-children">
+									{node.children.map((child) => {
+										const childHue = getCatHue(child.fullName);
+										return (
+											<a
+												href={getCategoryUrl(child.fullName)}
+												class="category-item cat-child"
+												style={`--cat-hue: ${childHue}`}
+												data-name={child.fullName.toLowerCase()}
+											>
+												<Icon
+													name="material-symbols:subdirectory-arrow-right"
+													class="text-xs opacity-30"
+												/>
+												<span class="cat-child-name">{child.name}</span>
+												<span class="cat-child-count">{child.count}</span>
+											</a>
+										);
+									})}
+								</div>
+							)}
+						</div>
+					);
+				})}
+			</div>
+
+			<!-- No Results -->
+			<div id="category-no-results" class="hidden text-center py-16">
+				<Icon
+					name="material-symbols:search-off-rounded"
+					class="text-6xl text-black/15 dark:text-white/15 mb-4"
+				/>
+				<p class="text-black/40 dark:text-white/40 text-lg">
+					{i18n(I18nKey.noData)}
+				</p>
+			</div>
+		</div>
+	</div>
+</MainGridLayout>
+
+<style is:global>
+/* Card */
+.cat-card {
+	background: var(--card-bg);
+	border-radius: var(--radius-large, 1rem);
+	padding: 1rem 1.25rem;
+	animation: cat-fade-in 0.4s ease both;
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cat-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px hsla(var(--cat-hue), 40%, 50%, 0.1);
+}
+
+.dark .cat-card:hover {
+	box-shadow: 0 8px 24px hsla(var(--cat-hue), 30%, 20%, 0.15);
+}
+
+/* Icon wrapper */
+.cat-icon-wrap {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 0.5rem;
+	background: hsl(var(--cat-hue), 70%, 94%);
+	flex-shrink: 0;
+}
+
+.dark .cat-icon-wrap {
+	background: hsl(var(--cat-hue), 30%, 18%);
+}
+
+.cat-icon {
+	font-size: 1.125rem;
+	color: hsl(var(--cat-hue), 55%, 45%);
+}
+
+.dark .cat-icon {
+	color: hsl(var(--cat-hue), 50%, 65%);
+}
+
+/* Name */
+.cat-name {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: rgba(0, 0, 0, 0.78);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	transition: color 0.2s ease;
+}
+
+.dark .cat-name {
+	color: rgba(255, 255, 255, 0.78);
+}
+
+.cat-card:hover .cat-name {
+	color: hsl(var(--cat-hue), 55%, 40%);
+}
+
+.dark .cat-card:hover .cat-name {
+	color: hsl(var(--cat-hue), 50%, 72%);
+}
+
+/* Badge (child count) */
+.cat-badge {
+	font-size: 0.65rem;
+	padding: 0.125rem 0.375rem;
+	border-radius: 9999px;
+	background: hsl(var(--cat-hue), 70%, 94%);
+	color: hsl(var(--cat-hue), 55%, 45%);
+	font-weight: 600;
+	flex-shrink: 0;
+}
+
+.dark .cat-badge {
+	background: hsl(var(--cat-hue), 30%, 18%);
+	color: hsl(var(--cat-hue), 50%, 65%);
+}
+
+/* Count */
+.cat-count {
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: hsl(var(--cat-hue), 55%, 45%);
+	flex-shrink: 0;
+}
+
+.dark .cat-count {
+	color: hsl(var(--cat-hue), 50%, 65%);
+}
+
+/* Progress bar */
+.cat-bar-track {
+	margin-top: 0.625rem;
+	height: 0.25rem;
+	border-radius: 9999px;
+	background: hsl(var(--cat-hue), 70%, 94%);
+	overflow: hidden;
+}
+
+.dark .cat-bar-track {
+	background: hsl(var(--cat-hue), 30%, 18%);
+}
+
+.cat-bar-fill {
+	height: 100%;
+	border-radius: 9999px;
+	background: hsl(var(--cat-hue), 60%, 65%);
+	transition: width 0.6s ease;
+}
+
+.dark .cat-bar-fill {
+	background: hsl(var(--cat-hue), 45%, 50%);
+}
+
+/* Children */
+.cat-children {
+	margin-top: 0.75rem;
+	padding-top: 0.625rem;
+	border-top: 1px solid var(--line-divider);
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.cat-child {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.375rem 0.5rem;
+	border-radius: 0.5rem;
+	transition: background 0.2s ease, color 0.2s ease;
+	text-decoration: none;
+}
+
+.cat-child:hover {
+	background: hsl(var(--cat-hue), 70%, 94%);
+}
+
+.dark .cat-child:hover {
+	background: hsl(var(--cat-hue), 30%, 18%);
+}
+
+.cat-child-name {
+	font-size: 0.8125rem;
+	color: rgba(0, 0, 0, 0.6);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dark .cat-child-name {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.cat-child:hover .cat-child-name {
+	color: hsl(var(--cat-hue), 55%, 40%);
+}
+
+.dark .cat-child:hover .cat-child-name {
+	color: hsl(var(--cat-hue), 50%, 72%);
+}
+
+.cat-child-count {
+	font-size: 0.7rem;
+	color: rgba(0, 0, 0, 0.35);
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+.dark .cat-child-count {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+/* Animation */
+@keyframes cat-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+</style>
+
+<script>
+	const searchInput = document.getElementById("category-search") as HTMLInputElement;
+	const categoryTree = document.getElementById("category-tree");
+	const noResults = document.getElementById("category-no-results");
+	const categoryGroups = document.querySelectorAll(".category-group");
+
+	if (searchInput && categoryTree && noResults) {
+		searchInput.addEventListener("input", () => {
+			const query = searchInput.value.trim().toLowerCase();
+			let visibleCount = 0;
+
+			categoryGroups.forEach((group) => {
+				const groupName = (group as HTMLElement).dataset.name || "";
+				const childItems = group.querySelectorAll(".category-item");
+				let groupMatch = groupName.includes(query);
+				let visibleChildren = 0;
+
+				childItems.forEach((item) => {
+					const childName = (item as HTMLElement).dataset.name || "";
+					const match = !query || childName.includes(query);
+					(item as HTMLElement).style.display = match ? "" : "none";
+					if (match) visibleChildren++;
+				});
+
+				const groupVisible = !query || groupMatch || visibleChildren > 0;
+				(group as HTMLElement).style.display = groupVisible ? "" : "none";
+				if (groupVisible) visibleCount++;
+			});
+
+			categoryTree.style.display = visibleCount > 0 ? "" : "none";
+			noResults.classList.toggle("hidden", visibleCount > 0);
+		});
+	}
+</script>

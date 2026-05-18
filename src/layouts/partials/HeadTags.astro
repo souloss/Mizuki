@@ -21,6 +21,7 @@ interface Props {
 	// SEO
 	title: string;
 	description?: string;
+	canonicalUrl?: string;
 
 	// Open Graph
 	ogImageUrl?: string;
@@ -33,6 +34,7 @@ interface Props {
 const {
 	title,
 	description,
+	canonicalUrl,
 	ogImageUrl,
 	setOGTypeArticle = false,
 	configHue,
@@ -56,9 +58,12 @@ const favicons: Favicon[] =
 }
 <meta name="author" content={profileConfig.name} />
 
+<!-- Canonical URL - prevents duplicate content when slug/alias pages exist -->
+{canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+
 <!-- Open Graph Tags -->
 <meta property="og:site_name" content={siteConfig.title} />
-<meta property="og:url" content={Astro.url} />
+<meta property="og:url" content={canonicalUrl || Astro.url.href} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description || title} />
 {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}

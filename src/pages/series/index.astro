@@ -1,0 +1,60 @@
+---
+import I18nKey from "@i18n/i18nKey"
+import { i18n } from "@i18n/translation"
+import MainGridLayout from "@layouts/MainGridLayout.astro"
+import { getAllSeries } from "@utils/series-utils"
+import { Icon } from "astro-icon/components"
+
+const allSeries = await getAllSeries()
+---
+
+<MainGridLayout
+	title={i18n(I18nKey.allSeries)}
+	description={i18n(I18nKey.allSeries)}
+>
+	<div class="card-base px-6 md:px-9 pt-6 pb-4 rounded-[var(--radius-large)] mb-4">
+		<div class="flex items-center gap-2 mb-6 onload-animation">
+			<Icon name="material-symbols:list-alt-rounded" class="text-2xl text-[var(--primary)]" />
+			<h1 class="text-2xl font-bold transition text-black/90 dark:text-white/90">
+				{i18n(I18nKey.allSeries)}
+			</h1>
+		</div>
+
+		{allSeries.length === 0 ? (
+			<div class="text-center py-12 transition text-black/30 dark:text-white/30">
+				{i18n(I18nKey.seriesNoSeries)}
+			</div>
+		) : (
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				{allSeries.map((series, index) => (
+					<a
+						href={`/series/${encodeURIComponent(series.name)}/`}
+						class:list={[
+							"group p-5 rounded-xl border border-black/5 dark:border-white/10",
+							"hover:border-[var(--primary)] transition-all duration-300",
+							"onload-animation",
+						]}
+						style={`--i: ${index}; --interval: 50ms;`}
+					>
+						<div class="flex items-center justify-between mb-2">
+							<h2 class="text-lg font-bold transition text-black/75 dark:text-white/75 group-hover:text-[var(--primary)]">
+								{series.name}
+							</h2>
+							<span class="text-xs transition text-black/30 dark:text-white/30">
+								{series.posts.length} {i18n(I18nKey.seriesArticlesShort)}
+							</span>
+						</div>
+						<div class="text-sm transition text-black/50 dark:text-white/50 truncate">
+							{series.posts[0]?.title}
+						</div>
+						{series.posts.length > 1 && (
+							<div class="text-xs mt-1 transition text-black/30 dark:text-white/30">
+								+{series.posts.length - 1} {i18n(I18nKey.seriesMoreArticles)}
+							</div>
+						)}
+					</a>
+				))}
+			</div>
+		)}
+	</div>
+</MainGridLayout>

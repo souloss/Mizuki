@@ -30,6 +30,7 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	postSlug?: string;
 	coverImage?: string;
+	canonicalUrl?: string;
 }
 
 let {
@@ -40,6 +41,7 @@ let {
 	setOGTypeArticle,
 	postSlug,
 	coverImage,
+	canonicalUrl,
 } = Astro.props;
 
 // apply a class to the body element to decide the height of the banner, only used for initial page load
@@ -189,6 +191,7 @@ if (siteConfig.font) {
 		<HeadTags
 			title={pageTitle}
 			description={description}
+			canonicalUrl={canonicalUrl}
 			ogImageUrl={ogImageUrl}
 			setOGTypeArticle={setOGTypeArticle}
 			configHue={configHue}

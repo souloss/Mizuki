@@ -1,6 +1,7 @@
 ---
 import Comment from "@components/comment/index.astro";
 import FriendCard from "@components/features/friends/FriendCard.astro";
+import FriendsCircle from "@components/features/friends/FriendsCircle.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
@@ -8,6 +9,7 @@ import { getEntry, render } from "astro:content";
 
 import { siteConfig } from "../config";
 import { getShuffledFriendsList } from "../data/friends";
+import { getFriendsCircleList } from "../data/friends-circle";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 
@@ -26,6 +28,7 @@ if (!friendsPost) {
 const { Content } = await render(friendsPost);
 const friendsList = getShuffledFriendsList();
 const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
+const circleItems = getFriendsCircleList();
 ---
 
 <MainGridLayout
@@ -126,6 +129,9 @@ const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
 			<Markdown class="mt-8 prose dark:prose-invert max-w-none">
 				<Content />
 			</Markdown>
+
+			<!-- 朋友圈 -->
+			<FriendsCircle items={circleItems} />
 
 			<!-- 隐藏元素用于传递 i18n 文本到全局脚本 -->
 			<div id="friends-copy-success-text" style="display: none;">

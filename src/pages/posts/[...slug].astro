@@ -8,16 +8,19 @@ import {
 	PostNavigation,
 	RandomPosts,
 	RelatedPosts,
+	Reward,
 	ShareCard,
 } from "@components/features/posts";
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
+import RepostNotice from "@components/features/posts/RepostNotice.astro";
+import SeriesNav from "@components/features/posts/SeriesNav.astro";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
-import { getFileDirFromPath, removeFileExtension } from "@utils/url-utils";
+import { getFileDirFromPath, getPostUrl, removeFileExtension } from "@utils/url-utils";
 import { getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
@@ -26,6 +29,7 @@ import {
 	permalinkConfig,
 	randomPostsConfig,
 	relatedPostsConfig,
+	rewardConfig,
 	shareConfig,
 } from "src/config";
 
@@ -76,6 +80,28 @@ export async function getStaticPaths() {
 				props: { entry },
 			});
 
+			// 如果文章有 slug 字段，创建基于 slug 的路径（目录保持原样，只替换文件名）
+			// 注意：Astro v5 的 entry.id 是 slugified 的（不含中文/目录），
+			// 需要从 entry.filePath 提取目录部分
+			if (entry.data.slug) {
+				let dir = "";
+				if (entry.filePath) {
+					// filePath 格式: "src/content/posts/subdir/filename.md"
+					// 提取 "src/content/posts/" 之后的目录部分
+					const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
+					const lastSlashIndex = relativePath.lastIndexOf("/");
+					dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+				}
+				const slugPath = `${dir}${entry.data.slug}`;
+				// 避免与默认路径重复
+				if (slugPath !== defaultSlug) {
+					paths.push({
+						params: { slug: slugPath },
+						props: { entry },
+					});
+				}
+			}
+
 			// 如果文章有 alias，也创建对应的路径
 			if (entry.data.alias) {
 				// 移除开头的斜杠和结尾的斜杠
@@ -98,6 +124,30 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+
+// Compute canonical URL for SEO - prefer slug-based URL when available
+let canonicalUrl: string | undefined;
+if (entry.data.slug) {
+	let dir = "";
+	if (entry.filePath) {
+		const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
+		const lastSlashIndex = relativePath.lastIndexOf("/");
+		dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+	}
+	const canonicalPath = `/posts/${dir}${entry.data.slug}/`;
+	canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined;
+} else if (entry.data.alias) {
+	const alias = entry.data.alias.replace(/^\/+/, "").replace(/\/+$/, "");
+	const canonicalPath = `/posts/${alias}/`;
+	canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined;
+}
+
+// 跳转逻辑：如果 redirect 或 repost.redirect 存在，直接重定向到目标页面
+const redirectUrl = entry.data.redirect || entry.data.repost?.redirect;
+if (redirectUrl) {
+	return Astro.redirect(redirectUrl);
+}
+
 const { Content, headings } = await render(entry);
 const { remarkPluginFrontmatter } = await render(entry);
 
@@ -218,6 +268,7 @@ const jsonLd = {
 	postSlug={entry.id}
 	headings={headings}
 	coverImage={ogCoverUrl}
+	canonicalUrl={canonicalUrl}
 >
 	<script
 		is:inline
@@ -311,6 +362,16 @@ const jsonLd = {
 				)
 			}
 
+			<!-- Repost notice -->
+			{entry.data.repost && (
+				<RepostNotice
+					originalAuthor={entry.data.repost.originalAuthor}
+					originalUrl={entry.data.repost.originalUrl}
+					originalTitle={entry.data.repost.originalTitle}
+					originalSite={entry.data.repost.originalSite}
+				/>
+			)}
+
 			{
 				isEncrypted ? (
 					<Encryptor
@@ -327,6 +388,14 @@ const jsonLd = {
 					</Markdown>
 				)
 			}
+
+			<!-- Series navigation -->
+			{entry.data.series && (
+				<SeriesNav
+					seriesName={entry.data.series}
+					currentSlug={removeFileExtension(entry.id)}
+				/>
+			)}
 
 			{
 				shareConfig.enable && (
@@ -368,6 +437,9 @@ const jsonLd = {
 			}
 		</div>
 	</div>
+
+	<!-- 赞赏 -->
+	<Reward />
 
 	<!-- 评论 -->
 	<Comment post={entry} />

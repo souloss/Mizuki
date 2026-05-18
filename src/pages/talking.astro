@@ -1,0 +1,229 @@
+---
+import Comment from "@components/comment/index.astro";
+import { PageHeader } from "@components/features/page-header";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { Icon } from "astro-icon/components";
+
+import { siteConfig } from "../config";
+import { getTalkingList, getTalkingTags } from "../data/talking";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+
+export const prerender = true;
+
+if (!siteConfig.featurePages.talking) {
+	return Astro.redirect("/404/");
+}
+
+const talkingList = getTalkingList();
+const allTags = getTalkingTags();
+
+const title = i18n(I18nKey.talking);
+const subtitle = i18n(I18nKey.talkingSubtitle);
+---
+
+<MainGridLayout title={title} description={subtitle}>
+	<script>
+		import("../scripts/right-sidebar-layout.js");
+	</script>
+
+	<div
+		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
+	>
+		<div class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
+			<PageHeader
+				title={title}
+				subtitle={subtitle}
+				icon="material-symbols:chat-bubble"
+			/>
+
+			<div class="mt-4 border-[var(--line-divider)] border-dashed border-b-[1px] mb-6" />
+
+			<!-- 标签筛选 -->
+			{
+				allTags.length > 0 && (
+					<div class="talking-filter-container flex flex-wrap gap-2 mb-6">
+						<button class="talking-filter-tag active" data-tag="all">
+							{i18n(I18nKey.talkingFilterAll)}
+						</button>
+						{allTags.map((tag) => (
+							<button class="talking-filter-tag" data-tag={tag}>
+								{tag}
+							</button>
+						))}
+					</div>
+				)
+			}
+
+			<!-- 说说列表 -->
+			{
+				talkingList.length === 0 ? (
+					<div class="text-center py-16">
+						<Icon
+							name="material-symbols:chat-bubble-outline"
+							class="text-6xl text-black/15 dark:text-white/15 mb-4"
+						/>
+						<p class="text-black/50 dark:text-white/50 text-lg">
+							{i18n(I18nKey.talkingEmpty)}
+						</p>
+					</div>
+				) : (
+					<div id="talking-list" class="space-y-4 mb-6">
+						{talkingList.map((item, index) => (
+							<div
+								class="talking-card group relative bg-transparent rounded-xl border border-black/10 dark:border-white/10 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 onload-animation"
+								data-tags={item.tags.join(",")}
+								style={`animation-delay: ${(index + 1) * 50}ms`}
+							>
+								<div class="p-5">
+									<!-- 内容 -->
+									<p class="text-sm md:text-base text-black/90 dark:text-white/90 leading-relaxed mb-3">
+										{item.content}
+									</p>
+
+									<!-- 图片 -->
+									{
+										item.images && item.images.length > 0 && (
+											<div class={`talking-images grid gap-2 mb-3 ${item.images.length === 1 ? "talking-images-single" : item.images.length === 2 ? "talking-images-double" : "talking-images-grid"}`}>
+												{item.images.map((img) => (
+													<div class="relative rounded-lg overflow-hidden aspect-square">
+														<a
+															href={img}
+															data-fancybox="talking"
+															class="block w-full h-full"
+														>
+															<img
+																src={img}
+																alt="talking image"
+																class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+																loading="lazy"
+															/>
+														</a>
+													</div>
+												))}
+											</div>
+										)
+									}
+
+									<!-- 标签 -->
+									{
+										item.tags.length > 0 && (
+											<div class="flex flex-wrap gap-1.5 mb-3">
+												{item.tags.map((tag) => (
+													<span class="btn-regular h-6 text-xs px-2 rounded-lg">
+														{tag}
+													</span>
+												))}
+											</div>
+										)
+									}
+
+									<!-- 时间 -->
+									<hr class="border-t border-black/5 dark:border-white/5 my-3" />
+									<div class="flex items-center gap-1.5 text-xs text-black/50 dark:text-white/50">
+										<Icon name="material-symbols:schedule" class="text-xs w-3.5 h-3.5" />
+										<time datetime={item.date}>
+											{new Date(item.date).toLocaleDateString(siteConfig.lang === "zh_CN" ? "zh-CN" : siteConfig.lang === "zh_TW" ? "zh-TW" : siteConfig.lang === "ja" ? "ja-JP" : "en-US", {
+												year: "numeric",
+												month: "long",
+												day: "numeric",
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+										</time>
+									</div>
+								</div>
+
+								<!-- 悬停装饰效果 -->
+								<div class="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-xl" />
+							</div>
+						))}
+					</div>
+				)
+			}
+		</div>
+	</div>
+
+	<div class="mt-4">
+		<Comment path="/talking/" />
+	</div>
+</MainGridLayout>
+
+<style>
+	.talking-filter-tag {
+		padding: 0.5rem 1rem;
+		border: 1px solid var(--line-divider);
+		border-radius: var(--radius-large);
+		background: var(--btn-regular-bg);
+		color: var(--btn-content);
+		font-size: 0.875rem;
+		font-weight: 500;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		white-space: nowrap;
+	}
+
+	.talking-filter-tag:hover:not(.active) {
+		background: var(--btn-hover-bg);
+		border-color: var(--primary);
+		transform: translateY(-1px);
+	}
+
+	.talking-filter-tag.active {
+		background: var(--primary);
+		color: white;
+		border-color: var(--primary);
+	}
+
+	.talking-images-single {
+		grid-template-columns: 1fr;
+	}
+
+	.talking-images-single > div {
+		aspect-ratio: auto;
+	}
+
+	.talking-images-double {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.talking-images-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+</style>
+
+<script>
+	document.addEventListener("DOMContentLoaded", () => {
+		initTalkingFilter();
+	});
+
+	document.addEventListener("swup:contentReplaced", () => {
+		initTalkingFilter();
+	});
+
+	function initTalkingFilter() {
+		const filterBtns = document.querySelectorAll(".talking-filter-tag");
+		const cards = document.querySelectorAll(".talking-card");
+
+		if (filterBtns.length === 0 || cards.length === 0) {return;}
+
+		filterBtns.forEach((btn) => {
+			btn.addEventListener("click", () => {
+				// Update active state
+				filterBtns.forEach((b) => b.classList.remove("active"));
+				btn.classList.add("active");
+
+				const tag = btn.getAttribute("data-tag");
+
+				cards.forEach((card) => {
+					if (tag === "all") {
+						card.style.display = "";
+					} else {
+						const cardTags = card.getAttribute("data-tags") || "";
+						card.style.display = cardTags.includes(tag) ? "" : "none";
+					}
+				});
+			});
+		});
+	}
+</script>
