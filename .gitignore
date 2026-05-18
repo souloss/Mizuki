@@ -53,3 +53,5 @@ src/data/bilibili-data.json
 
 # Lighthouse CI
 .lighthouseci/
+
+.omc

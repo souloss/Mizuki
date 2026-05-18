@@ -11,6 +11,7 @@
 	ProfileConfig,
 	RandomPostsConfig,
 	RelatedPostsConfig,
+	RewardConfig,
 	SakuraConfig,
 	ShareConfig,
 	SidebarLayoutConfig,
@@ -21,7 +22,7 @@ import { LinkPreset } from "./types/config";
 // 移除i18n导入以避免循环依赖
 
 // 定义站点语言
-const SITE_LANG = "en"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
+const SITE_LANG = "zh_CN"; // 语言代码，例如：'en', 'zh_CN', 'ja' 等。
 export const siteConfig: SiteConfig = {
 	title: "Mizuki",
 	subtitle: "One demo website",
@@ -45,6 +46,10 @@ export const siteConfig: SiteConfig = {
 		timeline: true, // 时间线页面开关
 		albums: true, // 相册页面开关
 		devices: true, // 设备页面开关
+		series: true, // 专栏/系列页面开关
+		reposts: true, // 转载页面开关
+		message: true, // 留言板页面开关
+		talking: true, // 说说/动态页面开关
 	},
 
 	// 顶栏标题配置
@@ -162,14 +167,14 @@ export const siteConfig: SiteConfig = {
 
 		homeText: {
 			enable: true, // 在主页显示自定义文本
-			title: "わたしの部屋", // 主页横幅主标题
+			title: "我的小窝", // 主页横幅主标题
 
 			subtitle: [
-				"特別なことはないけど、君がいると十分です",
-				"今でもあなたは私の光",
-				"君ってさ、知らないうちに私の毎日になってたよ",
-				"君と話すと、なんか毎日がちょっと楽しくなるんだ",
-				"今日はなんでもない日。でも、ちょっとだけいい日",
+				"没有什么特别的，但有你在就足够了",
+				"至今你依然是我的光",
+				"你啊，不知不觉间成了我的每一天",
+				"和你说话的时候，总觉得每天变得有趣了一点",
+				"今天是很普通的一天，但也是有点美好的一天",
 			],
 			typewriter: {
 				enable: true, // 启用副标题打字机效果
@@ -195,9 +200,9 @@ export const siteConfig: SiteConfig = {
 		enable: true, // 总开关，启用目录功能
 		mobileTop: true, // 手机端顶部 TOC 按钮
 		desktopSidebar: true, // 电脑端右侧边栏 TOC
-		floating: true, // 悬浮 TOC 按钮
+		floating: false, // 悬浮 TOC 按钮（已由 SidebarTOC + MobileTOC 覆盖，无需重复）
 		depth: 2, // 目录深度，1-6，1 表示只显示 h1 标题，2 表示显示 h1 和 h2 标题，依此类推
-		useJapaneseBadge: true, // 使用日语假名标记（あいうえお...）代替数字，开启后会将 1、2、3... 改为 あ、い、う...
+		useJapaneseBadge: false, // 使用日语假名标记（あいうえお...）代替数字，开启后会将 1、2、3... 改为 あ、い、う...
 	},
 	showCoverInContent: true, // 在文章内容页显示文章封面
 	generateOgImages: false, // 启用生成OpenGraph图片功能,注意开启后要渲染很长时间，不建议本地调试的时候开启
@@ -270,7 +275,24 @@ export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
 export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
-		LinkPreset.Archive,
+		{
+			name: "Archive",
+			url: "/archive/",
+			icon: "material-symbols:archive",
+			children: [
+				LinkPreset.Archive,
+				{
+					name: "Tags",
+					url: "/tags/",
+					icon: "material-symbols:label",
+				},
+				{
+					name: "Categories",
+					url: "/categories/",
+					icon: "material-symbols:category",
+				},
+			],
+		},
 		// 支持自定义导航栏链接，支持多级菜单
 		{
 			name: "Links",
@@ -362,6 +384,26 @@ export const navBarConfig: NavBarConfig = {
 					url: "/timeline/",
 					icon: "material-symbols:timeline",
 				},
+				{
+					name: "Series",
+					url: "/series/",
+					icon: "material-symbols:list-alt-rounded",
+				},
+				{
+					name: "Reposts",
+					url: "/reposts/",
+					icon: "material-symbols:content-copy",
+				},
+				{
+					name: "Message",
+					url: "/message/",
+					icon: "material-symbols:forum",
+				},
+				{
+					name: "Talking",
+					url: "/talking/",
+					icon: "material-symbols:chat-bubble",
+				},
 			],
 		},
 	],
@@ -369,8 +411,8 @@ export const navBarConfig: NavBarConfig = {
 
 export const profileConfig: ProfileConfig = {
 	avatar: "assets/images/avatar.webp", // 相对于 /src 目录。如果以 '/' 开头，则相对于 /public 目录
-	name: "まつざか ゆき",
-	bio: "世界は大きい、君は行かなければならない",
+	name: "松坂 雪",
+	bio: "世界很大，你必须去看看",
 	typewriter: {
 		enable: true, // 启用个人简介打字机效果
 		speed: 80, // 打字速度（毫秒）
@@ -473,9 +515,16 @@ export const shareConfig: ShareConfig = {
 	enable: true, // 启用分享功能
 };
 
+export const rewardConfig: RewardConfig = {
+	enable: false, // 启用赞赏功能
+	message: "", // 赞赏提示文字，留空使用i18n默认文字
+	AliPay: "", // 支付宝收款二维码图片URL
+	WeChat: "", // 微信收款二维码图片URL
+};
+
 export const announcementConfig: AnnouncementConfig = {
 	title: "", // 公告标题，填空使用i18n字符串Key.announcement
-	content: "ブログへようこそ！これはサンプルの告知です", // 公告内容
+	content: "欢迎来到我的博客！这是一条示例公告", // 公告内容
 	closable: true, // 允许用户关闭公告
 	link: {
 		enable: true, // 启用链接
@@ -554,6 +603,10 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				// 折叠阈值：当分类数量超过5个时自动折叠
 				collapseThreshold: 5,
 			},
+			// 侧边栏只显示热门 Top N 分类，0 或不设置表示显示全部
+			customProps: {
+				topN: 20,
+			},
 		},
 		{
 			// 组件类型：标签组件
@@ -569,16 +622,10 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 				// 折叠阈值：当标签数量超过20个时自动折叠
 				collapseThreshold: 20,
 			},
-		},
-		{
-			// 组件类型：卡片式目录组件
-			type: "card-toc",
-			// 组件位置
-			position: "sticky",
-			// CSS 类名
-			class: "onload-animation",
-			// 动画延迟时间
-			animationDelay: 200,
+			// 侧边栏只显示热门 Top N 标签，0 或不设置表示显示全部
+			customProps: {
+				topN: 20,
+			},
 		},
 		{
 			// 组件类型：站点统计组件
@@ -604,7 +651,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 
 	// 侧栏组件布局配置
 	components: {
-		left: ["profile", "announcement", "tags", "card-toc"],
+		left: ["profile", "announcement", "tags"],
 		right: ["site-stats", "calendar", "categories", "music-sidebar"],
 		drawer: [
 			"profile",

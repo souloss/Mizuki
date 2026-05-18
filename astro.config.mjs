@@ -24,12 +24,14 @@ import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badg
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
 import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
 import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
+import { rehypeLazyImage } from "./src/plugins/rehype-lazy-image.mjs";
 import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
 import { rehypeWrapTable } from "./src/plugins/rehype-wrap-table.mjs";
 import { remarkContent } from "./src/plugins/remark-content.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
+import { remarkRelativeLinks } from "./src/plugins/remark-relative-links.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -131,6 +133,7 @@ export default defineConfig({
 			remarkSectionize,
 			parseDirectiveNode,
 			remarkMermaid,
+			remarkRelativeLinks,
 		],
 		rehypePlugins: [
 			rehypeKatex,
@@ -177,6 +180,7 @@ export default defineConfig({
 				},
 			],
 			rehypeImageWidth,
+			rehypeLazyImage,
 		],
 	},
 	vite: {
@@ -185,9 +189,6 @@ export default defineConfig({
 		optimizeDeps: {
 			include: [
 				"@iconify/svelte",
-				"svelte",
-				"svelte/transition",
-				"svelte/easing",
 				"overlayscrollbars",
 				"@fancyapps/ui",
 				"marked",

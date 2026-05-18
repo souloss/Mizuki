@@ -28,11 +28,39 @@ const postsCollection = defineCollection({
 		passwordHint: z.string().optional().default(""),
 		hideHomeContent: z.boolean().optional(),
 
-		/* Posts alias */
+		/* Posts alias - 别名路径 */
 		alias: z.string().optional(),
 
 		/* Custom permalink - 自定义固定链接，优先级高于 alias */
 		permalink: z.string().optional(),
+
+		/* Slug - URL 路径中的简短文本标识，只覆盖文件名部分 */
+		slug: z.string().optional(),
+
+		/* Series fields - 专栏/系列 */
+		series: z.string().optional(),
+		seriesOrder: z.number().optional().default(0),
+
+		/* OG description override */
+		ogDescription: z.string().optional(),
+
+		/* Redirect URL - 跳转到外部/静态资源页面 */
+		redirect: z.string().optional(),
+
+		/* Repost fields - 转载 */
+		repost: z.object({
+			originalAuthor: z.string(),
+			originalUrl: z.string().url(),
+			originalTitle: z.string().optional(),
+			originalSite: z.string().optional(),
+			redirect: z.string().optional(),
+		}).optional(),
+
+		/* Copyright license */
+		copyright: z.enum([
+			"CC BY", "CC BY-SA", "CC BY-ND", "CC BY-NC",
+			"CC BY-NC-SA", "CC BY-NC-ND", "CC0", "ARR",
+		]).optional(),
 
 		/* For internal use */
 		prevTitle: z.string().default(""),

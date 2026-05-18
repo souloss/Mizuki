@@ -40,6 +40,10 @@ export interface SiteConfig {
 		timeline: boolean; // 时间线页面开关
 		albums: boolean; // 相册页面开关
 		devices: boolean; // 设备页面开关
+		series: boolean; // 专栏/系列页面开关
+		reposts: boolean; // 转载页面开关
+		message: boolean; // 留言板页面开关
+		talking: boolean; // 说说/动态页面开关
 	};
 
 	// 文章列表布局配置
@@ -464,6 +468,16 @@ export interface PioConfig {
  */
 export interface ShareConfig {
 	enable: boolean; // 是否启用分享功能
+}
+
+/**
+ * 赞赏/打赏组件配置
+ */
+export interface RewardConfig {
+	enable: boolean; // 是否启用赞赏功能
+	message?: string; // 赞赏提示文字，留空使用i18n默认文字
+	AliPay?: string; // 支付宝收款二维码图片URL
+	WeChat?: string; // 微信收款二维码图片URL
 }
 
 /**
