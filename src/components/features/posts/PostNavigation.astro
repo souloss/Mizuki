@@ -1,5 +1,4 @@
 ---
-import { getPostUrlBySlug } from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 
 interface Props {
@@ -31,7 +30,7 @@ const onlyOneButton = (prevSlug && !nextSlug) || (!prevSlug && nextSlug);
 	{
 		prevSlug && (
 			<a
-				href={getPostUrlBySlug(prevSlug)}
+				href={prevSlug}
 				class="w-full font-bold overflow-hidden active:scale-95"
 			>
 				<div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4">
@@ -50,7 +49,7 @@ const onlyOneButton = (prevSlug && !nextSlug) || (!prevSlug && nextSlug);
 	{
 		nextSlug && (
 			<a
-				href={getPostUrlBySlug(nextSlug)}
+				href={nextSlug}
 				class="w-full font-bold overflow-hidden active:scale-95"
 			>
 				<div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">

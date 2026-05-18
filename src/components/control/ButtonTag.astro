@@ -2,7 +2,7 @@
 /**
  * ButtonTag - 标签按钮组件
  *
- * 用于标签列表的紧凑链接按钮，支持圆点指示器。
+ * 用于标签列表的胶囊链接按钮，支持随机色相。
  * 这是一个特定用途的组件，新的通用按钮需求请使用 atoms/Button。
  */
 interface ButtonTagProps {
@@ -10,19 +10,63 @@ interface ButtonTagProps {
 	dot?: boolean;
 	href?: string;
 	label?: string;
+	hue?: number;
 }
-const { dot, href, label }: ButtonTagProps = Astro.props;
+const { dot, href, label, hue = 210 }: ButtonTagProps = Astro.props;
 ---
 
 <a
 	href={href}
 	aria-label={label}
-	class="btn-regular h-8 text-sm px-3 rounded-lg"
+	class="btn-tag-capsule"
+	style={`--tag-hue: ${hue}`}
 >
-	{
-		dot && (
-			<div class="h-1 w-1 bg-[var(--btn-content)] dark:bg-[var(--card-bg)] transition rounded-md mr-2" />
-		)
-	}
+	{dot && (
+		<span class="tag-dot" />
+	)}
 	<slot />
 </a>
+
+<style is:global>
+.btn-tag-capsule {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	height: 1.625rem;
+	padding: 0 0.625rem;
+	border-radius: 9999px;
+	background: hsl(var(--tag-hue), 70%, 94%);
+	color: hsl(var(--tag-hue), 55%, 38%);
+	font-size: 0.75rem;
+	font-weight: 500;
+	text-decoration: none;
+	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-tag-capsule:hover {
+	transform: scale(1.06);
+	box-shadow: 0 2px 8px hsla(var(--tag-hue), 60%, 60%, 0.2);
+	background: hsl(var(--tag-hue), 70%, 88%);
+}
+
+.btn-tag-capsule .tag-dot {
+	width: 0.25rem;
+	height: 0.25rem;
+	border-radius: 9999px;
+	background: hsl(var(--tag-hue), 55%, 50%);
+}
+
+.dark .btn-tag-capsule {
+	background: hsl(var(--tag-hue), 30%, 18%);
+	color: hsl(var(--tag-hue), 50%, 72%);
+}
+
+.dark .btn-tag-capsule:hover {
+	background: hsl(var(--tag-hue), 35%, 24%);
+	box-shadow: 0 2px 8px hsla(var(--tag-hue), 50%, 30%, 0.2);
+}
+
+.dark .btn-tag-capsule .tag-dot {
+	background: hsl(var(--tag-hue), 50%, 60%);
+}
+</style>

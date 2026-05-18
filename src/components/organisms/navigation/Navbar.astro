@@ -169,17 +169,18 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
 	}
 
 async function loadButtonScript() {
+    const settingBtn = document.getElementById("display-settings-switch");
+    const menuBtn = document.getElementById("nav-menu-switch");
+
     try {
         const { panelManager } = await import('../../../utils/panel-manager.js');
-        
-        const settingBtn = document.getElementById("display-settings-switch");
+
         if (settingBtn) {
             settingBtn.onclick = async function () {
                 await panelManager.togglePanel('display-setting');
             };
         }
 
-        const menuBtn = document.getElementById("nav-menu-switch");
         if (menuBtn) {
             menuBtn.onclick = async function () {
                 await panelManager.togglePanel('nav-menu-panel');
@@ -187,8 +188,7 @@ async function loadButtonScript() {
         }
     } catch (error) {
         console.error('Failed to load panel manager:', error);
-        // 备用逻辑
-        const settingBtn = document.getElementById("display-settings-switch");
+        // 备用逻辑：直接操作 DOM class
         if (settingBtn) {
             settingBtn.onclick = function () {
                 const settingPanel = document.getElementById("display-setting");
@@ -198,7 +198,6 @@ async function loadButtonScript() {
             };
         }
 
-        const menuBtn = document.getElementById("nav-menu-switch");
         if (menuBtn) {
             menuBtn.onclick = function () {
                 const menuPanel = document.getElementById("nav-menu-panel");
@@ -211,6 +210,26 @@ async function loadButtonScript() {
 }
 
 loadButtonScript();
+
+// Swup 页面切换后重新绑定按钮事件（防止事件丢失）
+function setupSwupButtonRebind() {
+    const swup = (window as any).swup;
+    if (swup?.hooks) {
+        swup.hooks.on('content:replace', () => {
+            loadButtonScript();
+        });
+    }
+}
+
+// Swup 可能尚未初始化，延迟注册
+if ((window as any).swup) {
+    setupSwupButtonRebind();
+} else {
+    // 监听 Swup 初始化完成事件
+    document.addEventListener('swup:enable', setupSwupButtonRebind, { once: true });
+    // 备用：延迟尝试
+    setTimeout(setupSwupButtonRebind, 500);
+}
 
 // 为semifull模式添加滚动检测逻辑
 function initSemifullScrollDetection() {

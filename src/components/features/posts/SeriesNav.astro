@@ -1,0 +1,129 @@
+---
+import I18nKey from "@i18n/i18nKey"
+import { i18n } from "@i18n/translation"
+import { getSeriesData, getSeriesNavigation } from "@utils/series-utils"
+import { getPostUrl, removeFileExtension } from "@utils/url-utils"
+import { Icon } from "astro-icon/components"
+
+interface Props {
+	seriesName: string
+	currentSlug: string
+}
+
+const { seriesName, currentSlug } = Astro.props
+
+const seriesInfo = await getSeriesData(seriesName)
+if (!seriesInfo || seriesInfo.posts.length < 2) {return}
+
+const nav = getSeriesNavigation(seriesInfo, currentSlug)
+if (!nav) {return}
+
+const progressPct = (nav.currentIndex / nav.total) * 100
+const orderStr = String(nav.currentIndex).padStart(2, "0")
+const totalStr = String(nav.total).padStart(2, "0")
+---
+
+<nav
+	class="series-nav my-6 rounded-xl border border-black/5 dark:border-white/10 p-4 sm:p-5 onload-animation"
+	aria-label={`${i18n(I18nKey.seriesNav)}: ${seriesName}`}
+>
+	<!-- Header -->
+	<div class="mb-3 flex items-center justify-between gap-2">
+		<div class="flex items-center gap-2 text-sm font-bold transition text-black/75 dark:text-white/75">
+			<Icon name="material-symbols:list-alt-rounded" class="text-xl text-[var(--primary)]" />
+			<span>{seriesName}</span>
+		</div>
+		<span class="font-mono text-xs tracking-wider text-black/30 dark:text-white/30">
+			{orderStr}<span class="mx-0.5 opacity-40">/</span>{totalStr}
+		</span>
+	</div>
+
+	<!-- Progress bar -->
+	<div class="series-track relative mb-4 h-[3px] w-full overflow-visible rounded-full bg-black/5 dark:bg-white/10">
+		<div class="series-fill absolute inset-y-0 left-0 rounded-full bg-[var(--primary)]" style={`width: ${progressPct}%`}>
+			<span class="series-pulse-dot"></span>
+		</div>
+	</div>
+
+	<!-- Post list -->
+	<ol class="space-y-0.5">
+		{seriesInfo.posts.map((p, idx) => {
+			const isCurrent = p.permalink === currentSlug || p.id === currentSlug || removeFileExtension(p.id) === currentSlug
+			const num = String(idx + 1).padStart(2, "0")
+			const href = getPostUrl({ id: p.id, filePath: p.filePath, data: { permalink: p.permalink, slug: p.slug } as any } as any)
+
+			return (
+				<li>
+					{isCurrent ? (
+						<span class="series-item series-item--active flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm font-medium">
+							<span class="font-mono text-xs opacity-70">{num}</span>
+							<span class="truncate">{p.title}</span>
+						</span>
+					) : (
+						<a
+							href={href}
+							class="series-item flex items-center gap-2.5 rounded-md px-3 py-1.5 text-sm transition text-black/50 dark:text-white/50 hover:text-[var(--primary)]"
+						>
+							<span class="font-mono text-xs opacity-40">{num}</span>
+							<span class="truncate">{p.title}</span>
+						</a>
+					)}
+				</li>
+			)
+		})}
+	</ol>
+
+	<!-- Prev/Next navigation -->
+	{(nav.prev || nav.next) && (
+		<div class="mt-4 flex items-center justify-between border-t border-black/5 dark:border-white/10 pt-3">
+			{nav.prev ? (
+				<a
+					href={getPostUrl({ id: nav.prev.id, filePath: nav.prev.filePath, data: { permalink: nav.prev.permalink, slug: nav.prev.slug } as any } as any)}
+					class="flex items-center gap-1.5 text-sm transition text-black/50 dark:text-white/50 hover:text-[var(--primary)]"
+				>
+					<Icon name="material-symbols:arrow-back-rounded" class="text-lg" />
+					<span class="truncate max-w-[200px]">{nav.prev.title}</span>
+				</a>
+			) : <span />}
+			{nav.next ? (
+				<a
+					href={getPostUrl({ id: nav.next.id, filePath: nav.next.filePath, data: { permalink: nav.next.permalink, slug: nav.next.slug } as any } as any)}
+					class="flex items-center gap-1.5 text-sm transition text-black/50 dark:text-white/50 hover:text-[var(--primary)]"
+				>
+					<span class="truncate max-w-[200px]">{nav.next.title}</span>
+					<Icon name="material-symbols:arrow-forward-rounded" class="text-lg" />
+				</a>
+			) : <span />}
+		</div>
+	)}
+</nav>
+
+<style>
+	.series-item--active {
+		color: var(--primary);
+		background-color: color-mix(in srgb, var(--primary) 8%, transparent);
+		border-left: 2px solid var(--primary);
+		padding-left: calc(0.75rem - 2px);
+	}
+
+	.series-pulse-dot {
+		position: absolute;
+		right: -4px;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: var(--primary);
+		animation: pulse-glow 2s ease-in-out infinite;
+	}
+
+	@keyframes pulse-glow {
+		0%, 100% { box-shadow: 0 0 4px 1px color-mix(in srgb, var(--primary) 30%, transparent); opacity: 1; }
+		50% { box-shadow: 0 0 10px 4px color-mix(in srgb, var(--primary) 50%, transparent); opacity: 0.7; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.series-pulse-dot { animation: none; }
+	}
+</style>

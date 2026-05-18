@@ -1,0 +1,52 @@
+---
+import I18nKey from "@i18n/i18nKey"
+import { i18n } from "@i18n/translation"
+import { Icon } from "astro-icon/components"
+
+interface Props {
+	originalAuthor: string
+	originalUrl: string
+	originalTitle?: string
+	originalSite?: string
+}
+
+const { originalAuthor, originalUrl, originalSite } = Astro.props
+---
+
+<div class="repost-notice my-4 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-4 sm:p-5 onload-animation">
+	<div class="flex items-start gap-3">
+		<div class="mt-0.5 flex-shrink-0">
+			<Icon name="material-symbols:content-copy" class="text-lg text-[var(--primary)]" />
+		</div>
+		<div class="flex-1 min-w-0">
+			<div class="mb-2 text-sm font-bold text-[var(--primary)]">
+				{i18n(I18nKey.repostNotice)}
+			</div>
+			<div class="space-y-1.5 text-sm transition text-black/60 dark:text-white/60">
+				<div class="flex items-center gap-2">
+					<span class="transition text-black/40 dark:text-white/40">
+						{i18n(I18nKey.repostFrom)}:
+					</span>
+					<span class="font-medium transition text-black/75 dark:text-white/75">{originalAuthor}</span>
+				</div>
+				{originalSite && (
+					<div class="flex items-center gap-2">
+						<span class="transition text-black/40 dark:text-white/40">
+							{i18n(I18nKey.repostOriginalSite)}:
+						</span>
+						<span class="transition text-black/60 dark:text-white/60">{originalSite}</span>
+					</div>
+				)}
+				<a
+					href={originalUrl}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex items-center gap-1.5 text-[var(--primary)] hover:underline break-all"
+				>
+					<Icon name="material-symbols:open-in-new-rounded" class="text-sm flex-shrink-0" />
+					<span class="truncate">{i18n(I18nKey.originalArticle)}</span>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>

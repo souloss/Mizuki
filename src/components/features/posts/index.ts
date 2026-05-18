@@ -6,5 +6,6 @@ export { default as PostNavigation } from "./PostNavigation.astro";
 export { default as PostPage } from "./PostPage.astro";
 export { default as RandomPosts } from "./RandomPosts.astro";
 export { default as RelatedPosts } from "./RelatedPosts.astro";
+export { default as Reward } from "./Reward.astro";
 export { default as ShareCard } from "./ShareCard.astro";
 export * from "./types";

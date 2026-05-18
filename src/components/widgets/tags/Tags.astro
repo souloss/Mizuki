@@ -1,4 +1,6 @@
 ---
+import { Icon } from "astro-icon/components";
+
 import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import { getTagList } from "../../../utils/content-utils";
@@ -7,7 +9,17 @@ import { widgetManager } from "../../../utils/widget-manager";
 import ButtonTag from "../../control/ButtonTag.astro";
 import WidgetLayout from "../common/WidgetLayout.astro";
 
-const tags = await getTagList();
+const allTags = await getTagList();
+
+const TAG_HUES = [0, 25, 50, 85, 140, 175, 210, 255, 290, 330];
+
+function getTagHue(name: string): number {
+	let hash = 0;
+	for (const ch of name) {
+		hash = ((hash << 5) - hash + ch.charCodeAt(0)) | 0;
+	}
+	return TAG_HUES[Math.abs(hash) % TAG_HUES.length];
+}
 
 const COLLAPSED_HEIGHT = "7.5rem";
 
@@ -16,8 +28,14 @@ const tagsComponent = widgetManager
 	.getConfig()
 	.properties.find((p) => p.type === "tags");
 const isCollapsed = tagsComponent
-	? widgetManager.isCollapsed(tagsComponent, tags.length)
+	? widgetManager.isCollapsed(tagsComponent, allTags.length)
 	: false;
+
+// 从 customProps 读取 topN 配置，0 或未设置表示显示全部
+const topN: number = (tagsComponent?.customProps?.topN as number) || 0;
+const sortedTags = [...allTags].sort((a, b) => b.count - a.count);
+const tags = topN > 0 ? sortedTags.slice(0, topN) : sortedTags;
+const hasMore = topN > 0 && allTags.length > topN;
 
 interface Props {
 	class?: string;
@@ -41,10 +59,18 @@ const style = Astro.props.style;
 				<ButtonTag
 					href={getTagUrl(t.name)}
 					label={`View all posts with the ${t.name.trim()} tag`}
+					hue={getTagHue(t.name)}
 				>
 					{t.name.trim()}
 				</ButtonTag>
 			))
 		}
 	</div>
+	<a
+		href="/tags/"
+		class="mt-3 text-sm text-black/50 dark:text-white/50 hover:text-[var(--primary)] transition-colors flex items-center gap-1"
+	>
+		{hasMore ? `${i18n(I18nKey.viewAll)} (${allTags.length})` : i18n(I18nKey.viewAll)}
+		<Icon name="material-symbols:arrow-forward-rounded" class="text-sm" />
+	</a>
 </WidgetLayout>

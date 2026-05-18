@@ -1,0 +1,118 @@
+---
+import { PageHeader } from "@components/features/page-header";
+
+import type { FriendsCircleItem } from "@/data/friends-circle";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+
+interface Props {
+	items: FriendsCircleItem[];
+}
+
+const { items } = Astro.props;
+
+function formatRelativeTime(dateStr: string): string {
+	const date = new Date(dateStr);
+	const now = new Date();
+	const diffMs = now.getTime() - date.getTime();
+	const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+	const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+	const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+	if (diffDays > 0) {
+		return `${diffDays} ${i18n(I18nKey.friendsCircleDay)}${i18n(I18nKey.friendsCircleAgo)}`;
+	}
+	if (diffHours > 0) {
+		return `${diffHours} ${i18n(I18nKey.friendsCircleHour)}${i18n(I18nKey.friendsCircleAgo)}`;
+	}
+	if (diffMinutes > 0) {
+		return `${diffMinutes} ${i18n(I18nKey.friendsCircleMinute)}${i18n(I18nKey.friendsCircleAgo)}`;
+	}
+	return i18n(I18nKey.friendsCircleAgo);
+}
+---
+
+<div class="friends-circle-section mt-8">
+	<div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-6"></div>
+
+	<PageHeader
+		title={i18n(I18nKey.friendsCircle)}
+		subtitle={i18n(I18nKey.friendsCircleSubtitle)}
+		icon="material-symbols:group-work"
+	/>
+
+	{items.length === 0 ? (
+		<div class="text-center py-12">
+			<p class="text-black/50 dark:text-white/50 text-lg">
+				{i18n(I18nKey.friendsCircleEmpty)}
+			</p>
+		</div>
+	) : (
+		<div class="circle-list space-y-4 mt-6">
+			{items.map((item) => (
+				<article class="circle-item card-base p-4 transition-all duration-300 hover:shadow-md">
+					<a
+						href={item.link}
+						target="_blank"
+					 rel="noopener noreferrer"
+						class="block group"
+					>
+						<div class="flex items-center gap-3 mb-2">
+							<div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center">
+								<img
+									src={`https://icon.bqb.cool/?url=${new URL(item.link).hostname}`}
+									alt={item.author}
+									class="w-6 h-6 rounded-full"
+									loading="lazy"
+									onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs font-bold text-[var(--primary)]\'>${item.author.charAt(0)}</span>'"
+								/>
+							</div>
+							<div class="flex-1 min-w-0">
+								<div class="flex items-center gap-2">
+									<span class="text-sm font-medium text-black/80 dark:text-white/80 truncate">
+										{item.author}
+									</span>
+									<span class="text-xs text-black/40 dark:text-white/40">
+										{formatRelativeTime(item.date)}
+									</span>
+								</div>
+							</div>
+						</div>
+
+						<h3 class="text-base font-bold text-black/90 dark:text-white/90 mb-2 group-hover:text-[var(--primary)] transition-colors duration-200 line-clamp-1">
+							{item.title}
+						</h3>
+
+						<p class="text-sm text-black/60 dark:text-white/60 line-clamp-2">
+							{item.content}
+						</p>
+					</a>
+				</article>
+			))}
+		</div>
+	)}
+</div>
+
+<style>
+	.circle-item {
+		animation: fadeInUp 0.5s ease-out forwards;
+		opacity: 0;
+	}
+
+	@keyframes fadeInUp {
+		from {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.circle-item:nth-child(1) { animation-delay: 0.05s; }
+	.circle-item:nth-child(2) { animation-delay: 0.1s; }
+	.circle-item:nth-child(3) { animation-delay: 0.15s; }
+	.circle-item:nth-child(4) { animation-delay: 0.2s; }
+	.circle-item:nth-child(5) { animation-delay: 0.25s; }
+</style>

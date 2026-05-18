@@ -4,7 +4,7 @@ import { Icon } from "astro-icon/components";
 import type { PostForList } from "@/utils/content-utils";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
 import { getPostPublicDescription } from "@/utils/post-card-content";
-import { getPostUrlBySlug } from "@/utils/url-utils";
+import { getPostUrl } from "@/utils/url-utils";
 
 interface Props {
 	post: PostForList;
@@ -22,6 +22,9 @@ const {
 	dateFormat = "description",
 } = Astro.props;
 
+// Use pre-computed URL if available, otherwise compute from full post data
+const postUrl = post.url || getPostUrl({ id: post.id, data: post.data } as any);
+
 const displayDate =
 	dateFormat === "iso"
 		? post.data.published.toISOString().substring(0, 10)
@@ -32,7 +35,7 @@ const displayDate =
 ---
 
 <a
-	href={getPostUrlBySlug(post.id)}
+	href={postUrl}
 	class="group flex items-center gap-3 px-3 py-3 -mx-1 rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98]"
 >
 	<div
