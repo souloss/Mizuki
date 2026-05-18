@@ -32,7 +32,10 @@ export function setHue(hue: number): void {
 	r.style.setProperty("--hue", String(hue));
 }
 
-export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
+export function applyThemeToDocument(
+	theme: LIGHT_DARK_MODE,
+	clickCoords?: { x: number; y: number },
+) {
 	// 获取当前主题状态的完整信息
 	const currentIsDark = document.documentElement.classList.contains("dark");
 	const currentTheme = document.documentElement.getAttribute("data-theme");
@@ -100,28 +103,63 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 			"use-view-transition",
 		);
 
+		const isGoingDark = targetIsDark;
+		if (isGoingDark) {
+			document.documentElement.classList.add("going-dark");
+		}
+
 		// 使用 View Transitions API 实现平滑过渡
 		const transition = document.startViewTransition(() => {
 			performThemeChange();
 		});
 
-		// 在过渡完成后移除标记类（使用 finished promise 确保完全同步）
-		transition.finished
+		// 在 View Transition 就绪后，使用 clip-path 圆形扩张/收缩动画
+		transition.ready
 			.then(() => {
-				// 使用 microtask 确保在下一个事件循环前完成清理
-				queueMicrotask(() => {
-					document.documentElement.classList.remove(
-						"is-theme-transitioning",
-						"use-view-transition",
-					);
-				});
+				const x = clickCoords?.x ?? window.innerWidth / 2;
+				const y = clickCoords?.y ?? window.innerHeight / 2;
+
+				const endRadius = Math.hypot(
+					Math.max(x, innerWidth - x),
+					Math.max(y, innerHeight - y),
+				);
+
+				const clipPath = [
+					`circle(0px at ${x}px ${y}px)`,
+					`circle(${endRadius}px at ${x}px ${y}px)`,
+				];
+
+				const animation = document.documentElement.animate(
+					{
+						clipPath: isGoingDark
+							? [clipPath[1], clipPath[0]]
+							: clipPath,
+					},
+					{
+						duration: 400,
+						easing: "ease-in-out",
+						pseudoElement: isGoingDark
+							? "::view-transition-old(root)"
+							: "::view-transition-new(root)",
+					},
+				);
+
+				animation.onfinish = () => {
+					transition.skipTransition();
+					cleanupTransitionClasses();
+				};
 			})
 			.catch(() => {
-				// 如果过渡被中断，也要清理状态
-				document.documentElement.classList.remove(
-					"is-theme-transitioning",
-					"use-view-transition",
-				);
+				cleanupTransitionClasses();
+			});
+
+		// 在过渡完成后移除标记类
+		transition.finished
+			.then(() => {
+				cleanupTransitionClasses();
+			})
+			.catch(() => {
+				cleanupTransitionClasses();
 			});
 	} else {
 		// 不支持 View Transitions API 或用户偏好减少动画，使用传统方式
@@ -141,11 +179,22 @@ export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
 			});
 		}
 	}
+
+	function cleanupTransitionClasses() {
+		document.documentElement.classList.remove(
+			"is-theme-transitioning",
+			"use-view-transition",
+			"going-dark",
+		);
+	}
 }
 
-export function setTheme(theme: LIGHT_DARK_MODE): void {
+export function setTheme(
+	theme: LIGHT_DARK_MODE,
+	clickCoords?: { x: number; y: number },
+): void {
 	localStorage.setItem("theme", theme);
-	applyThemeToDocument(theme);
+	applyThemeToDocument(theme, clickCoords);
 }
 
 export function getStoredTheme(): LIGHT_DARK_MODE {

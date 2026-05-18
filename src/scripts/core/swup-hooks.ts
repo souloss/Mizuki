@@ -22,6 +22,8 @@ export interface SwupHookHandlers {
 	cleanupFancybox?: () => void;
 	initCustomScrollbar?: () => void;
 	checkKatex?: () => void;
+	refreshLazyImages?: () => void;
+	refreshLivePhoto?: () => void;
 }
 
 // 访问对象类型
@@ -108,6 +110,8 @@ export class SwupHooksManager {
 
 			// 初始化新页面的图片、公式、滚动条和 TOC
 			this.handlers.initFancybox?.();
+			this.handlers.refreshLazyImages?.();
+			this.handlers.refreshLivePhoto?.();
 			this.handlers.checkKatex?.();
 			this.handlers.initCustomScrollbar?.();
 

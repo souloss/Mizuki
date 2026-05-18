@@ -46,11 +46,11 @@ export async function getSortedPosts() {
 	const sorted = await getRawSortedPosts();
 
 	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].id;
+		sorted[i].data.nextSlug = getPostUrl(sorted[i - 1]);
 		sorted[i].data.nextTitle = sorted[i - 1].data.title;
 	}
 	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].id;
+		sorted[i].data.prevSlug = getPostUrl(sorted[i + 1]);
 		sorted[i].data.prevTitle = sorted[i + 1].data.title;
 	}
 
@@ -284,7 +284,7 @@ export async function getRelatedPosts(
 		if (result.length >= maxCount) {
 			break;
 		}
-		result.push({ id: s.post.id, data: s.post.data });
+		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 
 	// 不足时从剩余候选中按 timeFreshnessScore + categoryBonus 降序补充
@@ -299,7 +299,7 @@ export async function getRelatedPosts(
 			if (result.length >= maxCount) {
 				break;
 			}
-			result.push({ id: s.post.id, data: s.post.data });
+			result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 		}
 	}
 

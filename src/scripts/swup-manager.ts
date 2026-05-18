@@ -18,11 +18,12 @@ import {
 	initBackToTopHandler,
 } from "./handlers/back-to-top-handler";
 import type { FancyboxHandler } from "./handlers/fancybox-handler";
-import {
-	cleanupFancybox,
+import { 	cleanupFancybox,
 	getFancyboxHandler,
-	initFancybox,
+initFancybox,
 } from "./handlers/fancybox-handler";
+import { initLazyImages, refreshLazyImages } from "./handlers/lazy-image-handler";
+import { initLivePhoto, refreshLivePhoto } from "./handlers/livephoto-handler";
 import type { PanelHandler } from "./handlers/panel-handler";
 import { getPanelHandler, initPanelHandler } from "./handlers/panel-handler";
 import { checkKatex, initCustomScrollbar } from "./handlers/scroll-handler";
@@ -114,6 +115,12 @@ export class SwupManager {
 			cleanupFancybox: () => {
 				cleanupFancybox();
 			},
+			refreshLazyImages: () => {
+				refreshLazyImages();
+			},
+			refreshLivePhoto: async () => {
+				await refreshLivePhoto();
+			},
 			initCustomScrollbar: () => {
 				initCustomScrollbar();
 			},
@@ -125,6 +132,8 @@ export class SwupManager {
 		// 如果 Swup 已经就绪，直接设置钩子
 		if (window?.swup?.hooks) {
 			initFancybox();
+		initLazyImages();
+		initLivePhoto();
 			checkKatex();
 			this.hooksManager.registerHooks();
 		} else {
@@ -143,6 +152,8 @@ export class SwupManager {
 				});
 			} else {
 				initFancybox();
+		initLazyImages();
+		initLivePhoto();
 				checkKatex();
 			}
 		}

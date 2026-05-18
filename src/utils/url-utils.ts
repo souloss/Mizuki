@@ -36,10 +36,29 @@ export function getPostUrlByAlias(alias: string): string {
 	return url(`/posts/${cleanAlias}/`);
 }
 
+/**
+ * 根据 entry 的文件路径目录部分和 slug 字段构建 URL
+ * slug 只覆盖文件名部分，目录保持原样
+ * 注意：Astro v5 的 entry.id 是 slugified 的（不含中文/目录），
+ * 需要从 filePath 提取目录部分
+ * 例如: filePath="src/content/posts/internet-architecture/1-从家到网站全景拓扑.md", slug="from-home-to-website-full-internet-topology"
+ * → /posts/internet-architecture/from-home-to-website-full-internet-topology/
+ */
+function getPostUrlBySlugField(entry: { id: string; data: { slug: string }; filePath?: string }): string {
+	let dir = "";
+	if (entry.filePath) {
+		const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
+		const lastSlashIndex = relativePath.lastIndexOf("/");
+		dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+	}
+	return url(`/posts/${dir}${entry.data.slug}/`);
+}
+
 export function getPostUrl(post: CollectionEntry<"posts">): string;
 export function getPostUrl(post: {
 	id: string;
-	data: { alias?: string; permalink?: string };
+	filePath?: string;
+	data: { slug?: string; alias?: string; permalink?: string };
 }): string;
 export function getPostUrl(post: any): string {
 	// 如果文章有自定义 permalink，优先使用（在根目录下）
@@ -56,12 +75,17 @@ export function getPostUrl(post: any): string {
 		return url(`/${slug}/`);
 	}
 
+	// 如果文章有 slug，使用 slug 替换文件名部分（目录保持原样）
+	if (post.data.slug) {
+		return getPostUrlBySlugField(post);
+	}
+
 	// 如果文章有 alias，使用 alias（在 /posts/ 下）
 	if (post.data.alias) {
 		return getPostUrlByAlias(post.data.alias);
 	}
 
-	// 否则使用默认的 slug 路径
+	// 否则使用默认的 id 路径
 	return getPostUrlBySlug(post.id);
 }
 
