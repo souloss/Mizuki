@@ -45,7 +45,32 @@ const specCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/spec" }),
 	schema: z.object({}),
 });
+const docsCollection = defineCollection({
+	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/docs" }),
+	schema: z.object({
+		title: z.string().optional(),
+		createTime: z.union([z.string(), z.date()]).optional(),
+		permalink: z.string().optional(),
+		copyright: z.unknown().optional(),
+		order: z.number().optional().default(0),
+		section: z.string().optional(),
+		docSlug: z.string().optional(),
+		lang: z.string().optional().default(""),
+		description: z.string().optional().default(""),
+		isHomepage: z.boolean().optional().default(false),
+		icon: z.string().optional(),
+		badge: z
+			.object({
+				type: z
+					.enum(["info", "warning", "danger", "tip", "new", "recommended", "not-recommended", "v2", "v3", "v4"])
+					.default("info"),
+				text: z.string(),
+			})
+			.optional(),
+	}),
+});
 export const collections = {
 	posts: postsCollection,
 	spec: specCollection,
+	docs: docsCollection,
 };

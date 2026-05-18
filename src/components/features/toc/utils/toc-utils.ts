@@ -11,9 +11,17 @@ import { getKatakanaBadge } from "./japanese-katakana";
  * @returns 标题数据数组
  */
 export function extractHeadings(
-	containerSelector = "#post-container",
+	containerSelector?: string,
 ): HeadingData[] {
-	const container = document.querySelector(containerSelector);
+	// Try the provided selector first, then fall back to common content containers
+	const selectors = containerSelector
+		? [containerSelector]
+		: ["#post-container", ".custom-md", ".markdown-content", ".docs-markdown"];
+	let container: Element | null = null;
+	for (const sel of selectors) {
+		container = document.querySelector(sel);
+		if (container) {break;}
+	}
 	if (!container) {
 		return [];
 	}

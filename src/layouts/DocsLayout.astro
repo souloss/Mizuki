@@ -1,0 +1,404 @@
+---
+import "../styles/main.css";
+import "../styles/mobile-navbar.css";
+import "../styles/expressive-code.css";
+import "../styles/markdown.css";
+import "../styles/markdown-extend.styl";
+import "../styles/docs-layout.css";
+
+import FloatingControls from "@components/control/FloatingControls.astro";
+import { PageProgressBar } from "@components/control/PageProgressBar";
+import DocLangSwitcher from "@components/features/docs/DocLangSwitcher.astro";
+import DocSearch from "@components/features/docs/DocSearch.svelte";
+import { SidebarTOC } from "@components/features/toc";
+import ConfigCarrier from "@components/misc/ConfigCarrier.astro";
+import IconifyLoader from "@components/misc/IconifyLoader.astro";
+import Footer from "@components/organisms/footer/Footer.astro";
+import Navbar from "@components/organisms/navigation/Navbar.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import type { DocNavLink,DocSidebarSection } from "@utils/docs-utils";
+import type { MarkdownHeading } from "astro";
+import { Icon } from "astro-icon/components";
+
+import { siteConfig } from "../config";
+import { PAGE_WIDTH } from "../constants/constants";
+import AnalyticsScripts from "./partials/AnalyticsScripts.astro";
+import HeadTags from "./partials/HeadTags.astro";
+
+interface Props {
+	title?: string;
+	description?: string;
+	lang?: string;
+	docSlug?: string;
+	currentPageId?: string;
+	currentLang?: string;
+	defaultLang?: string;
+	availableLangs?: string[];
+	sidebarData?: DocSidebarSection[];
+	headings?: MarkdownHeading[];
+	isFallback?: boolean;
+	isHomePage?: boolean;
+	prevNextLinks?: { prev?: DocNavLink; next?: DocNavLink };
+	breadcrumbTitle?: string;
+}
+
+const {
+	title,
+	description,
+	lang,
+	docSlug,
+	currentPageId,
+	currentLang,
+	defaultLang,
+	availableLangs = [],
+	sidebarData = [],
+	headings = [],
+	isFallback = false,
+	isHomePage = false,
+	prevNextLinks = {},
+	breadcrumbTitle,
+} = Astro.props;
+
+const configHue = siteConfig.themeColor.hue;
+
+let pageTitle: string;
+if (title) {
+	pageTitle = `${title} - ${siteConfig.title}`;
+} else {
+	pageTitle = siteConfig.subtitle
+		? `${siteConfig.title} - ${siteConfig.subtitle}`
+		: siteConfig.title;
+}
+
+const siteLang = (lang || siteConfig.lang).replace("_", "-");
+---
+
+<!doctype html>
+<html
+	lang={siteLang}
+	class="bg-[var(--page-bg)] text-[14px] md:text-[16px]"
+	data-overlayscrollbars-initialize
+>
+	<head>
+		<meta charset="UTF-8" />
+		<AnalyticsScripts
+			thirdPartyAnalytics={siteConfig.thirdPartyAnalytics}
+		/>
+		<HeadTags
+			title={pageTitle}
+			description={description}
+			ogImageUrl={undefined}
+			setOGTypeArticle={false}
+			configHue={configHue}
+		/>
+		<slot name="head" />
+		<style
+			define:vars={{
+				configHue,
+				"page-width": `${PAGE_WIDTH}rem`,
+			}}
+		></style>
+	</head>
+	<body class="min-h-screen docs-page" data-overlayscrollbars-initialize>
+		<ConfigCarrier />
+		<PageProgressBar
+			enable={siteConfig.pageProgressBar?.enable ?? false}
+			height={siteConfig.pageProgressBar?.height ?? 3}
+			duration={siteConfig.pageProgressBar?.duration ?? 8000}
+		/>
+
+		<!-- Navbar -->
+		<div
+			id="top-row"
+			class="z-50 pointer-events-none relative transition-all duration-700 max-w-(--page-width) px-0 md:px-4 mx-auto"
+		>
+			<div
+				id="navbar-wrapper"
+				class="pointer-events-auto sticky top-0 transition-all"
+			>
+				<Navbar />
+			</div>
+		</div>
+
+		<!-- Docs Main Layout -->
+		<div class="docs-layout-container max-w-(--page-width) mx-auto px-2 md:px-4">
+			<!-- Mobile sidebar toggle (outside sidebar to avoid transform issues) -->
+			<button
+				class="docs-sidebar-toggle"
+				id="docs-sidebar-toggle"
+				aria-label={i18n(I18nKey.docsToggleSidebar)}
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+				>
+					<path d="M3 12h18M3 6h18M3 18h18" />
+				</svg>
+			</button>
+
+			<!-- Mobile sidebar overlay -->
+			<div class="docs-sidebar-overlay" id="docs-sidebar-overlay"></div>
+
+			<div class="docs-layout-grid">
+				<!-- Left Sidebar: Doc Navigation -->
+				<aside class="docs-sidebar-wrapper" id="docs-sidebar">
+					<div class="docs-sidebar-inner">
+						{availableLangs.length > 1 && currentLang && defaultLang && currentPageId && docSlug && (
+							<DocLangSwitcher
+								currentLang={currentLang}
+								defaultLang={defaultLang}
+								availableLangs={availableLangs}
+								currentPagePath={currentPageId}
+								docSlug={docSlug}
+							/>
+						)}
+						{docSlug && <DocSearch docSlug={docSlug} placeholder={i18n(I18nKey.docsSearchPlaceholder)} client:load />}
+						<nav class="docs-sidebar-nav" id="docs-sidebar-nav">
+							{sidebarData.map((section) => {
+								const hasActiveItem = section.items.some((item) => item.isCurrent);
+								const isSectionCollapsed = section.collapsed ?? !hasActiveItem;
+								return (
+									<div class:list={["docs-sidebar-section", { "docs-sidebar-section-active": hasActiveItem }]}>
+										{section.name && (
+											<button
+												class:list={["docs-sidebar-section-title", { "docs-sidebar-section-collapsed": isSectionCollapsed }]}
+												data-section-toggle
+											>
+												{section.icon && <Icon name={section.icon} class="docs-sidebar-section-icon" />}
+												<span>{section.name}</span>
+												<svg class="docs-sidebar-section-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M6 9l6 6 6-6" />
+												</svg>
+											</button>
+										)}
+										<div class:list={["docs-sidebar-section-items", { "docs-sidebar-section-items-hidden": section.name && isSectionCollapsed }]}>
+											{section.items.map((item) => {
+												const isNestedCollapsed = item.children && (item.collapsed ?? !item.isCurrent);
+												return (
+												item.children ? (
+													<div class="docs-sidebar-nested-group">
+														<button class:list={["docs-sidebar-nested-title", { "docs-sidebar-nested-open": !isNestedCollapsed }]} data-nested-toggle>
+															<svg class="docs-sidebar-nested-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+																<path d="M6 9l6 6 6-6" />
+															</svg>
+															{item.icon && <Icon name={item.icon} class="docs-sidebar-item-icon" />}
+															<span class="docs-sidebar-item-text">{item.title}</span>
+														</button>
+														<div class:list={["docs-sidebar-nested-items", { "docs-sidebar-nested-items-hidden": isNestedCollapsed }]}>
+															{item.children.map((child) => (
+																<a
+																	href={child.url}
+																	class:list={[
+																		"docs-sidebar-item docs-sidebar-nested-item",
+																		{ "docs-sidebar-item-active": child.isCurrent },
+																	]}
+																>
+																	{child.icon && <Icon name={child.icon} class="docs-sidebar-item-icon" />}
+																	<span class="docs-sidebar-item-text">{child.title}</span>
+																	{child.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${child.badge.type}`]}>{child.badge.text}</span>}
+																</a>
+															))}
+														</div>
+													</div>
+												) : (
+													<a
+														href={item.url}
+														class:list={[
+															"docs-sidebar-item",
+															{ "docs-sidebar-item-active": item.isCurrent },
+														]}
+													>
+														{item.icon && <Icon name={item.icon} class="docs-sidebar-item-icon" />}
+														<span class="docs-sidebar-item-text">{item.title}</span>
+														{item.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${item.badge.type}`]}>{item.badge.text}</span>}
+														{!item.badge && !item.children && <svg class="docs-sidebar-item-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" /></svg>}
+													</a>
+												)
+											)})}
+										</div>
+									</div>
+								);
+							})}
+						</nav>
+					</div>
+				</aside>
+
+				<!-- Center: Doc Content -->
+				<main
+					id="swup-container"
+					class="docs-content-wrapper"
+				>
+					<div id="content-wrapper" class="onload-animation">
+						{isFallback && (
+							<div class="docs-fallback-notice">
+								{i18n(I18nKey.docsFallbackNotice)}
+							</div>
+						)}
+						{docSlug && !isHomePage && (
+							<nav class="docs-breadcrumb" aria-label="Breadcrumb">
+								<a href="/docs/" class="docs-breadcrumb-item">{i18n(I18nKey.docs)}</a>
+								<span class="docs-breadcrumb-separator">/</span>
+								<a href={`/docs/${docSlug}/`} class="docs-breadcrumb-item">{docSlug.charAt(0).toUpperCase() + docSlug.slice(1)}</a>
+								{breadcrumbTitle && (
+									<>
+										<span class="docs-breadcrumb-separator">/</span>
+										<span class="docs-breadcrumb-item docs-breadcrumb-current">{breadcrumbTitle}</span>
+									</>
+								)}
+							</nav>
+						)}
+						<slot />
+						{(prevNextLinks.prev || prevNextLinks.next) && (
+							<div class="docs-prev-next-nav">
+								{prevNextLinks.prev && (
+									<a href={prevNextLinks.prev.url} class="docs-prev-next-link docs-prev-link">
+										<span class="docs-prev-next-label">{i18n(I18nKey.docsPrevPage)}</span>
+										<span class="docs-prev-next-title">{prevNextLinks.prev.title}</span>
+									</a>
+								)}
+								{!prevNextLinks.prev && <div class="docs-prev-next-placeholder"></div>}
+								{prevNextLinks.next && (
+									<a href={prevNextLinks.next.url} class="docs-prev-next-link docs-next-link">
+										<span class="docs-prev-next-label">{i18n(I18nKey.docsNextPage)}</span>
+										<span class="docs-prev-next-title">{prevNextLinks.next.title}</span>
+									</a>
+								)}
+								{!prevNextLinks.next && <div class="docs-prev-next-placeholder"></div>}
+							</div>
+						)}
+						<div class="footer col-span-full onload-animation hidden lg:block">
+							<Footer />
+						</div>
+					</div>
+				</main>
+
+				<!-- Right Sidebar: TOC -->
+				<aside class="docs-toc-wrapper" id="docs-toc">
+					<div class="docs-toc-inner">
+						{siteConfig.toc.enable && (
+							<div class:list={["docs-toc-container", { hidden: isHomePage || headings.length === 0 }]}>
+								<h4 class="docs-toc-title">{i18n(I18nKey.docsTableOfContents)}</h4>
+								<SidebarTOC headings={headings} />
+							</div>
+						)}
+					</div>
+				</aside>
+			</div>
+
+			<div class="footer col-span-full onload-animation block lg:hidden">
+				<Footer />
+			</div>
+		</div>
+
+		<FloatingControls headings={headings} />
+		<IconifyLoader />
+
+		<div id="page-height-extend" class="hidden h-[300vh]"></div>
+	</body>
+</html>
+
+<script>
+	import { initSwupManager } from "../scripts/swup-manager";
+	initSwupManager();
+
+	// Docs sidebar mobile toggle
+	const toggleBtn = document.getElementById("docs-sidebar-toggle");
+	const sidebar = document.getElementById("docs-sidebar");
+	const overlay = document.getElementById("docs-sidebar-overlay");
+
+	function closeSidebar() {
+		sidebar?.classList.remove("docs-sidebar-open");
+	}
+
+	if (toggleBtn && sidebar) {
+		toggleBtn.addEventListener("click", () => {
+			sidebar.classList.toggle("docs-sidebar-open");
+		});
+	}
+
+	// Close sidebar on overlay click
+	if (overlay) {
+		overlay.addEventListener("click", closeSidebar);
+	}
+
+	// Close sidebar on nav link click (mobile)
+	const navLinks = document.querySelectorAll(".docs-sidebar-item");
+	navLinks.forEach((link) => {
+		link.addEventListener("click", closeSidebar);
+	});
+
+	// Collapsible sidebar sections
+	const sectionToggles = document.querySelectorAll("[data-section-toggle]");
+	sectionToggles.forEach((toggle) => {
+		toggle.addEventListener("click", () => {
+			const section = toggle.closest(".docs-sidebar-section");
+			const items = section?.querySelector(".docs-sidebar-section-items");
+			if (!items) {return;}
+
+			const isCollapsed = toggle.classList.contains("docs-sidebar-section-collapsed");
+			if (isCollapsed) {
+				toggle.classList.remove("docs-sidebar-section-collapsed");
+				items.classList.remove("docs-sidebar-section-items-hidden");
+			} else {
+				toggle.classList.add("docs-sidebar-section-collapsed");
+				items.classList.add("docs-sidebar-section-items-hidden");
+			}
+		});
+	});
+
+	// Nested sidebar group toggles
+	const nestedToggles = document.querySelectorAll("[data-nested-toggle]");
+	nestedToggles.forEach((toggle) => {
+		toggle.addEventListener("click", () => {
+			const group = toggle.closest(".docs-sidebar-nested-group");
+			const nestedItems = group?.querySelector(".docs-sidebar-nested-items");
+			if (!nestedItems) {return;}
+
+			const isOpen = toggle.classList.contains("docs-sidebar-nested-open");
+			if (isOpen) {
+				toggle.classList.remove("docs-sidebar-nested-open");
+				nestedItems.classList.add("docs-sidebar-nested-items-hidden");
+			} else {
+				toggle.classList.add("docs-sidebar-nested-open");
+				nestedItems.classList.remove("docs-sidebar-nested-items-hidden");
+			}
+		});
+	});
+</script>
+
+<script>
+	import "../scripts/code-collapse.js";
+</script>
+
+<script>
+	import "../scripts/docs-enhancements";
+</script>
+
+<script>
+	// Reinitialize TOC after Swup page transitions within docs
+	function refreshDocsTOC() {
+		const tocEl = document.querySelector("table-of-contents") as (HTMLElement & { regenerateTOC?: () => void }) | null;
+		if (tocEl && typeof tocEl.regenerateTOC === "function") {
+			tocEl.regenerateTOC();
+		}
+
+		// Also update the TOC container visibility based on whether headings exist
+		const tocContainer = document.querySelector(".docs-toc-container");
+		if (tocContainer) {
+			const hasContent = document.querySelector(".docs-markdown, .markdown-content");
+			tocContainer.classList.toggle("hidden", !hasContent);
+		}
+	}
+
+	document.addEventListener("astro:page-load", refreshDocsTOC);
+	document.addEventListener("swup:content:replace", () => setTimeout(refreshDocsTOC, 100));
+</script>
+
+<script>
+	import "../scripts/theme-optimizer.js";
+</script>

@@ -1,0 +1,69 @@
+---
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getDocProjectMeta, getDocProjectSlugs } from "@utils/docs-utils";
+import { Icon } from "astro-icon/components";
+
+export async function getStaticPaths() {
+	return [{}];
+}
+
+const docSlugs = await getDocProjectSlugs();
+const docProjects = await Promise.all(
+	docSlugs.map((slug) => getDocProjectMeta(slug)),
+);
+---
+
+<MainGridLayout title={i18n(I18nKey.docs)} description="Documentation">
+	<div class="px-4 md:px-8 py-6">
+		<h1 class="text-3xl md:text-4xl font-bold mb-2 text-black/90 dark:text-white/90">{i18n(I18nKey.docs)}</h1>
+		<p class="text-black/50 dark:text-white/50 mb-8">Browse documentation projects</p>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{docProjects.map((project) => (
+				<a
+					href={`/docs/${project.slug}/`}
+					class="card-base p-6 hover:shadow-lg transition-all duration-300 group"
+				>
+					<div class="flex items-center gap-3 mb-4">
+						<div class="w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+							<Icon name="material-symbols:book-2" class="text-primary text-xl" />
+						</div>
+						<h2 class="text-lg font-semibold group-hover:text-primary transition-colors">
+							{project.title}
+						</h2>
+					</div>
+
+					{project.description && (
+						<p class="text-sm text-black/50 dark:text-white/50 mb-3">{project.description}</p>
+					)}
+
+					<div class="space-y-2 text-sm text-black/50 dark:text-white/50">
+						<div class="flex items-center gap-2">
+							<Icon name="material-symbols:article" class="text-base" />
+							<span>{project.pageCount} pages</span>
+						</div>
+						{project.sections.length > 0 && (
+							<div class="flex items-center gap-2">
+								<Icon name="material-symbols:folder" class="text-base" />
+								<span>{project.sections.join(", ")}</span>
+							</div>
+						)}
+						{project.availableLangs.length > 1 && (
+							<div class="flex items-center gap-2">
+								<Icon name="material-symbols:translate" class="text-base" />
+								<span>{project.availableLangs.join(", ")}</span>
+							</div>
+						)}
+					</div>
+
+					<div class="mt-4 flex items-center text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+						<span>Read docs</span>
+						<Icon name="material-symbols:arrow-forward" class="ml-1 text-base" />
+					</div>
+				</a>
+			))}
+		</div>
+	</div>
+</MainGridLayout>

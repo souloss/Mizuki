@@ -1,0 +1,55 @@
+---
+import { Icon } from "astro-icon/components";
+
+import type { docsMizukiHome } from "@/data/docs-mizuki";
+
+interface Props {
+	home: typeof docsMizukiHome;
+}
+
+const { home } = Astro.props;
+---
+
+<div class="docs-home" data-pagefind-ignore>
+	<section class="docs-home-hero">
+		<div class="docs-home-hero-copy">
+			<p class="docs-home-kicker">{home.tagline}</p>
+			<h1>{home.name}</h1>
+			<p class="docs-home-text">{home.text}</p>
+			<div class="docs-home-actions">
+				{home.actions.map((action) => (
+					<a
+						href={action.link}
+						class:list={[
+							"docs-home-action",
+							action.theme === "brand" ? "docs-home-action-brand" : "docs-home-action-alt",
+						]}
+					>
+						{action.text}
+					</a>
+				))}
+			</div>
+		</div>
+		<div class="docs-home-hero-art" aria-hidden="true">
+			<div class="docs-home-glow"></div>
+			<img src={home.image} alt="" loading="eager" />
+		</div>
+	</section>
+
+	<section class="docs-home-features">
+		{home.features.map((feature) => (
+			<div class="docs-home-feature">
+				<div class="docs-home-feature-icon">{feature.icon}</div>
+				<h2>{feature.title}</h2>
+				<p>{feature.details}</p>
+			</div>
+		))}
+	</section>
+
+	<section class="docs-home-start">
+		<a href="/docs/mizuki/guide/intro/" class="docs-home-start-link">
+			<span>开始阅读文档</span>
+			<Icon name="material-symbols:arrow-forward-rounded" class="text-xl" />
+		</a>
+	</section>
+</div>

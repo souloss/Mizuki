@@ -351,4 +351,16 @@ export const zh_CN: Translation = {
 	[Key.randomPosts]: "随机文章",
 	[Key.smartRecommend]: "智能推荐",
 	[Key.randomRecommend]: "随机推荐",
+
+	// 文档
+	[Key.docs]: "文档",
+	[Key.docsSearchPlaceholder]: "搜索文档...",
+	[Key.docsTableOfContents]: "目录",
+	[Key.docsFallbackNotice]: "此页面在所选语言中不可用，正在显示默认语言版本。",
+	[Key.docsToggleSidebar]: "切换侧边栏",
+	[Key.docsPrevPage]: "上一页",
+	[Key.docsNextPage]: "下一页",
+	[Key.docsLastUpdated]: "最后更新于",
+	[Key.docsWordCount]: "字",
+	[Key.docsReadingTime]: "阅读时间",
 };

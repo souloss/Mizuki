@@ -348,6 +348,11 @@ export const navBarConfig: NavBarConfig = {
 			icon: "material-symbols:more-horiz",
 			children: [
 				{
+					name: "Docs",
+					url: "/docs/",
+					icon: "material-symbols:book-2",
+				},
+				{
 					name: "Projects",
 					url: "/projects/",
 					icon: "material-symbols:work",

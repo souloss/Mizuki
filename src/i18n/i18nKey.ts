@@ -341,6 +341,18 @@ enum I18nKey {
 	randomPosts = "randomPosts",
 	smartRecommend = "smartRecommend",
 	randomRecommend = "randomRecommend",
+
+	// 文档页面
+	docs = "docs",
+	docsSearchPlaceholder = "docsSearchPlaceholder",
+	docsTableOfContents = "docsTableOfContents",
+	docsFallbackNotice = "docsFallbackNotice",
+	docsToggleSidebar = "docsToggleSidebar",
+	docsPrevPage = "docsPrevPage",
+	docsNextPage = "docsNextPage",
+	docsLastUpdated = "docsLastUpdated",
+	docsWordCount = "docsWordCount",
+	docsReadingTime = "docsReadingTime",
 }
 
 export default I18nKey;

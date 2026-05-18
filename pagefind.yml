@@ -4,3 +4,9 @@ exclude_selectors:
   - "[data-pagefind-ignore]"
   - ".search-panel"
   - "#search-panel"
+  - ".docs-sidebar-nav"
+  - ".docs-lang-switcher"
+  - ".docs-search"
+
+filter_selector_keys:
+  - "docSlug"

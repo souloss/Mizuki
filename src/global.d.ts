@@ -15,6 +15,12 @@ declare global {
 		hooks: {
 			on: (event: string, handler: (...args: unknown[]) => void) => void;
 			off: (event: string, handler: (...args: unknown[]) => void) => void;
+			before: (event: string, handler: (...args: unknown[]) => void) => void;
+		};
+		options: {
+			ignoreVisit: (url: string, opts: { el?: Element; event?: Event }) => boolean;
+			containers: string[];
+			[key: string]: unknown;
 		};
 		navigate?: (url: string, options?: { history?: boolean }) => void;
 		preload?: (url: string) => Promise<void>;

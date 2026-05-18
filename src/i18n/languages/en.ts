@@ -364,4 +364,16 @@ export const en: Translation = {
 	[Key.randomPosts]: "Random Posts",
 	[Key.smartRecommend]: "Smart",
 	[Key.randomRecommend]: "Random",
+
+	// Docs
+	[Key.docs]: "Docs",
+	[Key.docsSearchPlaceholder]: "Search docs...",
+	[Key.docsTableOfContents]: "Table of Contents",
+	[Key.docsFallbackNotice]: "This page is not available in the selected language. Showing the default language version.",
+	[Key.docsToggleSidebar]: "Toggle sidebar",
+	[Key.docsPrevPage]: "Previous",
+	[Key.docsNextPage]: "Next",
+	[Key.docsLastUpdated]: "Last updated",
+	[Key.docsWordCount]: "words",
+	[Key.docsReadingTime]: "Reading time",
 };
