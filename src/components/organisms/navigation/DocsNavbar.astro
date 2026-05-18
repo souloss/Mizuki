@@ -1,0 +1,76 @@
+---
+import { Icon } from "astro-icon/components"
+
+import { navBarConfig, siteConfig } from "../../../config"
+import { LinkPresets } from "../../../constants/link-presets"
+import { LinkPreset, type NavBarLink } from "../../../types/config"
+import { url } from "../../../utils/url-utils"
+import ThemeSwitch from "../../control/ThemeSwitch.svelte"
+
+const className = Astro.props.class
+
+const links: NavBarLink[] = navBarConfig.links.map(
+	(item: NavBarLink | LinkPreset): NavBarLink => {
+		if (typeof item === "number") {
+			return LinkPresets[item];
+		}
+		return item;
+	},
+);
+
+const rawLogo = siteConfig.navbarTitle?.logo;
+const logoSrc = rawLogo?.match(/^(http|https|\/\/)/) ? rawLogo : rawLogo ? url(rawLogo) : "";
+
+const rawIcon = siteConfig.navbarTitle?.icon;
+const iconSrc = rawIcon?.match(/^(http|https|\/\/)/) ? rawIcon : rawIcon ? url(rawIcon) : "";
+
+const isLogoExternal = rawLogo?.match(/^(http|https|\/\/)/);
+const isIconExternal = rawIcon?.match(/^(http|https|\/\/)/);
+const hasLogoPngFallback = rawLogo?.endsWith(".png") && !isLogoExternal;
+const hasIconPngFallback = rawIcon?.endsWith(".png") && !isIconExternal;
+const logoWebpSrc = hasLogoPngFallback ? logoSrc.replace(/\.png$/i, ".webp") : logoSrc;
+const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : iconSrc;
+---
+<div id="navbar" class="z-50 docs-navbar-inner">
+    <div class:list={[className, "flex items-center justify-between px-4"]}>
+        <a href={url('/')} class="btn-plain scale-animation rounded-lg h-[2.5rem] px-4 font-bold active:scale-95 shrink-0 transition-all duration-300">
+            <div class="flex flex-row items-center text-md">
+                {siteConfig.navbarTitle ? (
+                    siteConfig.navbarTitle.mode === "logo" ? (
+                        hasLogoPngFallback ? (
+                            <picture>
+                                <source srcset={logoWebpSrc} type="image/webp" />
+                                <img src={logoSrc} alt={siteConfig.navbarTitle.text} class="h-[2.5rem] max-w-full object-contain" loading="lazy" />
+                            </picture>
+                        ) : (
+                            <img src={logoSrc} alt={siteConfig.navbarTitle.text} class="h-[2.5rem] max-w-full object-contain" loading="lazy" />
+                        )
+                    ) : (
+                        <>
+                            {hasIconPngFallback ? (
+                                <picture>
+                                    <source srcset={iconWebpSrc} type="image/webp" />
+                                    <img src={iconSrc} alt="" class="h-[1.75rem] w-[1.75rem] mr-2 object-contain" loading="lazy" />
+                                </picture>
+                            ) : (
+                                <img src={iconSrc} alt="" class="h-[1.75rem] w-[1.75rem] mr-2 object-contain" loading="lazy" />
+                            )}
+                            <span class="dark:text-white text-black">{siteConfig.navbarTitle.text}</span>
+                        </>
+                    )
+                ) : (
+                    <>
+                        <Icon name="material-symbols:home-pin-outline" class="text-[1.75rem] mr-2" />
+                        <span class="dark:text-white text-black">{siteConfig.title}</span>
+                    </>
+                )}
+            </div>
+        </a>
+        <div class="flex items-center gap-2">
+            <a href={url('/docs')} class="btn-plain scale-animation rounded-lg h-11 px-4 text-sm font-medium active:scale-90">
+                {siteConfig.lang === 'zh_CN' || siteConfig.lang === 'zh_TW' ? '文档' : 'Docs'}
+            </a>
+            <ThemeSwitch client:only="svelte"></ThemeSwitch>
+        </div>
+    </div>
+</div>

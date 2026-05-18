@@ -6,15 +6,16 @@ import "../styles/markdown.css";
 import "../styles/markdown-extend.styl";
 import "../styles/docs-layout.css";
 
-import FloatingControls from "@components/control/FloatingControls.astro";
 import { PageProgressBar } from "@components/control/PageProgressBar";
+import BackToHome from "@components/control/BackToHome.astro";
+import BackToTop from "@components/control/BackToTop.astro";
 import DocLangSwitcher from "@components/features/docs/DocLangSwitcher.astro";
 import DocSearch from "@components/features/docs/DocSearch.svelte";
 import { SidebarTOC } from "@components/features/toc";
 import ConfigCarrier from "@components/misc/ConfigCarrier.astro";
 import IconifyLoader from "@components/misc/IconifyLoader.astro";
 import Footer from "@components/organisms/footer/Footer.astro";
-import Navbar from "@components/organisms/navigation/Navbar.astro";
+import DocsNavbar from "@components/organisms/navigation/DocsNavbar.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import type { DocNavLink,DocSidebarSection } from "@utils/docs-utils";
@@ -77,7 +78,7 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 <!doctype html>
 <html
 	lang={siteLang}
-	class="bg-[var(--page-bg)] text-[14px] md:text-[16px]"
+	class="docs-page text-[14px] md:text-[16px]"
 	data-overlayscrollbars-initialize
 >
 	<head>
@@ -108,22 +109,14 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 			duration={siteConfig.pageProgressBar?.duration ?? 8000}
 		/>
 
-		<!-- Navbar -->
-		<div
-			id="top-row"
-			class="z-50 pointer-events-none relative transition-all duration-700 max-w-(--page-width) px-0 md:px-4 mx-auto"
-		>
-			<div
-				id="navbar-wrapper"
-				class="pointer-events-auto sticky top-0 transition-all"
-			>
-				<Navbar />
-			</div>
-		</div>
+		<!-- Navbar: full-width, flat style for docs -->
+		<header class="docs-navbar" id="docs-navbar">
+			<DocsNavbar />
+		</header>
 
-		<!-- Docs Main Layout -->
-		<div class="docs-layout-container max-w-(--page-width) mx-auto px-2 md:px-4">
-			<!-- Mobile sidebar toggle (outside sidebar to avoid transform issues) -->
+		<!-- Docs Main Layout: full-screen with fixed sidebar and TOC -->
+		<div class="docs-layout-container">
+			<!-- Mobile sidebar toggle -->
 			<button
 				class="docs-sidebar-toggle"
 				id="docs-sidebar-toggle"
@@ -144,158 +137,164 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 			<!-- Mobile sidebar overlay -->
 			<div class="docs-sidebar-overlay" id="docs-sidebar-overlay"></div>
 
-			<div class="docs-layout-grid">
-				<!-- Left Sidebar: Doc Navigation -->
-				<aside class="docs-sidebar-wrapper" id="docs-sidebar">
-					<div class="docs-sidebar-inner">
-						{availableLangs.length > 1 && currentLang && defaultLang && currentPageId && docSlug && (
-							<DocLangSwitcher
-								currentLang={currentLang}
-								defaultLang={defaultLang}
-								availableLangs={availableLangs}
-								currentPagePath={currentPageId}
-								docSlug={docSlug}
-							/>
-						)}
-						{docSlug && <DocSearch docSlug={docSlug} placeholder={i18n(I18nKey.docsSearchPlaceholder)} client:load />}
-						<nav class="docs-sidebar-nav" id="docs-sidebar-nav">
-							{sidebarData.map((section) => {
-								const hasActiveItem = section.items.some((item) => item.isCurrent);
-								const isSectionCollapsed = section.collapsed ?? !hasActiveItem;
-								return (
-									<div class:list={["docs-sidebar-section", { "docs-sidebar-section-active": hasActiveItem }]}>
-										{section.name && (
-											<button
-												class:list={["docs-sidebar-section-title", { "docs-sidebar-section-collapsed": isSectionCollapsed }]}
-												data-section-toggle
-											>
-												{section.icon && <Icon name={section.icon} class="docs-sidebar-section-icon" />}
-												<span>{section.name}</span>
-												<svg class="docs-sidebar-section-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-													<path d="M6 9l6 6 6-6" />
-												</svg>
-											</button>
-										)}
-										<div class:list={["docs-sidebar-section-items", { "docs-sidebar-section-items-hidden": section.name && isSectionCollapsed }]}>
-											{section.items.map((item) => {
-												const isNestedCollapsed = item.children && (item.collapsed ?? !item.isCurrent);
-												return (
-												item.children ? (
-													<div class="docs-sidebar-nested-group">
-														<button class:list={["docs-sidebar-nested-title", { "docs-sidebar-nested-open": !isNestedCollapsed }]} data-nested-toggle>
-															<svg class="docs-sidebar-nested-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-																<path d="M6 9l6 6 6-6" />
-															</svg>
-															{item.icon && <Icon name={item.icon} class="docs-sidebar-item-icon" />}
-															<span class="docs-sidebar-item-text">{item.title}</span>
-														</button>
-														<div class:list={["docs-sidebar-nested-items", { "docs-sidebar-nested-items-hidden": isNestedCollapsed }]}>
-															{item.children.map((child) => (
-																<a
-																	href={child.url}
-																	class:list={[
-																		"docs-sidebar-item docs-sidebar-nested-item",
-																		{ "docs-sidebar-item-active": child.isCurrent },
-																	]}
-																>
-																	{child.icon && <Icon name={child.icon} class="docs-sidebar-item-icon" />}
-																	<span class="docs-sidebar-item-text">{child.title}</span>
-																	{child.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${child.badge.type}`]}>{child.badge.text}</span>}
-																</a>
-															))}
-														</div>
-													</div>
-												) : (
-													<a
-														href={item.url}
-														class:list={[
-															"docs-sidebar-item",
-															{ "docs-sidebar-item-active": item.isCurrent },
-														]}
-													>
+			<!-- Left Sidebar: fixed position, extends to viewport edge -->
+			<aside class="docs-sidebar-wrapper" id="docs-sidebar">
+				<div class="docs-sidebar-inner">
+					{availableLangs.length > 1 && currentLang && defaultLang && currentPageId && docSlug && (
+						<DocLangSwitcher
+							currentLang={currentLang}
+							defaultLang={defaultLang}
+							availableLangs={availableLangs}
+							currentPagePath={currentPageId}
+							docSlug={docSlug}
+						/>
+					)}
+					{docSlug && <DocSearch docSlug={docSlug} placeholder={i18n(I18nKey.docsSearchPlaceholder)} client:load />}
+					<nav class="docs-sidebar-nav" id="docs-sidebar-nav">
+						{sidebarData.map((section) => {
+							const hasActiveItem = section.items.some((item) => item.isCurrent);
+							const isSectionCollapsed = section.collapsed ?? !hasActiveItem;
+							return (
+								<div class:list={["docs-sidebar-section", { "docs-sidebar-section-active": hasActiveItem }]}>
+									{section.name && (
+										<button
+											class:list={["docs-sidebar-section-title", { "docs-sidebar-section-collapsed": isSectionCollapsed }]}
+											data-section-toggle
+										>
+											{section.icon && <Icon name={section.icon} class="docs-sidebar-section-icon" />}
+											<span>{section.name}</span>
+											<svg class="docs-sidebar-section-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<path d="M6 9l6 6 6-6" />
+											</svg>
+										</button>
+									)}
+									<div class:list={["docs-sidebar-section-items", { "docs-sidebar-section-items-hidden": section.name && isSectionCollapsed }]}>
+										{section.items.map((item) => {
+											const isNestedCollapsed = item.children && (item.collapsed ?? !item.isCurrent);
+											return (
+											item.children ? (
+												<div class="docs-sidebar-nested-group">
+													<button class:list={["docs-sidebar-nested-title", { "docs-sidebar-nested-open": !isNestedCollapsed }]} data-nested-toggle>
+														<svg class="docs-sidebar-nested-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+															<path d="M6 9l6 6 6-6" />
+														</svg>
 														{item.icon && <Icon name={item.icon} class="docs-sidebar-item-icon" />}
 														<span class="docs-sidebar-item-text">{item.title}</span>
-														{item.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${item.badge.type}`]}>{item.badge.text}</span>}
-														{!item.badge && !item.children && <svg class="docs-sidebar-item-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" /></svg>}
-													</a>
-												)
-											)})}
-										</div>
+													</button>
+													<div class:list={["docs-sidebar-nested-items", { "docs-sidebar-nested-items-hidden": isNestedCollapsed }]}>
+														{item.children.map((child) => (
+															<a
+																href={child.url}
+																class:list={[
+																	"docs-sidebar-item docs-sidebar-nested-item",
+																	{ "docs-sidebar-item-active": child.isCurrent },
+																]}
+															>
+																{child.icon && <Icon name={child.icon} class="docs-sidebar-item-icon" />}
+																<span class="docs-sidebar-item-text">{child.title}</span>
+																{child.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${child.badge.type}`]}>{child.badge.text}</span>}
+															</a>
+														))}
+													</div>
+												</div>
+											) : (
+												<a
+													href={item.url}
+													class:list={[
+														"docs-sidebar-item",
+														{ "docs-sidebar-item-active": item.isCurrent },
+													]}
+												>
+													{item.icon && <Icon name={item.icon} class="docs-sidebar-item-icon" />}
+													<span class="docs-sidebar-item-text">{item.title}</span>
+													{item.badge && <span class:list={["docs-sidebar-badge", `docs-sidebar-badge-${item.badge.type}`]}>{item.badge.text}</span>}
+													{!item.badge && !item.children && <svg class="docs-sidebar-item-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" /></svg>}
+												</a>
+											)
+										)})}
 									</div>
-								);
-							})}
-						</nav>
-					</div>
-				</aside>
+								</div>
+							);
+						})}
+					</nav>
+				</div>
+			</aside>
 
-				<!-- Center: Doc Content -->
-				<main
-					id="swup-container"
-					class="docs-content-wrapper"
-				>
-					<div id="content-wrapper" class="onload-animation">
-						{isFallback && (
-							<div class="docs-fallback-notice">
-								{i18n(I18nKey.docsFallbackNotice)}
-							</div>
-						)}
-						{docSlug && !isHomePage && (
-							<nav class="docs-breadcrumb" aria-label="Breadcrumb">
-								<a href="/docs/" class="docs-breadcrumb-item">{i18n(I18nKey.docs)}</a>
-								<span class="docs-breadcrumb-separator">/</span>
-								<a href={`/docs/${docSlug}/`} class="docs-breadcrumb-item">{docSlug.charAt(0).toUpperCase() + docSlug.slice(1)}</a>
-								{breadcrumbTitle && (
-									<>
-										<span class="docs-breadcrumb-separator">/</span>
-										<span class="docs-breadcrumb-item docs-breadcrumb-current">{breadcrumbTitle}</span>
-									</>
-								)}
-							</nav>
-						)}
-						<slot />
-						{(prevNextLinks.prev || prevNextLinks.next) && (
-							<div class="docs-prev-next-nav">
-								{prevNextLinks.prev && (
-									<a href={prevNextLinks.prev.url} class="docs-prev-next-link docs-prev-link">
-										<span class="docs-prev-next-label">{i18n(I18nKey.docsPrevPage)}</span>
-										<span class="docs-prev-next-title">{prevNextLinks.prev.title}</span>
-									</a>
-								)}
-								{!prevNextLinks.prev && <div class="docs-prev-next-placeholder"></div>}
-								{prevNextLinks.next && (
-									<a href={prevNextLinks.next.url} class="docs-prev-next-link docs-next-link">
-										<span class="docs-prev-next-label">{i18n(I18nKey.docsNextPage)}</span>
-										<span class="docs-prev-next-title">{prevNextLinks.next.title}</span>
-									</a>
-								)}
-								{!prevNextLinks.next && <div class="docs-prev-next-placeholder"></div>}
-							</div>
-						)}
-						<div class="footer col-span-full onload-animation hidden lg:block">
-							<Footer />
+			<!-- Center: Doc Content — uses padding to offset fixed sidebar/TOC -->
+			<main
+				id="swup-container"
+				class="docs-content-wrapper"
+			>
+				<div id="content-wrapper" class="onload-animation">
+					{isFallback && (
+						<div class="docs-fallback-notice">
+							{i18n(I18nKey.docsFallbackNotice)}
 						</div>
+					)}
+					{docSlug && !isHomePage && (
+						<nav class="docs-breadcrumb" aria-label="Breadcrumb">
+							<a href="/docs/" class="docs-breadcrumb-item">{i18n(I18nKey.docs)}</a>
+							<span class="docs-breadcrumb-separator">/</span>
+							<a href={`/docs/${docSlug}/`} class="docs-breadcrumb-item">{docSlug.charAt(0).toUpperCase() + docSlug.slice(1)}</a>
+							{breadcrumbTitle && (
+								<>
+									<span class="docs-breadcrumb-separator">/</span>
+									<span class="docs-breadcrumb-item docs-breadcrumb-current">{breadcrumbTitle}</span>
+								</>
+							)}
+						</nav>
+					)}
+					<slot />
+					{(prevNextLinks.prev || prevNextLinks.next) && (
+						<div class="docs-prev-next-nav">
+							{prevNextLinks.prev && (
+								<a href={prevNextLinks.prev.url} class="docs-prev-next-link docs-prev-link">
+									<span class="docs-prev-next-label">{i18n(I18nKey.docsPrevPage)}</span>
+									<span class="docs-prev-next-title">{prevNextLinks.prev.title}</span>
+								</a>
+							)}
+							{!prevNextLinks.prev && <div class="docs-prev-next-placeholder"></div>}
+							{prevNextLinks.next && (
+								<a href={prevNextLinks.next.url} class="docs-prev-next-link docs-next-link">
+									<span class="docs-prev-next-label">{i18n(I18nKey.docsNextPage)}</span>
+									<span class="docs-prev-next-title">{prevNextLinks.next.title}</span>
+								</a>
+							)}
+							{!prevNextLinks.next && <div class="docs-prev-next-placeholder"></div>}
+						</div>
+					)}
+					<div class="footer col-span-full onload-animation hidden lg:block">
+						<Footer />
 					</div>
-				</main>
+				</div>
+			</main>
 
-				<!-- Right Sidebar: TOC -->
-				<aside class="docs-toc-wrapper" id="docs-toc">
-					<div class="docs-toc-inner">
-						{siteConfig.toc.enable && (
-							<div class:list={["docs-toc-container", { hidden: isHomePage || headings.length === 0 }]}>
-								<h4 class="docs-toc-title">{i18n(I18nKey.docsTableOfContents)}</h4>
-								<SidebarTOC headings={headings} />
-							</div>
-						)}
-					</div>
-				</aside>
-			</div>
-
-			<div class="footer col-span-full onload-animation block lg:hidden">
-				<Footer />
-			</div>
+			<!-- Right Sidebar: TOC — fixed position, extends to viewport edge -->
+			<aside class="docs-toc-wrapper" id="docs-toc">
+				<div class="docs-toc-inner">
+					{siteConfig.toc.enable && (
+						<div class:list={["docs-toc-container", { hidden: isHomePage || headings.length === 0 }]}>
+							<h4 class="docs-toc-title">{i18n(I18nKey.docsTableOfContents)}</h4>
+							<SidebarTOC headings={headings} />
+						</div>
+					)}
+				</div>
+			</aside>
 		</div>
 
-		<FloatingControls headings={headings} />
+		<div class="footer col-span-full onload-animation block lg:hidden">
+			<Footer />
+		</div>
+
+		<!-- Simplified floating controls for docs -->
+		<div class="docs-floating-controls fixed z-50 flex flex-col gap-2 right-4 bottom-20 md:right-6 md:bottom-24">
+			<div class="floating-control-item" data-control-key="home">
+				<BackToHome />
+			</div>
+			<div class="floating-control-item" data-control-key="top">
+				<BackToTop />
+			</div>
+		</div>
 		<IconifyLoader />
 
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
@@ -311,13 +310,23 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 	const sidebar = document.getElementById("docs-sidebar");
 	const overlay = document.getElementById("docs-sidebar-overlay");
 
+	function openSidebar() {
+		sidebar?.classList.add("docs-sidebar-open");
+		overlay?.classList.add("docs-sidebar-overlay-active");
+	}
+
 	function closeSidebar() {
 		sidebar?.classList.remove("docs-sidebar-open");
+		overlay?.classList.remove("docs-sidebar-overlay-active");
 	}
 
 	if (toggleBtn && sidebar) {
 		toggleBtn.addEventListener("click", () => {
-			sidebar.classList.toggle("docs-sidebar-open");
+			if (sidebar.classList.contains("docs-sidebar-open")) {
+				closeSidebar();
+			} else {
+				openSidebar();
+			}
 		});
 	}
 

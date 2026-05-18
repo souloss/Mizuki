@@ -1,275 +1,504 @@
-﻿/* ===== Docs Layout Styles ===== */
+/* ================================================================
+ * Docs Layout — Full-screen VitePress-style layout
+ *
+ * Architecture:
+ *   - Full-viewport background using --docs-bg (no white borders in dark mode)
+ *   - position:fixed sidebar extending from viewport left edge
+ *   - position:fixed TOC extending from viewport right edge
+ *   - Content area uses padding-left/right to offset fixed panels
+ *   - Navbar is full-width with flat styling (no card-base)
+ *
+ * Breakpoints:
+ *   - <768px:  Mobile — sidebar as overlay, no TOC
+ *   - 768-1279px: Tablet — sidebar visible, no TOC
+ *   - >=1280px: Desktop — both sidebar and TOC visible
+ * ================================================================ */
 
-/* Container */
+/* ================================================================
+ * CSS Custom Properties — VitePress-inspired design tokens
+ * ================================================================ */
+:root {
+	/* Backgrounds */
+	--docs-bg: #ffffff;
+	--docs-bg-sidebar: #f6f6f7;
+	--docs-bg-toc: #ffffff;
+	--docs-bg-mute: #f6f6f7;
+	--docs-bg-soft: #f9fafb;
+	--docs-bg-alt: #f5f5f5;
+
+	/* Text */
+	--docs-text-100: rgba(60, 60, 67);
+	--docs-text-75: rgba(60, 60, 67, 0.78);
+	--docs-text-50: rgba(60, 60, 67, 0.55);
+	--docs-text-25: rgba(60, 60, 67, 0.28);
+	--docs-text-12: rgba(60, 60, 67, 0.12);
+
+	/* Brand */
+	--docs-brand: #5b3cc4;
+	--docs-brand-dim: rgba(91, 60, 196, 0.08);
+	--docs-brand-soft: rgba(91, 60, 196, 0.14);
+
+	/* Borders & dividers */
+	--docs-divider: rgba(60, 60, 67, 0.12);
+	--docs-border: rgba(60, 60, 67, 0.12);
+
+	/* Shadows */
+	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
+	--docs-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--docs-shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+
+	/* Layout dimensions */
+	--docs-navbar-height: 56px;
+	--docs-sidebar-width: 268px;
+	--docs-toc-width: 220px;
+	--docs-content-max-width: 768px;
+
+	/* Transitions */
+	--docs-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+	--docs-bg: #1b1b1f;
+	--docs-bg-sidebar: #1b1b1f;
+	--docs-bg-toc: #1b1b1f;
+	--docs-bg-mute: #2e2e32;
+	--docs-bg-soft: #252529;
+	--docs-bg-alt: #252529;
+
+	--docs-text-100: rgba(235, 235, 245, 0.86);
+	--docs-text-75: rgba(235, 235, 245, 0.6);
+	--docs-text-50: rgba(235, 235, 245, 0.38);
+	--docs-text-25: rgba(235, 235, 245, 0.18);
+	--docs-text-12: rgba(235, 235, 245, 0.08);
+
+	--docs-brand: #a78bfa;
+	--docs-brand-dim: rgba(167, 139, 250, 0.12);
+	--docs-brand-soft: rgba(167, 139, 250, 0.18);
+
+	--docs-divider: rgba(82, 82, 96, 0.32);
+	--docs-border: rgba(82, 82, 96, 0.32);
+
+	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.2);
+	--docs-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+	--docs-shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* ================================================================
+ * Full-screen page background
+ * — overrides the blog theme's constrained page-width
+ * ================================================================ */
+html.docs-page {
+	background: var(--docs-bg) !important;
+	color: var(--docs-text-100);
+}
+
 body.docs-page {
-	overflow-x: hidden;
+	background: var(--docs-bg);
 }
 
-.docs-layout-container {
-	--docs-text-90: rgba(0, 0, 0, 0.9);
-	--docs-text-75: rgba(0, 0, 0, 0.75);
-	--docs-text-50: rgba(0, 0, 0, 0.5);
-	--docs-text-40: rgba(0, 0, 0, 0.4);
-	--docs-text-30: rgba(0, 0, 0, 0.3);
-	color-scheme: light;
-	padding-top: 4.5rem;
-	min-height: calc(100vh - 4.5rem);
+/* /docs/ index page uses MainGridLayout — override its background too */
+body.docs-page .page-container,
+body.docs-page .main-grid-container {
+	background: var(--docs-bg) !important;
 }
 
-.dark .docs-layout-container {
-	--docs-text-90: rgba(255, 255, 255, 0.9);
-	--docs-text-75: rgba(255, 255, 255, 0.75);
-	--docs-text-50: rgba(255, 255, 255, 0.5);
-	--docs-text-40: rgba(255, 255, 255, 0.4);
-	--docs-text-30: rgba(255, 255, 255, 0.3);
-	color-scheme: dark;
+/* /docs/ index page content area — uses MainGridLayout so needs scoped overrides */
+.docs-index-content {
+	background: var(--docs-bg);
 }
 
-.docs-layout-grid {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: 1rem;
-	position: relative;
-	min-width: 0;
+.docs-index-grid {
+	/* Override card-base on grid items if present */
 }
 
-/* Desktop: 3-column layout */
-@media (min-width: 1280px) {
-	.docs-layout-grid {
-		grid-template-columns: 260px 1fr 220px;
-	}
+.docs-index-grid .card-base {
+	background: var(--docs-bg) !important;
+	border: 1px solid var(--docs-divider) !important;
+	border-radius: 12px !important;
+	box-shadow: none !important;
 }
 
-/* Tablet: sidebar overlay + content */
-@media (min-width: 768px) and (max-width: 1279px) {
-	.docs-layout-grid {
-		grid-template-columns: 1fr;
-	}
-	.docs-sidebar-wrapper {
-		position: fixed;
-		left: 0;
-		top: 4.5rem;
-		width: 260px;
-		height: calc(100vh - 4.5rem);
-		z-index: 40;
-		transform: translateX(-100%);
-		transition: transform 0.3s ease;
-		background: var(--page-bg);
-		border-right: 1px solid var(--line-divider);
-	}
-	.docs-sidebar-wrapper.docs-sidebar-open {
-		transform: translateX(0);
-	}
-	.docs-toc-wrapper {
-		display: none;
-	}
-}
-
-/* Mobile: single column with drawer */
-@media (max-width: 767px) {
-	.docs-layout-grid {
-		gap: 0.75rem;
-	}
-	.docs-sidebar-wrapper {
-		position: fixed;
-		left: 0;
-		top: 0;
-		width: 280px;
-		height: 100vh;
-		z-index: 50;
-		transform: translateX(-100%);
-		transition: transform 0.3s ease;
-		background: var(--page-bg);
-	}
-	.docs-sidebar-wrapper.docs-sidebar-open {
-		transform: translateX(0);
-	}
-	.docs-toc-wrapper {
-		display: none;
-	}
-}
-
-/* ===== Left Sidebar ===== */
-
-.docs-sidebar-wrapper {
-	overflow: hidden;
-	border-right: 1px solid var(--line-divider);
-}
-
-@media (min-width: 1280px) {
-	.docs-sidebar-wrapper {
-		background: var(--card-bg);
-		border-radius: var(--radius-large);
-		border-right: none;
-	}
-}
-
-.docs-sidebar-inner {
-	position: sticky;
-	top: 5.5rem;
-	height: calc(100vh - 5.5rem);
-	overflow-y: auto;
-	padding: 0.75rem 0;
-	scrollbar-width: thin;
-}
-
-.docs-sidebar-toggle {
-	display: none;
+/* ================================================================
+ * Navbar — full-width, flat, VitePress-style
+ * ================================================================ */
+.docs-navbar {
 	position: fixed;
-	bottom: 1rem;
-	left: 1rem;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 50;
+	height: var(--docs-navbar-height);
+	background: var(--docs-bg);
+	border-bottom: 1px solid var(--docs-divider);
+	transition: background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* DocsNavbar — simplified navbar for docs pages */
+.docs-navbar-inner {
+	height: var(--docs-navbar-height);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	max-width: none !important;
+	padding: 0 1rem !important;
+}
+
+.docs-navbar-inner > div {
+	max-width: none !important;
+}
+
+/* Override blog theme's Navbar card-base styling on docs pages */
+body.docs-page #navbar-wrapper {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+	backdrop-filter: none !important;
+	position: static !important;
+}
+
+body.docs-page #navbar-wrapper > div,
+body.docs-page #navbar-wrapper nav {
+	max-width: none !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+body.docs-page #navbar-wrapper .card-base {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
+
+/* ================================================================
+ * Layout container — full-screen, padding for fixed sidebar/TOC
+ * ================================================================ */
+.docs-layout-container {
+	position: relative;
+	min-height: calc(100vh - var(--docs-navbar-height));
+	margin-top: var(--docs-navbar-height);
+	background: var(--docs-bg);
+}
+
+/* ================================================================
+ * Left Sidebar — fixed position, extends to viewport left edge
+ * ================================================================ */
+.docs-sidebar-wrapper {
+	position: fixed;
+	top: var(--docs-navbar-height);
+	left: 0;
+	bottom: 0;
+	width: var(--docs-sidebar-width);
+	background: var(--docs-bg-sidebar);
+	border-right: 1px solid var(--docs-divider);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	z-index: 40;
+	transition: transform var(--docs-transition), background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* Desktop: sidebar always visible */
+@media (min-width: 768px) {
+	.docs-sidebar-wrapper {
+		transform: translateX(0);
+	}
+
+	.docs-layout-container {
+		padding-left: var(--docs-sidebar-width);
+	}
+}
+
+/* Mobile: sidebar off-screen by default */
+@media (max-width: 767px) {
+	.docs-sidebar-wrapper {
+		transform: translateX(-100%);
+		width: 280px;
+		box-shadow: none;
+	}
+
+	.docs-sidebar-wrapper.docs-sidebar-open {
+		transform: translateX(0);
+		box-shadow: var(--docs-shadow-3);
+	}
+
+	.docs-layout-container {
+		padding-left: 0;
+	}
+}
+
+/* Scrollbar styling */
+.docs-sidebar-wrapper::-webkit-scrollbar {
+	width: 4px;
+}
+
+.docs-sidebar-wrapper::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.docs-sidebar-wrapper::-webkit-scrollbar-thumb {
+	background: var(--docs-text-25);
+	border-radius: 4px;
+}
+
+.docs-sidebar-wrapper:hover::-webkit-scrollbar-thumb {
+	background: var(--docs-text-50);
+}
+
+/* ================================================================
+ * Sidebar inner content
+ * ================================================================ */
+.docs-sidebar-inner {
+	padding: 12px 12px 32px;
+}
+
+/* ================================================================
+ * Right Sidebar / TOC — fixed position, extends to viewport right edge
+ * ================================================================ */
+.docs-toc-wrapper {
+	position: fixed;
+	top: var(--docs-navbar-height);
+	right: 0;
+	bottom: 0;
+	width: var(--docs-toc-width);
+	background: var(--docs-bg-toc);
+	border-left: 1px solid var(--docs-divider);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	z-index: 40;
+	transition: background var(--docs-transition), border-color var(--docs-transition);
+}
+
+/* Desktop: TOC visible */
+@media (min-width: 1280px) {
+	.docs-layout-container {
+		padding-right: var(--docs-toc-width);
+	}
+}
+
+/* Below desktop: hide TOC */
+@media (max-width: 1279px) {
+	.docs-toc-wrapper {
+		display: none;
+	}
+}
+
+/* TOC inner content */
+.docs-toc-inner {
+	padding: 16px 16px 32px;
+}
+
+/* ================================================================
+ * TOC title
+ * ================================================================ */
+.docs-toc-title {
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--docs-text-75);
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	margin-bottom: 8px;
+	padding-left: 8px;
+}
+
+/* ================================================================
+ * Content wrapper — centered, max-width constrained
+ * ================================================================ */
+.docs-content-wrapper {
+	min-height: calc(100vh - var(--docs-navbar-height));
+	display: flex;
+	justify-content: center;
+}
+
+.docs-content-wrapper #content-wrapper {
+	width: 100%;
+	max-width: var(--docs-content-max-width);
+	padding: 2rem 2.5rem 4rem;
+	margin: 0 auto;
+}
+
+@media (max-width: 767px) {
+	.docs-content-wrapper #content-wrapper {
+		padding: 1.5rem 1rem 3rem;
+	}
+}
+
+/* ================================================================
+ * Sidebar toggle button (mobile only)
+ * ================================================================ */
+.docs-sidebar-toggle {
+	position: fixed;
+	bottom: 1.5rem;
+	right: 1.5rem;
 	z-index: 45;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	background: var(--primary);
-	color: var(--btn-content);
-	border: none;
-	cursor: pointer;
+	display: none;
 	align-items: center;
 	justify-content: center;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--docs-bg);
+	color: var(--docs-text-75);
+	border: 1px solid var(--docs-divider);
+	box-shadow: var(--docs-shadow-2);
+	cursor: pointer;
+	transition: background var(--docs-transition), color var(--docs-transition), box-shadow var(--docs-transition);
 }
 
-.dark .docs-sidebar-toggle {
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+.docs-sidebar-toggle:hover {
+	background: var(--docs-bg-mute);
+	color: var(--docs-text-100);
+	box-shadow: var(--docs-shadow-3);
 }
 
-.docs-content-wrapper {
-	min-width: 0;
-}
-
-.docs-article {
-	overflow: hidden;
-}
-
-.docs-markdown {
-	min-width: 0;
-	overflow-wrap: anywhere;
-}
-
-.docs-markdown :where(img, video, iframe) {
-	max-width: 100%;
-	height: auto;
-}
-
-.docs-markdown :where(table, pre, .expressive-code) {
-	max-width: 100%;
-}
-
-.docs-markdown :where(.expressive-code, .table-wrapper) {
-	overflow-x: auto;
-}
-
-@media (max-width: 1279px) {
+@media (max-width: 767px) {
 	.docs-sidebar-toggle {
 		display: flex;
 	}
 }
 
+/* ================================================================
+ * Sidebar overlay (mobile)
+ * ================================================================ */
+.docs-sidebar-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 35;
+	background: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--docs-transition);
+}
+
+.docs-sidebar-overlay.docs-sidebar-overlay-active {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Show overlay when sidebar is open on mobile */
+.docs-sidebar-wrapper.docs-sidebar-open ~ .docs-sidebar-overlay,
+.docs-sidebar-wrapper.docs-sidebar-open + .docs-sidebar-overlay {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Actually the overlay is before sidebar in DOM for mobile, let's handle via JS class */
+@media (min-width: 768px) {
+	.docs-sidebar-overlay {
+		display: none;
+	}
+}
+
+/* ================================================================
+ * Sidebar navigation — sections and items
+ * ================================================================ */
 .docs-sidebar-nav {
-	padding: 0 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
 }
 
-/* Section container — thin divider between sections */
+/* Sidebar section */
 .docs-sidebar-section {
-	margin-bottom: 0;
+	border-radius: 6px;
 }
 
-.docs-sidebar-section + .docs-sidebar-section {
-	border-top: 1px solid var(--line-divider);
-	margin-top: 0.5rem;
-	padding-top: 0.5rem;
+.docs-sidebar-section-active {
+	background: var(--docs-brand-dim);
 }
 
-/* Section title — top-level heading with icon + text + arrow */
+/* Section title (collapsible group header) */
 .docs-sidebar-section-title {
-	font-size: 0.875rem;
-	font-weight: 700;
-	color: var(--docs-text-75);
-	padding: 0.5rem 0.625rem;
-	letter-spacing: 0.03em;
 	display: flex;
 	align-items: center;
-	gap: 0.375rem;
+	gap: 6px;
 	width: 100%;
-	border: none;
+	padding: 8px 10px;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
 	background: none;
+	border: none;
+	border-radius: 6px;
 	cursor: pointer;
-	transition: color 0.2s, background 0.2s;
-	margin: 0;
-	border-radius: 0.375rem;
+	transition: background var(--docs-transition), color var(--docs-transition);
 	text-align: left;
 }
 
 .docs-sidebar-section-title:hover {
-	color: var(--primary);
-	background: var(--toc-btn-hover);
+	background: var(--docs-bg-mute);
+	color: var(--docs-brand);
 }
 
 .docs-sidebar-section-icon {
 	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
 	opacity: 0.8;
-	width: 1rem;
-	height: 1rem;
-	font-size: 1rem;
-}
-
-.docs-sidebar-section-title span {
-	flex: 1;
 }
 
 .docs-sidebar-section-arrow {
-	transition: transform 0.2s;
-	flex-shrink: 0;
-	color: var(--docs-text-30);
 	margin-left: auto;
+	transition: transform var(--docs-transition);
+	flex-shrink: 0;
 }
 
 .docs-sidebar-section-collapsed .docs-sidebar-section-arrow {
 	transform: rotate(-90deg);
 }
 
+/* Section items container */
 .docs-sidebar-section-items {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-left: 8px;
 	overflow: hidden;
-	transition: max-height 0.3s ease, opacity 0.2s ease;
-	max-height: 2000px;
-	opacity: 1;
+	transition: max-height 0.3s ease;
 }
 
 .docs-sidebar-section-items-hidden {
-	max-height: 0;
+	max-height: 0 !important;
+	overflow: hidden;
 	opacity: 0;
-	pointer-events: none;
 }
 
-/* Sidebar item — link row: icon + text + badge/arrow */
+/* Sidebar item link */
 .docs-sidebar-item {
 	display: flex;
 	align-items: center;
-	gap: 0.5rem;
-	padding: 0.375rem 0.625rem;
-	font-size: 0.9375rem;
-	font-weight: 400;
-	color: var(--docs-text-50);
-	border-radius: 0.375rem;
-	transition: color 0.15s ease, background 0.15s ease;
-	text-decoration: none;
+	gap: 6px;
+	padding: 6px 10px;
+	font-size: 0.8125rem;
 	line-height: 1.5;
-	position: relative;
+	color: var(--docs-text-75);
+	text-decoration: none;
+	border-radius: 4px;
+	transition: background var(--docs-transition), color var(--docs-transition);
+}
+
+.docs-sidebar-item:hover {
+	color: var(--docs-text-100);
+	background: var(--docs-bg-mute);
+}
+
+.docs-sidebar-item-active {
+	color: var(--docs-brand) !important;
+	font-weight: 500;
+	background: var(--docs-brand-dim);
 }
 
 .docs-sidebar-item-icon {
 	flex-shrink: 0;
-	opacity: 0.55;
-	width: 1rem;
-	height: 1rem;
-	font-size: 1rem;
+	width: 14px;
+	height: 14px;
+	opacity: 0.7;
 }
 
 .docs-sidebar-item-text {
 	flex: 1;
-	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -277,916 +506,753 @@ body.docs-page {
 
 .docs-sidebar-item-arrow {
 	flex-shrink: 0;
-	opacity: 0;
-	color: var(--docs-text-30);
-	transition: opacity 0.15s, transform 0.15s;
+	opacity: 0.3;
 }
 
-.docs-sidebar-item:hover {
-	background: var(--toc-btn-hover);
-	color: var(--docs-text-75);
-}
-
-.docs-sidebar-item:hover .docs-sidebar-item-icon {
-	opacity: 0.85;
-}
-
-.docs-sidebar-item:hover .docs-sidebar-item-arrow {
-	opacity: 0.5;
-	transform: translateX(1px);
-}
-
-.docs-sidebar-item-active {
-	background: var(--toc-btn-hover);
-	color: var(--primary);
-	font-weight: 500;
-}
-
-.docs-sidebar-item-active .docs-sidebar-item-icon {
-	opacity: 1;
-}
-
-.docs-sidebar-item-active::before {
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 2px;
-	height: 55%;
-	background: var(--primary);
-	border-radius: 1px;
-}
-
-/* ===== Badge styles ===== */
-
+/* Sidebar badge */
 .docs-sidebar-badge {
-	font-size: 0.625rem;
-	font-weight: 700;
-	padding: 0.0625rem 0.375rem;
-	border-radius: 9999px;
+	display: inline-flex;
+	align-items: center;
+	padding: 1px 6px;
+	font-size: 0.6875rem;
+	font-weight: 500;
+	border-radius: 8px;
 	line-height: 1.4;
-	flex-shrink: 0;
-	letter-spacing: 0.02em;
 }
 
 .docs-sidebar-badge-info {
-	background: oklch(0.93 0.04 250);
-	color: oklch(0.5 0.15 250);
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
 }
 
 .docs-sidebar-badge-new {
-	background: oklch(0.92 0.06 150);
-	color: oklch(0.45 0.18 150);
-}
-
-.docs-sidebar-badge-tip,
-.docs-sidebar-badge-recommended {
-	background: oklch(0.92 0.06 170);
-	color: oklch(0.4 0.16 170);
-}
-
-.docs-sidebar-badge-warning {
-	background: oklch(0.93 0.06 80);
-	color: oklch(0.5 0.16 80);
-}
-
-.docs-sidebar-badge-danger,
-.docs-sidebar-badge-not-recommended {
-	background: oklch(0.93 0.06 25);
-	color: oklch(0.5 0.2 25);
-}
-
-.docs-sidebar-badge-v2,
-.docs-sidebar-badge-v3,
-.docs-sidebar-badge-v4 {
-	background: oklch(0.92 0.06 300);
-	color: oklch(0.45 0.16 300);
-}
-
-/* Dark mode badge overrides */
-.dark .docs-sidebar-badge-info {
-	background: oklch(0.28 0.08 250);
-	color: oklch(0.75 0.14 250);
+	background: rgba(34, 197, 94, 0.12);
+	color: #16a34a;
 }
 
 .dark .docs-sidebar-badge-new {
-	background: oklch(0.28 0.1 150);
-	color: oklch(0.8 0.16 150);
+	background: rgba(74, 222, 128, 0.12);
+	color: #4ade80;
 }
 
-.dark .docs-sidebar-badge-tip,
-.dark .docs-sidebar-badge-recommended {
-	background: oklch(0.28 0.1 170);
-	color: oklch(0.78 0.14 170);
+.docs-sidebar-badge-beta {
+	background: rgba(234, 179, 8, 0.12);
+	color: #ca8a04;
+}
+
+.dark .docs-sidebar-badge-beta {
+	background: rgba(250, 204, 21, 0.12);
+	color: #facc15;
+}
+
+.docs-sidebar-badge-warning {
+	background: rgba(239, 68, 68, 0.12);
+	color: #dc2626;
 }
 
 .dark .docs-sidebar-badge-warning {
-	background: oklch(0.3 0.08 80);
-	color: oklch(0.78 0.14 80);
+	background: rgba(248, 113, 113, 0.12);
+	color: #f87171;
 }
 
-.dark .docs-sidebar-badge-danger,
-.dark .docs-sidebar-badge-not-recommended {
-	background: oklch(0.3 0.1 25);
-	color: oklch(0.78 0.18 25);
-}
-
-.dark .docs-sidebar-badge-v2,
-.dark .docs-sidebar-badge-v3,
-.dark .docs-sidebar-badge-v4 {
-	background: oklch(0.28 0.1 300);
-	color: oklch(0.78 0.14 300);
-}
-
-/* ===== Nested sidebar groups ===== */
-
+/* Nested sidebar groups */
 .docs-sidebar-nested-group {
-	margin-top: 0.0625rem;
+	margin-left: 4px;
 }
 
 .docs-sidebar-nested-title {
 	display: flex;
 	align-items: center;
-	gap: 0.375rem;
-	font-size: 0.875rem;
-	font-weight: 600;
-	color: var(--docs-text-50);
-	padding: 0.375rem 0.625rem;
+	gap: 4px;
 	width: 100%;
-	border: none;
+	padding: 5px 8px;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--docs-text-75);
 	background: none;
+	border: none;
+	border-radius: 4px;
 	cursor: pointer;
-	transition: color 0.15s, background 0.15s;
-	margin: 0;
-	border-radius: 0.375rem;
+	transition: background var(--docs-transition), color var(--docs-transition);
 	text-align: left;
 }
 
 .docs-sidebar-nested-title:hover {
-	color: var(--docs-text-75);
-	background: var(--toc-btn-hover);
+	color: var(--docs-text-100);
+	background: var(--docs-bg-mute);
 }
 
 .docs-sidebar-nested-arrow {
-	transition: transform 0.2s;
+	transition: transform var(--docs-transition);
 	flex-shrink: 0;
-	color: var(--docs-text-30);
 }
 
 .docs-sidebar-nested-open .docs-sidebar-nested-arrow {
-	transform: rotate(0deg);
-}
-
-.docs-sidebar-nested-title:not(.docs-sidebar-nested-open) .docs-sidebar-nested-arrow {
-	transform: rotate(-90deg);
+	transform: rotate(90deg);
 }
 
 .docs-sidebar-nested-items {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-left: 16px;
 	overflow: hidden;
-	transition: max-height 0.3s ease, opacity 0.2s ease;
-	max-height: 1000px;
-	opacity: 1;
-	padding-left: 1rem;
-	margin-left: 0.5rem;
-	border-left: 1.5px solid var(--line-divider);
 }
 
 .docs-sidebar-nested-items-hidden {
-	max-height: 0;
+	max-height: 0 !important;
+	overflow: hidden;
 	opacity: 0;
-	pointer-events: none;
 }
 
-/* Nested (child) items — slightly smaller, lighter for level distinction */
 .docs-sidebar-nested-item {
-	font-size: 0.875rem;
-	font-weight: 400;
-	padding: 0.3rem 0.5rem;
-	color: var(--docs-text-40);
+	font-size: 0.8125rem;
+	padding: 4px 10px;
 }
 
-.docs-sidebar-nested-item:hover {
-	color: var(--docs-text-75);
-}
-
-.docs-sidebar-nested-item.docs-sidebar-item-active {
-	color: var(--primary);
-	font-weight: 500;
-}
-
-/* ===== Content Area ===== */
-
-.docs-content-wrapper {
-	min-width: 0;
-}
-
-.docs-article {
-	padding: 1.25rem 1.5rem;
-}
-
-@media (min-width: 768px) {
-	.docs-article {
-		padding: 1.5rem 2rem;
-	}
-}
-
-@media (min-width: 1280px) {
-	.docs-article {
-		padding: 2rem 2.5rem;
-	}
-}
-
-.docs-article-title {
-	margin: 0 0 0.75rem;
-	font-size: clamp(1.75rem, 3vw, 2.25rem);
-	line-height: 1.15;
-	font-weight: 800;
-	color: var(--docs-text-90);
-}
-
-.docs-meta {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 0.75rem 1rem;
-	margin-bottom: 1.5rem;
-	color: var(--docs-text-40);
-	font-size: 0.875rem;
-}
-
-.docs-meta span {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.25rem;
-}
-
-.docs-markdown mark {
-	padding: 0.08em 0.25em;
-	border-radius: 0.35rem;
-	background: color-mix(in oklch, var(--primary) 20%, transparent);
-	color: var(--primary);
-}
-
-/* ===== Docs Home ===== */
-
-.docs-home {
-	padding: 0.75rem 0 2rem;
-}
-
-.docs-home-hero {
-	position: relative;
-	display: grid;
-	grid-template-columns: minmax(0, 1.08fr) minmax(220px, 0.72fr);
-	align-items: center;
-	min-height: min(560px, calc(100vh - 8rem));
-	gap: 2rem;
-	padding: clamp(2rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 3rem);
-	overflow: hidden;
-}
-
-.docs-home-kicker {
-	margin: 0 0 0.8rem;
-	color: var(--docs-text-50);
-	font-weight: 700;
-	letter-spacing: 0;
-}
-
-.docs-home-hero h1 {
-	margin: 0;
-	width: fit-content;
-	background: linear-gradient(120deg, oklch(0.58 0.18 330), var(--primary));
-	background-clip: text;
-	-webkit-background-clip: text;
-	color: transparent;
-	font-size: clamp(3rem, 8vw, 5.75rem);
-	font-weight: 900;
-	line-height: 0.98;
-}
-
-.docs-home-text {
-	max-width: 38rem;
-	margin: 1.2rem 0 0;
-	color: var(--docs-text-75);
-	font-size: clamp(1.15rem, 2vw, 1.55rem);
-	line-height: 1.7;
-}
-
-.docs-home-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.85rem;
-	margin-top: 2rem;
-}
-
-.docs-home-action {
-	display: inline-flex;
-	align-items: center;
-	min-height: 2.75rem;
-	padding: 0.7rem 1.15rem;
-	border-radius: 999px;
-	font-weight: 700;
-	text-decoration: none;
-	transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.docs-home-action:hover {
-	transform: translateY(-1px);
-}
-
-.docs-home-action-brand {
-	background: var(--primary);
-	color: var(--btn-content);
-}
-
-.docs-home-action-alt {
-	border: 1px solid var(--line-divider);
-	background: var(--card-bg);
-	color: var(--docs-text-75);
-}
-
-.docs-home-hero-art {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	min-height: 280px;
-}
-
-.docs-home-glow {
-	position: absolute;
-	width: min(72vw, 360px);
-	aspect-ratio: 1;
-	border-radius: 50%;
-	background:
-		linear-gradient(135deg, color-mix(in oklch, var(--primary) 42%, transparent), transparent 58%),
-		linear-gradient(315deg, oklch(0.76 0.14 345 / 0.55), transparent 55%);
-	filter: blur(40px);
-	opacity: 0.65;
-}
-
-.dark .docs-home-glow {
-	background:
-		linear-gradient(135deg, color-mix(in oklch, var(--primary) 30%, transparent), transparent 58%),
-		linear-gradient(315deg, oklch(0.5 0.1 345 / 0.35), transparent 55%);
-	opacity: 0.5;
-}
-
-.docs-home-hero-art img {
-	position: relative;
-	width: min(70%, 280px);
-	height: auto;
-	filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.18));
-}
-
-.dark .docs-home-hero-art img {
-	filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.4));
-}
-
-.docs-home-features {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 1rem;
-	margin-top: 0.5rem;
-}
-
-.docs-home-feature {
-	min-height: 10rem;
-	padding: 1.25rem;
-	border: 1px solid var(--line-divider);
-	border-radius: 0.5rem;
-	background: var(--card-bg);
-}
-
-.docs-home-feature-icon {
-	margin-bottom: 0.75rem;
-	font-size: 1.65rem;
-	line-height: 1;
-}
-
-.docs-home-feature h2 {
-	margin: 0 0 0.45rem;
-	color: var(--docs-text-90);
-	font-size: 1rem;
-	font-weight: 800;
-}
-
-.docs-home-feature p {
-	margin: 0;
-	color: var(--docs-text-50);
-	font-size: 0.9rem;
-	line-height: 1.65;
-}
-
-.docs-home-start {
-	display: flex;
-	justify-content: flex-end;
-	margin-top: 1.25rem;
-}
-
-.docs-home-start-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.35rem;
-	color: var(--primary);
-	font-weight: 700;
-	text-decoration: none;
-}
-
-@media (max-width: 900px) {
-	.docs-home-hero {
-		grid-template-columns: 1fr;
-		min-height: auto;
-		padding-top: 2rem;
-	}
-
-	.docs-home-hero-art {
-		min-height: 180px;
-		order: -1;
-	}
-
-	.docs-home-features {
-		grid-template-columns: 1fr;
-	}
-}
-
-/* Fallback notice */
-.docs-fallback-notice {
-	background: var(--toc-btn-hover);
-	border: 1px solid var(--line-divider);
-	border-radius: var(--radius-large);
-	padding: 0.5rem 1rem;
-	margin-bottom: 1rem;
-	font-size: 0.875rem;
-	color: var(--docs-text-50);
-}
-
-/* ===== Right TOC Sidebar ===== */
-
-.docs-toc-wrapper {
-	overflow: hidden;
-	border-left: 1px solid var(--line-divider);
-}
-
-@media (min-width: 1280px) {
-	.docs-toc-wrapper {
-		background: var(--card-bg);
-		border-radius: var(--radius-large);
-		border-left: none;
-	}
-}
-
-.docs-toc-inner {
-	position: sticky;
-	top: 5.5rem;
-	height: calc(100vh - 5.5rem);
-	overflow-y: auto;
-	padding: 0.75rem 0;
-	scrollbar-width: thin;
-}
-
-.docs-toc-container {
-	padding: 0 0.375rem;
-}
-
-.docs-toc-title {
-	font-size: 0.875rem;
-	font-weight: 700;
-	color: var(--docs-text-75);
-	padding: 0.5rem 0.625rem;
-	letter-spacing: 0.03em;
-}
-
-/* Scrollbar styling for sidebar and TOC */
-.docs-sidebar-inner::-webkit-scrollbar,
-.docs-toc-inner::-webkit-scrollbar {
-	width: 3px;
-}
-
-.docs-sidebar-inner::-webkit-scrollbar-thumb,
-.docs-toc-inner::-webkit-scrollbar-thumb {
-	background: var(--line-divider);
-	border-radius: 2px;
-}
-
-.docs-sidebar-inner::-webkit-scrollbar-track,
-.docs-toc-inner::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-/* ===== Mobile Sidebar Overlay ===== */
-
-.docs-sidebar-overlay {
-	display: none;
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.4);
-	z-index: 49;
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.dark .docs-sidebar-overlay {
-	background: rgba(0, 0, 0, 0.6);
-}
-
-/* Show overlay when sidebar is open */
-body:has(.docs-sidebar-open) .docs-sidebar-overlay {
-	display: block;
-	opacity: 1;
-}
-
-/* ===== Prev/Next Navigation ===== */
-
-.docs-prev-next-nav {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 1rem;
-	margin-top: 2rem;
-}
-
-.docs-prev-next-link {
-	display: flex;
-	flex-direction: column;
-	gap: 0.25rem;
-	padding: 1rem;
-	border-radius: var(--radius-large);
-	border: 1px solid var(--line-divider);
-	text-decoration: none;
-	transition: border-color 0.2s, background 0.2s;
-	background: var(--card-bg);
-}
-
-.docs-prev-next-link:hover {
-	border-color: var(--primary);
-	background: var(--toc-btn-hover);
-}
-
-.docs-prev-link {
-	text-align: left;
-}
-
-.docs-next-link {
-	text-align: right;
-}
-
-.docs-prev-next-label {
-	font-size: 0.75rem;
-	color: var(--docs-text-30);
-	letter-spacing: 0.05em;
-}
-
-.docs-prev-next-title {
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: var(--docs-text-75);
-}
-
-.docs-prev-next-link:hover .docs-prev-next-title {
-	color: var(--primary);
-}
-
-.docs-prev-next-placeholder {
-	/* empty placeholder to keep grid alignment */
-}
-
-/* ===== Breadcrumb Navigation ===== */
-
+/* ================================================================
+ * Breadcrumb — VitePress-inspired
+ * ================================================================ */
 .docs-breadcrumb {
 	display: flex;
 	align-items: center;
-	gap: 0.25rem;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-bottom: 1.25rem;
+	padding: 8px 0;
 	font-size: 0.8125rem;
-	color: var(--docs-text-30);
-	margin-bottom: 0.75rem;
+	line-height: 1.5;
+	border-bottom: 1px solid var(--docs-divider);
 }
 
 .docs-breadcrumb-item {
 	color: var(--docs-text-50);
 	text-decoration: none;
-	transition: color 0.2s;
+	transition: color var(--docs-transition);
 }
 
-.docs-breadcrumb-item:hover {
-	color: var(--primary);
+.docs-breadcrumb-item[href]:hover {
+	color: var(--docs-brand);
 }
 
 .docs-breadcrumb-separator {
-	color: var(--line-divider);
-}
-
-.docs-breadcrumb-current {
-	color: var(--docs-text-75);
-	font-weight: 500;
-}
-
-/* ===== Markdown Directive Styles ===== */
-
-/* :::collapse directive - collapsible sections */
-.docs-markdown collapse {
-	display: block;
-	margin: 1rem 0;
-	border: 1px solid var(--line-divider);
-	border-radius: var(--radius-large);
-	overflow: hidden;
-}
-
-.docs-markdown collapse > p:first-child,
-.docs-markdown collapse > ul:first-child > li:first-child > p:first-child {
-	font-weight: 600;
-	cursor: pointer;
-	padding: 0.75rem 1rem;
-	background: var(--toc-btn-hover);
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+	color: var(--docs-text-25);
+	margin: 0 2px;
 	user-select: none;
 }
 
-.docs-markdown collapse > p:first-child::after,
-.docs-markdown collapse > ul:first-child > li:first-child > p:first-child::after {
-	content: "";
-	display: inline-block;
-	width: 12px;
-	height: 12px;
-	border-right: 2px solid var(--docs-text-50);
-	border-bottom: 2px solid var(--docs-text-50);
-	transform: rotate(-45deg);
-	transition: transform 0.2s;
-	margin-left: 0.5rem;
-	flex-shrink: 0;
+.docs-breadcrumb-current {
+	color: var(--docs-text-100);
+	font-weight: 500;
 }
 
-.docs-markdown collapse.is-open > p:first-child::after,
-.docs-markdown collapse.is-open > ul:first-child > li:first-child > p:first-child::after {
-	transform: rotate(45deg);
+/* ================================================================
+ * Prev/Next navigation
+ * ================================================================ */
+.docs-prev-next-nav {
+	display: flex;
+	gap: 1rem;
+	margin-top: 3rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--docs-divider);
 }
 
-.docs-markdown collapse > ul:first-child > li:first-child {
-	list-style: none;
+.docs-prev-next-link {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1;
+	padding: 12px 16px;
+	border: 1px solid var(--docs-divider);
+	border-radius: 8px;
+	text-decoration: none;
+	transition: border-color var(--docs-transition), background var(--docs-transition);
 }
 
-.docs-markdown collapse > :not(:first-child) {
-	padding: 0 1rem;
-	max-height: 0;
-	overflow: hidden;
-	opacity: 0;
-	transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+.docs-prev-next-link:hover {
+	border-color: var(--docs-brand);
+	background: var(--docs-brand-dim);
 }
 
-.docs-markdown collapse.is-open > :not(:first-child) {
-	max-height: 2000px;
-	opacity: 1;
-	padding: 0.5rem 1rem 1rem;
-}
-
-/* :::file-tree directive - directory structure display */
-.docs-markdown file-tree {
-	display: block;
-	margin: 1rem 0;
-	padding: 1rem 1.25rem;
-	background: var(--card-bg);
-	border: 1px solid var(--line-divider);
-	border-radius: var(--radius-large);
-	font-family: var(--ec-codeFontFml, ui-monospace, monospace);
-	font-size: 0.875rem;
-	line-height: 1.6;
-	overflow-x: auto;
-}
-
-.docs-markdown file-tree ul,
-.docs-markdown file-tree ol {
-	list-style: none;
-	padding-left: 1.25rem;
-	margin: 0;
-}
-
-.docs-markdown file-tree > ul,
-.docs-markdown file-tree > ol {
-	padding-left: 0;
-}
-
-.docs-markdown file-tree li {
-	position: relative;
-	padding: 0;
-	margin: 0;
-}
-
-.docs-markdown file-tree li::before {
-	content: "";
-	position: absolute;
-	left: -1rem;
-	top: 0;
-	height: 100%;
-	width: 1px;
-	background: var(--line-divider);
-}
-
-.docs-markdown file-tree li:last-child::before {
-	height: 0.8rem;
-}
-
-.docs-markdown file-tree li::after {
-	content: "";
-	position: absolute;
-	left: -1rem;
-	top: 0.8rem;
-	width: 0.75rem;
-	height: 1px;
-	background: var(--line-divider);
-}
-
-.docs-markdown file-tree > ul > li::before,
-.docs-markdown file-tree > ul > li::after,
-.docs-markdown file-tree > ol > li::before,
-.docs-markdown file-tree > ol > li::after {
-	display: none;
-}
-
-/* :::steps directive - step-by-step instructions */
-.docs-markdown steps {
-	display: block;
-	margin: 1rem 0;
-	padding-left: 2rem;
-	position: relative;
-}
-
-.docs-markdown steps > ol,
-.docs-markdown steps > ul {
-	list-style: none;
-	padding-left: 0;
-	margin: 0;
-	counter-reset: step-counter;
-}
-
-.docs-markdown steps > ol > li,
-.docs-markdown steps > ul > li {
-	position: relative;
-	padding: 1rem 1rem 1rem 2.5rem;
-	margin-bottom: 0.75rem;
-	border: 1px solid var(--line-divider);
-	border-radius: var(--radius-large);
-	background: var(--card-bg);
-	counter-increment: step-counter;
-}
-
-.docs-markdown steps > ol > li::before,
-.docs-markdown steps > ul > li::before {
-	content: counter(step-counter);
-	position: absolute;
-	left: -0.5rem;
-	top: 1rem;
-	width: 1.5rem;
-	height: 1.5rem;
-	border-radius: 50%;
-	background: var(--primary);
-	color: var(--btn-content);
+.docs-prev-next-label {
 	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--docs-text-50);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.docs-prev-next-title {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--docs-text-100);
+}
+
+.docs-prev-next-placeholder {
+	flex: 1;
+}
+
+/* ================================================================
+ * Fallback notice
+ * ================================================================ */
+.docs-fallback-notice {
+	padding: 12px 16px;
+	margin-bottom: 1rem;
+	background: rgba(234, 179, 8, 0.1);
+	border: 1px solid rgba(234, 179, 8, 0.3);
+	border-radius: 8px;
+	color: var(--docs-text-100);
+	font-size: 0.875rem;
+}
+
+/* ================================================================
+ * TOC overrides for docs pages — VitePress-style
+ * ================================================================ */
+body.docs-page .docs-toc-container {
+	--toc-badge-bg: var(--docs-brand-dim);
+	--toc-btn-hover: var(--docs-bg-mute);
+	--toc-btn-active: var(--docs-brand-dim);
+	--btn-content: var(--docs-brand);
+}
+
+body.docs-page table-of-contents {
+	font-size: 0.8125rem;
+}
+
+body.docs-page table-of-contents a {
+	font-size: 0.8125rem;
+	line-height: 1.5;
+	color: var(--docs-text-50);
+	border-radius: 4px;
+	padding: 4px 8px;
+}
+
+body.docs-page table-of-contents a:hover {
+	color: var(--docs-text-75);
+	background: var(--docs-bg-mute);
+}
+
+body.docs-page table-of-contents a.visible {
+	color: var(--docs-brand);
+	font-weight: 500;
+}
+
+body.docs-page #active-indicator {
+	border-color: var(--docs-brand-dim) !important;
+	background: var(--docs-brand-dim) !important;
+}
+
+/* ================================================================
+ * Prose / Markdown content overrides for docs pages
+ * ================================================================ */
+body.docs-page .prose,
+body.docs-page .markdown-content,
+body.docs-page .custom-md {
+	--tw-prose-body: var(--docs-text-100);
+	--tw-prose-headings: var(--docs-text-100);
+	--tw-prose-links: var(--docs-brand);
+	--tw-prose-bold: var(--docs-text-100);
+	--tw-prose-code: var(--docs-text-100);
+	--tw-prose-quotes: var(--docs-text-75);
+	color: var(--docs-text-100);
+}
+
+body.docs-page .prose a,
+body.docs-page .markdown-content a,
+body.docs-page .custom-md a {
+	color: var(--docs-brand);
+	text-decoration: none;
+	transition: color var(--docs-transition);
+}
+
+body.docs-page .prose a:hover,
+body.docs-page .markdown-content a:hover,
+body.docs-page .custom-md a:hover {
+	color: var(--docs-brand);
+	text-decoration: underline;
+}
+
+body.docs-page .prose h1,
+body.docs-page .prose h2,
+body.docs-page .prose h3,
+body.docs-page .prose h4 {
+	color: var(--docs-text-100);
+	border-bottom-color: var(--docs-divider);
+}
+
+/* ================================================================
+ * Admonition / Callout styles for docs
+ * ================================================================ */
+body.docs-page .admonition,
+body.docs-page [class*="admonition-"],
+body.docs-page .callout {
+	border-radius: 8px;
+	border: 1px solid var(--docs-divider);
+}
+
+body.docs-page .admonition-note,
+body.docs-page .callout-note {
+	border-left: 3px solid var(--docs-brand);
+	background: var(--docs-brand-dim);
+}
+
+body.docs-page .admonition-tip,
+body.docs-page .callout-tip {
+	border-left: 3px solid #16a34a;
+	background: rgba(34, 197, 94, 0.08);
+}
+
+body.docs-page .admonition-warning,
+body.docs-page .callout-warning {
+	border-left: 3px solid #ca8a04;
+	background: rgba(234, 179, 8, 0.08);
+}
+
+body.docs-page .admonition-caution,
+body.docs-page .callout-caution {
+	border-left: 3px solid #dc2626;
+	background: rgba(239, 68, 68, 0.08);
+}
+
+body.docs-page .admonition-important,
+body.docs-page .callout-important {
+	border-left: 3px solid #7c3aed;
+	background: rgba(124, 58, 237, 0.08);
+}
+
+/* ================================================================
+ * Footer overrides for docs pages
+ * ================================================================ */
+body.docs-page .footer {
+	background: var(--docs-bg);
+	border-top: 1px solid var(--docs-divider);
+}
+
+/* ================================================================
+ * Docs Home page specific
+ * ================================================================ */
+.docs-home {
+	max-width: var(--docs-content-max-width);
+	margin: 0 auto;
+	padding: 2rem 2.5rem;
+}
+
+.docs-home-hero {
+	display: flex;
+	align-items: center;
+	gap: 3rem;
+	padding: 4rem 0;
+}
+
+.docs-home-hero-copy {
+	flex: 1;
+}
+
+.docs-home-kicker {
+	font-size: 0.875rem;
 	font-weight: 600;
+	color: var(--docs-brand);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	margin-bottom: 0.75rem;
+}
+
+.docs-home-hero h1 {
+	font-size: 2.5rem;
+	font-weight: 800;
+	line-height: 1.1;
+	color: var(--docs-text-100);
+	margin-bottom: 1rem;
+}
+
+.docs-home-text {
+	font-size: 1.125rem;
+	color: var(--docs-text-75);
+	line-height: 1.6;
+	margin-bottom: 1.5rem;
+}
+
+.docs-home-actions {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.docs-home-action {
+	display: inline-flex;
+	align-items: center;
+	padding: 0.625rem 1.25rem;
+	border-radius: 8px;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-decoration: none;
+	transition: background var(--docs-transition), color var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-home-action-brand {
+	background: var(--docs-brand);
+	color: #ffffff;
+}
+
+.docs-home-action-brand:hover {
+	opacity: 0.9;
+	box-shadow: var(--docs-shadow-2);
+}
+
+.docs-home-action-alt {
+	background: var(--docs-bg-mute);
+	color: var(--docs-text-100);
+	border: 1px solid var(--docs-divider);
+}
+
+.docs-home-action-alt:hover {
+	border-color: var(--docs-brand);
+	color: var(--docs-brand);
+}
+
+.docs-home-hero-art {
+	position: relative;
+	flex-shrink: 0;
+	width: 280px;
+	height: 280px;
+}
+
+.docs-home-glow {
+	position: absolute;
+	inset: -20px;
+	background: radial-gradient(circle, var(--docs-brand-dim) 0%, transparent 70%);
+	border-radius: 50%;
+}
+
+.docs-home-hero-art img {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.docs-home-features {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+	padding: 2rem 0 3rem;
+}
+
+.docs-home-feature {
+	padding: 1.5rem;
+	border: 1px solid var(--docs-divider);
+	border-radius: 12px;
+	transition: border-color var(--docs-transition), box-shadow var(--docs-transition);
+}
+
+.docs-home-feature:hover {
+	border-color: var(--docs-brand);
+	box-shadow: var(--docs-shadow-1);
+}
+
+.docs-home-feature-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	z-index: 1;
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
+	font-size: 1.25rem;
+	margin-bottom: 0.75rem;
 }
 
-.docs-markdown steps > ol > li:last-child,
-.docs-markdown steps > ul > li:last-child {
-	margin-bottom: 0;
+.docs-home-feature h2 {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
+	margin-bottom: 0.375rem;
 }
 
-.docs-markdown steps > ol > li > p:first-child,
-.docs-markdown steps > ul > li > p:first-child {
-	margin-top: 0;
+.docs-home-feature p {
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+	line-height: 1.6;
 }
 
-.docs-markdown steps > ol > li > p:last-child,
-.docs-markdown steps > ul > li > p:last-child {
-	margin-bottom: 0;
+.docs-home-start {
+	padding: 2rem 0;
+	text-align: center;
 }
 
-/* VuePress Plume compatibility: CardGrid, RepoCard, LinkCard, card, tabs */
-.docs-markdown cardgrid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 0.75rem;
-	margin: 1rem 0;
-}
-
-.docs-markdown repocard,
-.docs-markdown linkcard {
-	display: block;
-	margin: 1rem 0;
-}
-
-.docs-markdown .docs-repo-card,
-.docs-markdown .docs-link-card {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	padding: 1rem 1.1rem;
-	border: 1px solid var(--line-divider);
-	border-radius: 0.5rem;
-	background: var(--card-bg);
-	color: var(--docs-text-75);
-	text-decoration: none;
-	transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
-}
-
-.docs-markdown .docs-repo-card:hover,
-.docs-markdown .docs-link-card:hover {
-	border-color: color-mix(in oklch, var(--primary) 45%, var(--line-divider));
-	background: var(--toc-btn-hover);
-	transform: translateY(-1px);
-}
-
-.docs-markdown .docs-repo-card-title,
-.docs-markdown .docs-link-card-title {
+.docs-home-start-link {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	font-weight: 750;
+	padding: 0.75rem 1.5rem;
+	background: var(--docs-brand);
+	color: #ffffff;
+	border-radius: 8px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: opacity var(--docs-transition), box-shadow var(--docs-transition);
 }
 
-.docs-markdown .docs-repo-card-meta,
-.docs-markdown .docs-link-card-arrow {
-	color: var(--docs-text-30);
-	font-size: 0.85rem;
+.docs-home-start-link:hover {
+	opacity: 0.9;
+	box-shadow: var(--docs-shadow-2);
 }
 
-.docs-markdown .docs-enhanced-card-icon {
-	color: var(--primary);
-	font-size: 0.85rem;
-	font-weight: 800;
-}
+/* Mobile home adjustments */
+@media (max-width: 767px) {
+	.docs-home {
+		padding: 1.5rem 1rem;
+	}
 
-.docs-markdown card {
-	display: block;
-	margin: 1rem 0;
-	padding: 1rem 1.1rem;
-	border: 1px solid var(--line-divider);
-	border-radius: 0.5rem;
-	background: var(--card-bg);
-}
+	.docs-home-hero {
+		flex-direction: column;
+		gap: 2rem;
+		padding: 2rem 0;
+		text-align: center;
+	}
 
-.docs-markdown card::before {
-	content: attr(title);
-	display: block;
-	margin-bottom: 0.5rem;
-	color: var(--docs-text-90);
-	font-weight: 750;
-}
+	.docs-home-hero h1 {
+		font-size: 1.75rem;
+	}
 
-.docs-markdown tabs {
-	display: block;
-	margin: 1rem 0;
-	border: 1px solid var(--line-divider);
-	border-radius: 0.5rem;
-	background: var(--card-bg);
-	overflow: hidden;
-}
+	.docs-home-hero-art {
+		width: 200px;
+		height: 200px;
+	}
 
-.docs-markdown .docs-tabs-list {
-	display: flex;
-	gap: 0.25rem;
-	padding: 0.45rem;
-	border-bottom: 1px solid var(--line-divider);
-	overflow-x: auto;
-}
-
-.docs-markdown .docs-tab-button {
-	flex: 0 0 auto;
-	border: 0;
-	border-radius: 0.375rem;
-	background: transparent;
-	color: var(--docs-text-50);
-	padding: 0.45rem 0.7rem;
-	font-size: 0.85rem;
-	font-weight: 700;
-	cursor: pointer;
-}
-
-.docs-markdown .docs-tab-button:hover,
-.docs-markdown .docs-tab-button[aria-selected="true"] {
-	background: var(--toc-btn-hover);
-	color: var(--primary);
-}
-
-.docs-markdown .docs-tab-panel {
-	padding: 1rem;
-}
-
-.docs-markdown .docs-tab-panel > :first-child {
-	margin-top: 0;
-}
-
-.docs-markdown .docs-tab-panel > :last-child {
-	margin-bottom: 0;
-}
-
-@media (max-width: 640px) {
-	.docs-markdown cardgrid {
+	.docs-home-features {
 		grid-template-columns: 1fr;
+	}
+
+	.docs-home-actions {
+		justify-content: center;
 	}
 }
 
+/* ================================================================
+ * /docs/ index page — dark-mode-safe styles
+ * (This page uses MainGridLayout, so we must override blog theme)
+ * ================================================================ */
+.docs-index-title {
+	font-size: 1.875rem;
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+	color: var(--docs-text-100);
+}
+
+@media (min-width: 768px) {
+	.docs-index-title {
+		font-size: 2.25rem;
+	}
+}
+
+.docs-index-subtitle {
+	color: var(--docs-text-50);
+	margin-bottom: 2rem;
+}
+
+.docs-index-card {
+	display: block;
+	padding: 1.5rem;
+	border: 1px solid var(--docs-divider);
+	border-radius: 12px;
+	background: var(--docs-bg);
+	transition: border-color var(--docs-transition), box-shadow var(--docs-transition);
+	text-decoration: none;
+}
+
+.docs-index-card:hover {
+	border-color: var(--docs-brand);
+	box-shadow: var(--docs-shadow-2);
+}
+
+.docs-index-card-header {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+.docs-index-card-icon {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 8px;
+	background: var(--docs-brand-dim);
+	color: var(--docs-brand);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.docs-index-card-title {
+	font-size: 1.125rem;
+	font-weight: 600;
+	color: var(--docs-text-100);
+	transition: color var(--docs-transition);
+}
+
+.docs-index-card:hover .docs-index-card-title {
+	color: var(--docs-brand);
+}
+
+.docs-index-card-desc {
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+	margin-bottom: 0.75rem;
+	line-height: 1.5;
+}
+
+.docs-index-card-meta {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+	color: var(--docs-text-50);
+}
+
+.docs-index-card-meta-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.docs-index-card-action {
+	margin-top: 1rem;
+	display: flex;
+	align-items: center;
+	color: var(--docs-brand);
+	font-size: 0.875rem;
+	font-weight: 500;
+	opacity: 0;
+	transition: opacity var(--docs-transition);
+}
+
+.docs-index-card:hover .docs-index-card-action {
+	opacity: 1;
+}
+
+/* ================================================================
+ * Doc article — VitePress-style title and metadata
+ * ================================================================ */
+.docs-article {
+	max-width: 100%;
+}
+
+/* Article title — VitePress: 28px/1.4 bold, with bottom border */
+.docs-article-title {
+	font-size: 1.75rem;
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--docs-text-100);
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--docs-divider);
+}
+
+@media (min-width: 768px) {
+	.docs-article-title {
+		font-size: 2rem;
+	}
+}
+
+/* Article metadata — VitePress: small text below title, muted color */
+.docs-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-bottom: 2rem;
+	font-size: 0.8125rem;
+	color: var(--docs-text-50);
+}
+
+.docs-meta-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.docs-meta-separator {
+	color: var(--docs-text-25);
+}
+
+/* ================================================================
+ * Docs Floating Controls — simplified for docs pages
+ * ================================================================ */
+.docs-floating-controls {
+	position: fixed;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	right: 1rem;
+	bottom: 5rem;
+}
+
+@media (min-width: 768px) {
+	.docs-floating-controls {
+		right: 1.5rem;
+		bottom: 6rem;
+	}
+}
+
+/* ================================================================
+ * FOUC / Style instability fix
+ *
+ * The blog theme's onload-animation starts with opacity:0 and
+ * transitions to opacity:1. On docs pages, this can cause a flash
+ * where the layout is briefly visible then hidden then shown again.
+ * We disable this animation on docs pages for stable rendering.
+ *
+ * NOTE: We are more targeted now to avoid interfering with Svelte
+ * component hydration which can cause "Cannot read properties of
+ * undefined (reading 'call')" errors.
+ * ================================================================ */
+body.docs-page #content-wrapper.onload-animation {
+	opacity: 1;
+	animation: none;
+}
+
+body.docs-page .footer.onload-animation {
+	opacity: 1;
+	animation: none;
+}
+
+/* Navbar onload animation handled separately */
+body.docs-page #navbar.onload-animation {
+	opacity: 1;
+	animation: none;
+	transform: none !important;
+}
+
+/* Prevent OverlayScrollbars from interfering with docs layout */
+body.docs-page [data-overlayscrollbars-viewport] {
+	overflow: visible;
+}
+
+body.docs-page .docs-sidebar-wrapper[data-overlayscrollbars-viewport],
+body.docs-page .docs-toc-wrapper[data-overlayscrollbars-viewport] {
+	overflow-y: auto;
+}
+
+/* ================================================================
+ * Print styles
+ * ================================================================ */
+@media print {
+	.docs-sidebar-wrapper,
+	.docs-toc-wrapper,
+	.docs-sidebar-toggle,
+	.docs-sidebar-overlay {
+		display: none !important;
+	}
+
+	.docs-layout-container {
+		padding: 0 !important;
+	}
+
+	.docs-content-wrapper {
+		padding: 0 !important;
+	}
+}

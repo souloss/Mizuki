@@ -22,18 +22,15 @@ const langNames: Record<string, string> = {
 };
 
 // Build URL for a target language
-// currentPagePath is the raw page.id (e.g., "mizuki/en/guide/intro.md")
 function getLangUrl(targetLang: string): string {
 	let cleanPath = currentPagePath.replace(/\.(md|mdx)$/, "");
 
-	// Strip docSlug prefix (e.g., "mizuki/" -> "")
 	if (cleanPath.startsWith(docSlug + "/")) {
 		cleanPath = cleanPath.slice(docSlug.length + 1);
 	} else if (cleanPath === docSlug) {
 		cleanPath = "";
 	}
 
-	// Strip current lang prefix if present
 	if (currentLang && currentLang !== defaultLang) {
 		if (cleanPath === currentLang) {
 			cleanPath = "";
@@ -42,17 +39,13 @@ function getLangUrl(targetLang: string): string {
 		}
 	}
 
-	// Build URL for target language
 	if (targetLang === defaultLang) {
-		// Default language: no lang prefix
 		return cleanPath === "" ? `/docs/${docSlug}/` : `/docs/${docSlug}/${cleanPath}/`;
 	} else {
-		// Non-default language: add lang prefix
 		return `/docs/${docSlug}/${targetLang}/${cleanPath === "" ? "" : cleanPath + "/"}`;
 	}
 }
 
-// Only show if there are multiple languages
 if (availableLangs.length <= 1) {return;}
 ---
 
@@ -62,7 +55,7 @@ if (availableLangs.length <= 1) {return;}
 			href={getLangUrl(lang)}
 			class:list={[
 				"docs-lang-switcher-item",
-				{ "docs-lang-switcher-active": lang === currentLang },
+				{ active: lang === currentLang },
 			]}
 		>
 			{langNames[lang] || lang}
@@ -75,7 +68,7 @@ if (availableLangs.length <= 1) {return;}
 		display: flex;
 		gap: 0.25rem;
 		padding: 0.5rem 0.75rem;
-		border-bottom: 1px solid var(--line-divider);
+		border-bottom: 1px solid var(--docs-divider, rgba(0, 0, 0, 0.08));
 		margin-bottom: 0.5rem;
 	}
 
@@ -83,19 +76,19 @@ if (availableLangs.length <= 1) {return;}
 		padding: 0.25rem 0.5rem;
 		font-size: 0.75rem;
 		border-radius: 0.375rem;
-		color: var(--text-50);
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
 		text-decoration: none;
 		transition: all 0.2s;
 	}
 
 	.docs-lang-switcher-item:hover {
-		background: var(--toc-btn-hover);
-		color: var(--text-75);
+		background: var(--docs-bg-mute, #f2f2f3);
+		color: var(--docs-text-75, rgba(0, 0, 0, 0.75));
 	}
 
-	.docs-lang-switcher-active {
-		background: var(--toc-btn-hover);
-		color: var(--primary);
+	.docs-lang-switcher-item.active {
+		background: var(--docs-brand-dim, rgba(99, 102, 241, 0.08));
+		color: var(--docs-brand, #6366f1);
 		font-weight: 500;
 	}
 </style>

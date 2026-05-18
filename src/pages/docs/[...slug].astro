@@ -183,7 +183,7 @@ const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime)
 	{isHome ? (
 		<DocsHome home={docsMizukiHome} />
 	) : (
-		<article class="card-base docs-article" data-pagefind-body data-pagefind-filter={`docSlug:${docSlug}`}>
+		<article class="docs-article" data-pagefind-body data-pagefind-filter={`docSlug:${docSlug}`}>
 			{!hasContentH1 && (
 				<h1 class="docs-article-title" data-pagefind-weight="10" data-pagefind-meta="title">
 					{title}
@@ -192,19 +192,19 @@ const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime)
 			{(wordCount > 0 || readingTime > 0 || createTime) && (
 				<div class="docs-meta">
 					{wordCount > 0 && (
-						<span>
+						<span class="docs-meta-item">
 							<Icon name="material-symbols:notes-rounded" class="text-base" />
 							{wordCount} {i18n(I18nKey.docsWordCount)}
 						</span>
 					)}
 					{readingTime > 0 && (
-						<span>
+						<span class="docs-meta-item">
 							<Icon name="material-symbols:schedule-rounded" class="text-base" />
 							{readingTime} {readingTime === 1 ? i18n(I18nKey.minuteCount) : i18n(I18nKey.minutesCount)}
 						</span>
 					)}
 					{createTime && (
-						<span>
+						<span class="docs-meta-item">
 							<Icon name="material-symbols:calendar-month-rounded" class="text-base" />
 							{createTime}
 						</span>

@@ -134,129 +134,148 @@
 	});
 </script>
 
-<div class="docs-search">
-	<div class="docs-search-input-wrapper">
-		<Icon icon="material-symbols:search" class="docs-search-icon" />
-		<input
-			type="text"
-			class="docs-search-input"
-			placeholder={placeholder}
-			bind:value={keyword}
-			onfocus={() => {
-				isExpanded = true;
-				void ensurePagefind();
-			}}
-			onblur={() => {
-				if (!keyword) {isExpanded = false;}
-			}}
-		/>
-	</div>
-
-	{#if isExpanded && keyword && (result.length > 0 || isSearching || searchUnavailable || hasSearched)}
-		<div class="docs-search-results">
-			{#if isSearching}
-				<div class="docs-search-status">Searching...</div>
-			{:else if searchUnavailable}
-				<div class="docs-search-status">Search index is not available.</div>
-			{:else if result.length === 0}
-				<div class="docs-search-status">No results found.</div>
-			{:else}
-				{#each result as item}
-					<a href={item.url} class="docs-search-result-item">
-						<div class="docs-search-result-title">{item.meta.title}</div>
-						<div class="docs-search-result-excerpt">{@html item.excerpt}</div>
-					</a>
-				{/each}
-			{/if}
-		</div>
-	{/if}
+<div class="docs-search-btn" role="search">
+	<Icon icon="material-symbols:search" class="search-icon" />
+	<input
+		type="text"
+		class="docs-search-input"
+		placeholder={placeholder}
+		bind:value={keyword}
+		onfocus={() => {
+			isExpanded = true;
+			void ensurePagefind();
+		}}
+		onblur={() => {
+			if (!keyword) {isExpanded = false;}
+		}}
+	/>
+	<span class="search-shortcut">Ctrl K</span>
 </div>
 
-<style>
-	.docs-search {
-		position: relative;
-		padding: 0.5rem 0.75rem;
-		border-bottom: 1px solid var(--line-divider);
-		margin-bottom: 0.5rem;
-	}
+{#if isExpanded && keyword && (result.length > 0 || isSearching || searchUnavailable || hasSearched)}
+	<div class="docs-search-results">
+		{#if isSearching}
+			<div class="docs-search-no-results">Searching...</div>
+		{:else if searchUnavailable}
+			<div class="docs-search-no-results">Search index is not available.</div>
+		{:else if result.length === 0}
+			<div class="docs-search-no-results">No results found.</div>
+		{:else}
+			{#each result as item}
+				<a href={item.url} class="docs-search-result-item">
+					<div class="result-title">{item.meta.title}</div>
+					<div class="result-excerpt">{@html item.excerpt}</div>
+				</a>
+			{/each}
+		{/if}
+	</div>
+{/if}
 
-	.docs-search-input-wrapper {
+<style>
+	.docs-search-btn {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0.375rem 0.5rem;
-		border-radius: 0.5rem;
-		background: var(--card-bg);
-		border: 1px solid var(--line-divider);
+		padding: 0.375rem 0.75rem;
+		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border-radius: 8px;
+		background-color: var(--docs-bg, #ffffff);
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		font-size: 0.8125rem;
+		cursor: text;
+		transition:
+			border-color 0.2s ease,
+			background-color 0.2s ease;
+		width: 100%;
+		position: relative;
 	}
 
-	.docs-search-icon {
+	.docs-search-btn:hover {
+		border-color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
+		background-color: var(--docs-bg-soft, #f6f6f7);
+	}
+
+	.search-icon {
+		flex-shrink: 0;
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
 		font-size: 1rem;
-		color: var(--docs-text-30, var(--text-30));
 	}
 
 	.docs-search-input {
-		width: 100%;
-		font-size: 0.875rem;
-		background: transparent;
+		flex: 1;
 		border: none;
 		outline: none;
-		color: var(--docs-text-75, var(--text-75));
+		background: transparent;
+		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
+		font-size: 0.8125rem;
+		font-family: inherit;
+		min-width: 0;
 	}
 
 	.docs-search-input::placeholder {
-		color: var(--docs-text-30, var(--text-30));
+		color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
+	}
+
+	.search-shortcut {
+		margin-left: auto;
+		padding: 0.125rem 0.375rem;
+		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border-radius: 4px;
+		font-size: 0.6875rem;
+		color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
+		font-family: inherit;
+		flex-shrink: 0;
 	}
 
 	.docs-search-results {
 		position: absolute;
-		top: calc(100% - 0.25rem);
-		left: 0.75rem;
-		right: 0.75rem;
-		z-index: 30;
-		margin-top: 0.5rem;
+		top: calc(100% + 4px);
+		left: 0;
+		right: 0;
+		z-index: 50;
 		max-height: min(360px, calc(100vh - 10rem));
 		overflow-y: auto;
-		padding: 0.35rem;
-		border: 1px solid var(--line-divider);
-		border-radius: 0.625rem;
-		background: var(--card-bg);
-		box-shadow: 0 14px 36px rgba(0, 0, 0, 0.12);
+		padding: 0.5rem;
+		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border-radius: 8px;
+		background: var(--docs-bg, #ffffff);
+		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
 	}
 
 	.docs-search-result-item {
 		display: block;
-		padding: 0.5rem;
-		border-radius: 0.375rem;
+		padding: 0.625rem 0.75rem;
+		border-radius: 6px;
 		text-decoration: none;
-		transition: background 0.2s;
+		transition: background-color 0.15s ease;
 	}
 
 	.docs-search-result-item:hover {
-		background: var(--toc-btn-hover);
+		background-color: var(--docs-bg-mute, #f2f2f3);
 	}
 
-	.docs-search-result-title {
+	.result-title {
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--docs-text-75, var(--text-75));
+		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
 	}
 
-	.docs-search-result-excerpt {
-		font-size: 0.75rem;
-		color: var(--docs-text-50, var(--text-50));
-		margin-top: 0.25rem;
+	.result-excerpt {
+		font-size: 0.8125rem;
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		margin-top: 0.125rem;
 	}
 
-	.docs-search-result-excerpt :global(mark) {
+	.result-excerpt :global(mark) {
 		border-radius: 0.2rem;
 		background: color-mix(in oklch, var(--primary) 22%, transparent);
-		color: var(--docs-text-90, var(--text-90));
+		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
 	}
 
-	.docs-search-status {
-		padding: 0.55rem 0.65rem;
-		font-size: 0.8125rem;
-		color: var(--docs-text-50, var(--text-50));
+	.docs-search-no-results {
+		padding: 1.5rem;
+		text-align: center;
+		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		font-size: 0.875rem;
 	}
 </style>
