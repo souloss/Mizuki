@@ -1,0 +1,22 @@
+@reference "tailwindcss";
+
+/* Image lazy loading blur transition */
+img.lazy-image {
+	transition: filter 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+img.lazy-image:not(.lazy-loaded) {
+	filter: blur(12px) brightness(1.1);
+	opacity: 0.8;
+}
+
+img.lazy-image.lazy-loaded {
+	filter: blur(0) brightness(1);
+	opacity: 1;
+}
+
+/* Prevent layout shift during lazy loading */
+img.lazy-image:not(.lazy-loaded)[data-lazy-src] {
+	min-height: 100px;
+	background: var(--btn-regular-bg);
+}

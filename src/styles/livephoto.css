@@ -1,0 +1,32 @@
+@reference "tailwindcss";
+
+/* LivePhoto container styles */
+.live-photo,
+[data-live-photo] {
+	@apply relative overflow-hidden rounded-xl cursor-pointer;
+	display: inline-block;
+	max-width: 100%;
+}
+
+/* LivePhoto badge indicator */
+.live-photo::after,
+[data-live-photo]::after {
+	@apply absolute top-2 right-2 flex items-center justify-center;
+	content: "LIVE";
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	padding: 0.125rem 0.375rem;
+	border-radius: 0.25rem;
+	background: rgba(0, 0, 0, 0.6);
+	color: white;
+	z-index: 1;
+	pointer-events: none;
+}
+
+/* Dark mode adjustments */
+:root.dark .live-photo::after,
+:root.dark [data-live-photo]::after {
+	background: rgba(255, 255, 255, 0.2);
+	color: white;
+}

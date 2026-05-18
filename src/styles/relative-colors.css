@@ -1,0 +1,24 @@
+/* CSS Relative Color Derivation System
+ * Using oklch(from ...) CSS Color Level 4 syntax to derive opacity variants
+ * from base colors. This eliminates the need for separate light/dark definitions
+ * for every opacity level, as the derivation automatically adapts to theme changes.
+ */
+:root {
+  /* Primary color opacity variants */
+  --primary-90: oklch(from var(--primary) l c h / 0.90);
+  --primary-75: oklch(from var(--primary) l c h / 0.75);
+  --primary-50: oklch(from var(--primary) l c h / 0.50);
+  --primary-30: oklch(from var(--primary) l c h / 0.30);
+  --primary-15: oklch(from var(--primary) l c h / 0.15);
+  --primary-10: oklch(from var(--primary) l c h / 0.10);
+  --primary-05: oklch(from var(--primary) l c h / 0.05);
+
+  /* Text color opacity variants (derived from content-meta base) */
+  --text-90: oklch(from var(--content-meta) l c h / 0.90);
+  --text-75: oklch(from var(--content-meta) l c h / 0.75);
+  --text-50: oklch(from var(--content-meta) l c h / 0.50);
+  --text-30: oklch(from var(--content-meta) l c h / 0.30);
+  --text-15: oklch(from var(--content-meta) l c h / 0.15);
+  --text-10: oklch(from var(--content-meta) l c h / 0.10);
+  --text-05: oklch(from var(--content-meta) l c h / 0.05);
+}

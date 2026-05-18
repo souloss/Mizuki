@@ -11,6 +11,12 @@
 @import "./gradient-buttons.css";
 /* 导入 Banner 和网格布局样式 */
 @import "./banner.css";
+/* 导入图片懒加载样式 */
+@import "./lazy-image.css";
+/* 导入 LivePhoto 样式 */
+@import "./livephoto.css";
+/* 导入 CSS 相对颜色派生系统 */
+@import "./relative-colors.css";
 /* 加密内容样式已移除，现在直接使用非加密文章的样式 */
 
 @plugin "@tailwindcss/typography";
