@@ -3,17 +3,6 @@
 .expressive-code {
   @apply relative;
 
-  /* Mermaid 全屏按钮与按钮体系的配色保持一致 */
-  .mermaid-fullscreen-btn {
-    background: var(--btn-regular-bg);
-    color: var(--btn-content);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.08);
-  }
-
-  .mermaid-fullscreen-btn:hover {
-    background: var(--btn-regular-bg-hover);
-  }
-
   .frame {
     @apply !shadow-none;
   }

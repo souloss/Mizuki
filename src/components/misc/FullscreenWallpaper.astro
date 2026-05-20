@@ -1,5 +1,6 @@
 ---
 import { siteConfig } from "../../config";
+import { backgroundWallpaperConfig } from "../../config";
 import type { FullscreenWallpaperConfig } from "../../types/config";
 
 interface Props {
@@ -82,6 +83,15 @@ const renderGroups = [
 		hasImages: hasMobileImages
 	}
 ];
+
+// 渐变过渡配置
+const gradientConfig = backgroundWallpaperConfig.banner?.gradient;
+const isGradientEnabled = gradientConfig?.enable ?? true;
+const gradientColors = gradientConfig?.colors ?? [
+	{ color: "var(--color-bg)", stop: 0.2 },
+	{ color: "transparent", stop: 0.7 },
+];
+const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.color} ${c.stop * 100}%`).join(", ")})`;
 ---
 
 <div 
@@ -181,6 +191,15 @@ const renderGroups = [
 				})();
 			</script>
 		</div>
+	)}
+
+	<!-- 渐变过渡效果 -->
+	{isGradientEnabled && (
+		<div
+			id="wallpaper-gradient"
+			class="absolute inset-0 pointer-events-none"
+			style={`background: ${gradientCSS}; z-index: 1;`}
+		/>
 	)}
 </div>
 

@@ -1,0 +1,247 @@
+/**
+ * 导航栏样式文件
+ * 包含固定导航栏（Sticky Navbar）样式和导航栏阴影样式
+ */
+
+/* ==========================================================================
+   Sticky Navbar 基础样式
+   ========================================================================== */
+#navbar > div {
+  background-color: var(--card-bg);
+  border: 1px solid transparent;
+  border-radius: 0 0 0.75rem 0.75rem;
+  backdrop-filter: blur(0);
+  transition:
+    background-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    backdrop-filter 0.36s cubic-bezier(0.22, 1, 0.36, 1),
+    border-radius 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   Sticky Navbar 模式 - 使用 body.sticky-navbar 类强制固定定位
+   ========================================================================== */
+body.sticky-navbar #top-row {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 80 !important;
+  height: 4.5rem !important;
+}
+
+body.sticky-navbar #navbar-wrapper {
+  position: static !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* 防止 navbar-hidden 在 Sticky Navbar 模式下隐藏导航栏 */
+body.sticky-navbar #navbar-wrapper.navbar-hidden {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+body.sticky-navbar #navbar.navbar-hidden {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* Sticky Navbar 模式下侧边栏偏移调整 */
+body.sticky-navbar #sidebar-sticky {
+  top: 5.5rem !important;
+}
+body.sticky-navbar #left-sidebar-sticky {
+  top: 5.5rem !important;
+}
+body.sticky-navbar #right-sidebar-sticky {
+  top: 5.5rem !important;
+}
+
+/* Sticky Navbar 模式下主内容区域的调整 */
+body.sticky-navbar .absolute.w-full.z-30 {
+  padding-top: 0;
+}
+
+/* 非 Banner 模式下，Sticky Navbar 时主内容区域的位置 */
+body.sticky-navbar.no-banner-layout .absolute.w-full.z-30 {
+  top: 5.5rem !important;
+}
+
+/* Banner 模式下，Sticky Navbar 时主内容区域的位置 */
+@media (min-width: 1280px) {
+  body.sticky-navbar.enable-banner .absolute.w-full.z-30 {
+    top: 35vh !important;
+  }
+}
+
+/* Sticky Navbar 模式下锚点滚动偏移 */
+body.sticky-navbar [id] {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Sticky Navbar 启用时的样式 */
+:root[data-sticky-navbar="true"] #top-row {
+  z-index: 80 !important;
+}
+
+/* Sticky Navbar 时确保导航栏有阴影 */
+#navbar.navbar-sticky-shadow > div {
+  box-shadow: var(--shadow-navbar) !important;
+}
+
+:root.dark #navbar.navbar-sticky-shadow > div {
+  box-shadow: var(--shadow-navbar-dark) !important;
+}
+
+/* ==========================================================================
+   桌面端 Banner 模式下的导航栏样式
+   ========================================================================== */
+@media (min-width: 1024px) {
+  /* Semi 透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semi"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div {
+    backdrop-filter: blur(var(--navbar-glass-blur, 20px)) !important;
+    background: rgba(255, 255, 255, var(--opacity-55)) !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: var(--shadow-navbar) !important;
+  }
+
+  /* Full 完全透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="full"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"] > div {
+    backdrop-filter: blur(0) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Semi-full 动态透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"] > div {
+    backdrop-filter: blur(0) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: none !important;
+  }
+
+  /* Semi-full 滚动后的样式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"].scrolled > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
+    backdrop-filter: blur(var(--navbar-glass-blur, 20px)) !important;
+    background: rgba(255, 255, 255, var(--opacity-55)) !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: var(--shadow-navbar) !important;
+  }
+}
+
+/* ==========================================================================
+   移动端 Banner 模式下的导航栏样式
+   ========================================================================== */
+@media (max-width: 1023px) {
+  /* Semi 透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
+    backdrop-filter: blur(var(--navbar-glass-blur, 20px)) !important;
+    background: rgba(255, 255, 255, var(--opacity-55)) !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: var(--shadow-navbar) !important;
+  }
+
+  /* Full 完全透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"][data-is-home="true"] > div {
+    backdrop-filter: blur(0) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Semi-full 动态透明模式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div {
+    backdrop-filter: blur(0) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: none !important;
+  }
+
+  /* Semi-full 滚动后的样式 */
+  #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
+    backdrop-filter: blur(var(--navbar-glass-blur, 20px)) !important;
+    background: rgba(255, 255, 255, var(--opacity-55)) !important;
+    border-radius: 0 0 0.75rem 0.75rem !important;
+    box-shadow: var(--shadow-navbar) !important;
+  }
+}
+
+/* ==========================================================================
+   桌面端暗色主题 Banner 模式下的导航栏样式
+   ========================================================================== */
+@media (min-width: 1024px) {
+  :root.dark #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semi"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div {
+    background: rgba(0, 0, 0, var(--opacity-55)) !important;
+    box-shadow: var(--shadow-navbar-dark) !important;
+  }
+
+  :root.dark #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"].scrolled > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
+    background: rgba(0, 0, 0, var(--opacity-55)) !important;
+    box-shadow: var(--shadow-navbar-dark) !important;
+  }
+}
+
+/* ==========================================================================
+   移动端暗色主题 Banner 模式下的导航栏样式
+   ========================================================================== */
+@media (max-width: 1023px) {
+  :root.dark #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
+    background: rgba(0, 0, 0, var(--opacity-55)) !important;
+    box-shadow: var(--shadow-navbar-dark) !important;
+  }
+
+  :root.dark #wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
+    background: rgba(0, 0, 0, var(--opacity-55)) !important;
+    box-shadow: var(--shadow-navbar-dark) !important;
+  }
+}
+
+/* ==========================================================================
+   Sticky Navbar 模式下主内容区域的调整
+   ========================================================================== */
+:root[data-sticky-navbar="true"] .absolute.w-full.z-30 {
+  /* 在 Sticky Navbar 模式下，确保内容不会被导航栏遮挡 */
+  padding-top: 0;
+}
+
+/* Banner 模式下，Sticky Navbar 时主内容区域的位置 */
+@media (min-width: 1280px) {
+  :root[data-sticky-navbar="true"] body.enable-banner .absolute.w-full.z-30 {
+    /* 保持原有的 Banner 模式布局，但调整顶部间距 */
+    top: 35vh !important;
+  }
+}
+
+/* 非 Banner 模式下，Sticky Navbar 时主内容区域的位置 */
+:root[data-sticky-navbar="true"] .absolute.w-full.z-30.no-banner-layout,
+:root[data-sticky-navbar="true"] body.no-banner-mode .absolute.w-full.z-30 {
+  top: 5.5rem !important;
+}
+
+/* ==========================================================================
+   半透明模式滚动时的阴影处理
+   ========================================================================== */
+/* Semifull 模式的透明阶段不单独显示 sticky shadow，避免 8px 和 50px 两段跳变 */
+#wallpaper-wrapper ~ #top-row #navbar[data-transparent-mode="semifull"]:not(.scrolled).navbar-sticky-shadow > div,
+body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"]:not(.scrolled).navbar-sticky-shadow > div {
+  box-shadow: none !important;
+}

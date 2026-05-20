@@ -5,10 +5,8 @@ import { navBarConfig, siteConfig } from "../../../config"
 import { LinkPresets } from "../../../constants/link-presets"
 import { LinkPreset, type NavBarLink } from "../../../types/config"
 import { url } from "../../../utils/url-utils"
-import LayoutSwitch from "../../control/LayoutSwitch.svelte"
 import ThemeSwitch from "../../control/ThemeSwitch.svelte"
 import DisplaySettings from "../../features/settings/DisplaySettings.svelte"
-import WallpaperSwitch from "../../features/settings/WallpaperSwitch.svelte"
 import MobileTOC from "../../features/toc/MobileTOC.svelte"
 import DropdownMenu from "./DropdownMenu.astro"
 import NavMenuPanel from "./NavMenuPanel.astro"
@@ -19,10 +17,6 @@ const className = Astro.props.class
 // 获取导航栏透明模式配置
 const navbarTransparentMode =
 	siteConfig.banner?.navbar?.transparentMode || "semi";
-
-// 获取整体布局方案切换按钮显示设置
-const modeSwitchDisplay =
-	siteConfig.wallpaperMode?.showModeSwitchOnMobile || "desktop";
 
 // 检查是否为首页
 const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
@@ -102,16 +96,6 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
                         <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
                     </button>
             )}
-            <LayoutSwitch client:only="svelte" currentLayout={siteConfig.postListLayout.defaultMode}></LayoutSwitch>
-            <!-- 整体布局方案切换按钮：根据配置决定在哪些设备上显示 -->
-            <div class:list={[
-                modeSwitchDisplay === "off" ? "hidden" :
-                modeSwitchDisplay === "mobile" ? "block md:hidden" :
-                modeSwitchDisplay === "desktop" ? "hidden md:block" :
-                modeSwitchDisplay === "both" ? "block" : "hidden md:block"
-            ]}>
-                <WallpaperSwitch client:only="svelte"></WallpaperSwitch>
-            </div>
             <ThemeSwitch client:only="svelte"></ThemeSwitch>
             <button aria-label="Menu" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-11 h-11 active:scale-90 md:!hidden" id="nav-menu-switch">
                 <Icon name="material-symbols:unfold-more" class="text-[1.25rem]"></Icon>
@@ -213,7 +197,7 @@ loadButtonScript();
 
 // Swup 页面切换后重新绑定按钮事件（防止事件丢失）
 function setupSwupButtonRebind() {
-    const swup = (window as any).swup;
+    const swup = window.swup;
     if (swup?.hooks) {
         swup.hooks.on('content:replace', () => {
             loadButtonScript();
@@ -222,7 +206,7 @@ function setupSwupButtonRebind() {
 }
 
 // Swup 可能尚未初始化，延迟注册
-if ((window as any).swup) {
+if (window.swup) {
     setupSwupButtonRebind();
 } else {
     // 监听 Swup 初始化完成事件
@@ -235,14 +219,21 @@ if ((window as any).swup) {
 function initSemifullScrollDetection() {
     const navbar = document.getElementById('navbar');
     if (!navbar) {return;}
-    
+
+    // Sticky navbar 模式下始终显示为 scrolled 状态
+    if (document.body.classList.contains('sticky-navbar')) {
+        navbar.classList.add('scrolled');
+        navbar.classList.add('navbar-sticky-shadow');
+        return;
+    }
+
     // 移除之前的滚动事件监听器（如果存在）
     // @ts-ignore
     if (window.semifullScrollHandler) {
         // @ts-ignore
         window.removeEventListener('scroll', window.semifullScrollHandler);
     }
-    
+
     // 获取当前是否为首页
     // @ts-ignore
     const isHomePage = navbar.dataset.isHome === 'true';
@@ -252,36 +243,36 @@ function initSemifullScrollDetection() {
         navbar.classList.add('scrolled');
         return;
     }
-    
+
     let ticking = false;
-    
+
     function updateNavbarState() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const threshold = 50; // 滚动阈值，可以根据需要调整
-        
+
         if (navbar && scrollTop > threshold) {
             navbar.classList.add('scrolled');
         } else if (navbar) {
             navbar.classList.remove('scrolled');
         }
-        
+
         ticking = false;
     }
-    
+
     function requestTick() {
         if (!ticking) {
             requestAnimationFrame(updateNavbarState);
             ticking = true;
         }
     }
-    
+
     // 保存新的事件处理器引用
     // @ts-ignore
     window.semifullScrollHandler = requestTick;
-    
+
     // 监听滚动事件
     window.addEventListener('scroll', requestTick, { passive: true });
-    
+
     // 初始化状态
     updateNavbarState();
 }

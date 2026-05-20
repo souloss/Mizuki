@@ -11,6 +11,8 @@
 @import "./gradient-buttons.css";
 /* 导入 Banner 和网格布局样式 */
 @import "./banner.css";
+/* 导入导航栏样式 */
+@import "./navbar.css";
 /* 导入图片懒加载样式 */
 @import "./lazy-image.css";
 /* 导入 LivePhoto 样式 */

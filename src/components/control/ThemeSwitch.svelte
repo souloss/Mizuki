@@ -2,7 +2,7 @@
 	import { DARK_MODE, DEFAULT_THEME, LIGHT_MODE } from "@constants/constants";
 	import Icon from "@iconify/svelte";
 	import { getStoredTheme, setTheme } from "@utils/setting-utils";
-	import { onMount, onDestroy } from "svelte";
+	import { onDestroy,onMount } from "svelte";
 
 	import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 

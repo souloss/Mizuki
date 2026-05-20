@@ -9,6 +9,7 @@ import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.ast
 import Image from "@components/atoms/Image/Image.astro";
 import { Icon } from "astro-icon/components";
 import { siteConfig } from "../../config";
+import { backgroundWallpaperConfig } from "../../config";
 import { BANNER_HEIGHT_EXTEND } from "../../constants/constants";
 
 interface Props {
@@ -64,8 +65,17 @@ const fadeMs = Math.min(Math.max(Math.round(carouselIntervalMs * 0.4), 500), 150
 // Ken Burns 动画时长 = 间隔 + 淡入，确保旧图在 crossfade 期间仍在运动，消除停顿感
 const kbDurationMs = carouselIntervalMs + fadeMs;
 
-const hasBannerCredit = siteConfig.banner.credit.enable;
-const hasBannerLink = !!siteConfig.banner.credit.url;
+const hasBannerCredit = siteConfig.banner.credit?.enable ?? false;
+const hasBannerLink = !!siteConfig.banner.credit?.url;
+
+// 渐变过渡配置
+const gradientConfig = backgroundWallpaperConfig.banner?.gradient;
+const isGradientEnabled = gradientConfig?.enable ?? true;
+const gradientColors = gradientConfig?.colors ?? [
+	{ color: "var(--color-bg)", stop: 0.2 },
+	{ color: "transparent", stop: 0.7 },
+];
+const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.color} ${c.stop * 100}%`).join(", ")})`;
 ---
 
 <div
@@ -574,12 +584,27 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 
 				startCarousel();
 
+				// 监听设置面板的轮播开关事件
+				var carouselChangeHandler = function(e) {
+					if (e.detail && e.detail.enabled === false) {
+						isPaused = true;
+						stopCarousel();
+						pauseKenBurns();
+					} else {
+						isPaused = false;
+						resumeKenBurns();
+						startCarousel(true);
+					}
+				};
+				window.addEventListener('banner-carousel-change', carouselChangeHandler);
+
 				// 注册清理函数，供下次 Swup 导航或销毁时调用
 				window.__bannerCarouselCleanup = function() {
 					stopCarousel();
 					remainingTime = 0;
 					intervalStartTime = 0;
 					document.removeEventListener('visibilitychange', visibilityHandler);
+					window.removeEventListener('banner-carousel-change', carouselChangeHandler);
 					if ('ontouchstart' in window) {
 						container.removeEventListener('touchstart', onTouchStart);
 						container.removeEventListener('touchmove', onTouchMove);
@@ -591,6 +616,15 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 				};
 			})();
 		</script>
+	)}
+
+	<!-- 渐变过渡效果 -->
+	{isGradientEnabled && (
+		<div
+			id="wallpaper-gradient"
+			class="absolute inset-0 z-15 pointer-events-none"
+			style={`background: ${gradientCSS};`}
+		/>
 	)}
 
 	<!-- 首页文字覆盖层 -->
@@ -686,7 +720,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 	<!-- Banner 图片来源标注 -->
 	{hasBannerCredit && (
 		<a
-			href={siteConfig.banner.credit.url}
+			href={siteConfig.banner.credit?.url}
 			id="banner-credit"
 			target="_blank"
 			rel="noopener"
@@ -700,7 +734,7 @@ const hasBannerLink = !!siteConfig.banner.credit.url;
 				class="text-white/75 text-[1.25rem] mr-1"
 				name="material-symbols:copyright-outline-rounded"
 			/>
-			<div class="text-white/75 text-xs">{siteConfig.banner.credit.text}</div>
+			<div class="text-white/75 text-xs">{siteConfig.banner.credit?.text}</div>
 			<Icon
 				class:list={[
 					"transition absolute text-[oklch(0.75_0.14_var(--hue))] right-4 text-[0.75rem] opacity-0",
