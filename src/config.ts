@@ -1,4 +1,10 @@
-﻿import type {
+﻿// 导入新配置文件
+import { backgroundWallpaperConfig } from "./config/backgroundWallpaper";
+import { effectsConfig } from "./config/effectsConfig";
+import { fontConfig } from "./config/fontConfig";
+import { friendsConfig } from "./config/friendsConfig";
+import { sponsorConfig } from "./config/sponsorConfig";
+import type {
 	AnnouncementConfig,
 	CommentConfig,
 	ExpressiveCodeConfig,
@@ -39,7 +45,7 @@ export const siteConfig: SiteConfig = {
 	// 特色页面开关配置（关闭未使用的页面有助于提升 SEO，关闭后请记得在 navbarConfig 中移除对应链接）
 	featurePages: {
 		anime: true, // 番剧页面开关
-		diary: true, // 日记页面开关
+		talking: true, // 说说/动态页面开关
 		friends: true, // 友链页面开关
 		projects: true, // 项目页面开关
 		skills: true, // 技能页面开关
@@ -48,8 +54,8 @@ export const siteConfig: SiteConfig = {
 		devices: true, // 设备页面开关
 		series: true, // 专栏/系列页面开关
 		reposts: true, // 转载页面开关
-		message: true, // 留言板页面开关
-		talking: true, // 说说/动态页面开关
+		guestbook: true, // 留言板页面开关
+		sponsor: true, // 赞助页面开关
 	},
 
 	// 顶栏标题配置
@@ -62,6 +68,12 @@ export const siteConfig: SiteConfig = {
 		icon: "assets/home/home.webp",
 		// 网站Logo图片路径
 		logo: "assets/home/default-logo.webp",
+	},
+
+	// 导航栏配置
+	navbar: {
+		// 导航栏是否固定在顶部并始终可见z
+		stickyNavbar: true,
 	},
 
 	// 页面自动缩放配置
@@ -92,8 +104,10 @@ export const siteConfig: SiteConfig = {
 		mode: "local", // 番剧页面模式："bangumi" 使用Bangumi API，"local" 使用本地配置，"bilibili" 使用Bilibili API
 	},
 
-	// 日记页面 Memos API 地址，留空则使用静态数据
-	diaryApiUrl: "",
+	// 说说/动态页面 Memos API 地址，留空则使用静态数据
+	talkingApiUrl: "",
+	// 说说/动态页面是否显示评论区
+	talkingShowComment: true,
 
 	// 文章列表布局配置
 	postListLayout: {
@@ -215,27 +229,8 @@ export const siteConfig: SiteConfig = {
 		// }
 	],
 
-	// 字体配置
-	font: {
-		// 注意：自定义字体需要在 src/styles/main.css 中引入字体文件
-		// 注意：字体子集优化功能目前仅支持 TTF 格式字体,开启后需要在生产环境才能看到效果,在Dev环境下显示的是浏览器默认字体!
-		asciiFont: {
-			// 英文字体 - 优先级最高
-			// 指定为英文字体则无论字体包含多大范围，都只会保留 ASCII 字符子集
-			fontFamily: "ZenMaruGothic-Medium",
-			fontWeight: "400",
-			localFonts: ["ZenMaruGothic-Medium.ttf"],
-			enableCompress: true, // 启用字体子集优化，减少字体文件大小
-		},
-		cjkFont: {
-			// 中日韩字体 - 作为回退字体
-			fontFamily: "萝莉体 第二版",
-			fontWeight: "500",
-			localFonts: ["loli.ttf"],
-			enableCompress: true, // 启用字体子集优化，减少字体文件大小
-		},
-	},
 	showLastModified: true, // 控制"上次编辑"卡片显示的开关
+	sharePoster: true, // 是否显示分享海报按钮
 	pageProgressBar: {
 		enable: true, // 启用页面顶部进度条
 		height: 3, // 进度条高度 3px
@@ -276,9 +271,9 @@ export const navBarConfig: NavBarConfig = {
 	links: [
 		LinkPreset.Home,
 		{
-			name: "Archive",
+			name: "Content",
 			url: "/archive/",
-			icon: "material-symbols:archive",
+			icon: "material-symbols:folder-open",
 			children: [
 				LinkPreset.Archive,
 				{
@@ -291,12 +286,102 @@ export const navBarConfig: NavBarConfig = {
 					url: "/categories/",
 					icon: "material-symbols:category",
 				},
+				{
+					name: "Series",
+					url: "/series/",
+					icon: "material-symbols:list-alt-rounded",
+				},
+				{
+					name: "Reposts",
+					url: "/reposts/",
+					icon: "material-symbols:content-copy",
+				},
+				{
+					name: "Docs",
+					url: "/docs/",
+					icon: "material-symbols:book-2",
+				},
 			],
 		},
-		// 支持自定义导航栏链接，支持多级菜单
+		{
+			name: "Interaction",
+			url: "/guestbook/",
+			icon: "material-symbols:interactive-space",
+			children: [
+				{
+					name: "Guestbook",
+					url: "/guestbook/",
+					icon: "material-symbols:chat",
+				},
+				{
+					name: "Friends",
+					url: "/friends/",
+					icon: "material-symbols:group",
+				},
+			],
+		},
+		{
+			name: "My",
+			url: "/anime/",
+			icon: "material-symbols:person",
+			children: [
+				{
+					name: "Anime",
+					url: "/anime/",
+					icon: "material-symbols:movie",
+				},
+				{
+					name: "Talking",
+					url: "/talking/",
+					icon: "material-symbols:chat-bubble",
+				},
+				{
+					name: "Gallery",
+					url: "/albums/",
+					icon: "material-symbols:photo-library",
+				},
+				{
+					name: "Projects",
+					url: "/projects/",
+					icon: "material-symbols:work",
+				},
+				{
+					name: "Skills",
+					url: "/skills/",
+					icon: "material-symbols:psychology",
+				},
+				{
+					name: "Devices",
+					url: "/devices/",
+					icon: "material-symbols:devices",
+				},
+				{
+					name: "Timeline",
+					url: "/timeline/",
+					icon: "material-symbols:timeline",
+				},
+			],
+		},
+		{
+			name: "About",
+			url: "/about/",
+			icon: "material-symbols:info",
+			children: [
+				{
+					name: "About",
+					url: "/about/",
+					icon: "material-symbols:person",
+				},
+				{
+					name: "Sponsor",
+					url: "/sponsor/",
+					icon: "material-symbols:favorite",
+				},
+			],
+		},
 		{
 			name: "Links",
-			url: "/links/",
+			url: "#",
 			icon: "material-symbols:link",
 			children: [
 				{
@@ -316,98 +401,6 @@ export const navBarConfig: NavBarConfig = {
 					url: "https://gitee.com/matsuzakayuki/Mizuki",
 					external: true,
 					icon: "mdi:git",
-				},
-			],
-		},
-		{
-			name: "My",
-			url: "/content/",
-			icon: "material-symbols:person",
-			children: [
-				{
-					name: "Anime",
-					url: "/anime/",
-					icon: "material-symbols:movie",
-				},
-				{
-					name: "Diary",
-					url: "/diary/",
-					icon: "material-symbols:book",
-				},
-				{
-					name: "Gallery",
-					url: "/albums/",
-					icon: "material-symbols:photo-library",
-				},
-				{
-					name: "Devices",
-					url: "/devices/",
-					icon: "material-symbols:devices",
-					external: false,
-				},
-			],
-		},
-		{
-			name: "About",
-			url: "/content/",
-			icon: "material-symbols:info",
-			children: [
-				{
-					name: "About",
-					url: "/about/",
-					icon: "material-symbols:person",
-				},
-				{
-					name: "Friends",
-					url: "/friends/",
-					icon: "material-symbols:group",
-				},
-			],
-		},
-		{
-			name: "Others",
-			url: "#",
-			icon: "material-symbols:more-horiz",
-			children: [
-				{
-					name: "Docs",
-					url: "/docs/",
-					icon: "material-symbols:book-2",
-				},
-				{
-					name: "Projects",
-					url: "/projects/",
-					icon: "material-symbols:work",
-				},
-				{
-					name: "Skills",
-					url: "/skills/",
-					icon: "material-symbols:psychology",
-				},
-				{
-					name: "Timeline",
-					url: "/timeline/",
-					icon: "material-symbols:timeline",
-				},
-				{
-					name: "Series",
-					url: "/series/",
-					icon: "material-symbols:list-alt-rounded",
-				},
-				{
-					name: "Reposts",
-					url: "/reposts/",
-					icon: "material-symbols:content-copy",
-				},
-				{
-					name: "Message",
-					url: "/message/",
-					icon: "material-symbols:forum",
-				},
-				{
-					name: "Talking",
-					url: "/talking/",
-					icon: "material-symbols:chat-bubble",
 				},
 			],
 		},
@@ -489,6 +482,10 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 	// 注意：某些样式（如背景颜色）已被覆盖，请参阅 astro.config.mjs 文件。
 	// 请选择深色主题，因为此博客主题目前仅支持深色背景
 	theme: "github-dark",
+	// 暗色主题名称（用于暗色模式）
+	darkTheme: "github-dark",
+	// 亮色主题名称（用于亮色模式）
+	lightTheme: "github-light",
 	// 是否在主题切换时隐藏代码块以避免卡顿问题
 	hideDuringThemeTransition: true,
 };
@@ -754,6 +751,11 @@ export const randomPostsConfig: RandomPostsConfig = {
 	maxCount: 5,
 };
 
+// 导出新配置
+export { backgroundWallpaperConfig, effectsConfig, fontConfig, friendsConfig,sponsorConfig };
+// 导出别名以兼容现有导入
+export { backgroundWallpaperConfig as backgroundWallpaper };
+
 // 导出所有配置的统一接口
 export const widgetConfigs = {
 	profile: profileConfig,
@@ -766,6 +768,12 @@ export const widgetConfigs = {
 	share: shareConfig,
 	relatedPosts: relatedPostsConfig,
 	randomPosts: randomPostsConfig,
+	// 新配置
+	backgroundWallpaper: backgroundWallpaperConfig,
+	font: fontConfig,
+	effects: effectsConfig,
+	sponsor: sponsorConfig,
+	friends: friendsConfig,
 } as const;
 
 // umamiConfig相关配置已移动至astro.config.mjs中,统计脚本请自行在Layout.astro文件的<head>中插入

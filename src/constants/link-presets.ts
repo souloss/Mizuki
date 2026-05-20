@@ -24,15 +24,25 @@ export const LinkPresets: Record<LinkPreset, NavBarLink> = {
 		url: "/friends/",
 		icon: "material-symbols:group",
 	},
+	[LinkPreset.Sponsor]: {
+		name: i18n(I18nKey.sponsor),
+		url: "/sponsor/",
+		icon: "material-symbols:favorite",
+	},
+	[LinkPreset.Guestbook]: {
+		name: i18n(I18nKey.guestbook),
+		url: "/guestbook/",
+		icon: "material-symbols:chat",
+	},
 	[LinkPreset.Anime]: {
 		name: i18n(I18nKey.anime),
 		url: "/anime/",
 		icon: "material-symbols:movie",
 	},
-	[LinkPreset.Diary]: {
-		name: i18n(I18nKey.diary),
-		url: "/diary/",
-		icon: "material-symbols:book",
+	[LinkPreset.Talking]: {
+		name: i18n(I18nKey.talking),
+		url: "/talking/",
+		icon: "material-symbols:chat-bubble",
 	},
 	[LinkPreset.Albums]: {
 		name: i18n(I18nKey.albums),
