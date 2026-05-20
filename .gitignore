@@ -51,6 +51,9 @@ src/data/bangumi-data.json
 # Bilibili generated data
 src/data/bilibili-data.json
 
+# Friends circle generated data
+src/data/friends-circle.json
+
 # Lighthouse CI
 .lighthouseci/
 

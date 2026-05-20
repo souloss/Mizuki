@@ -15,56 +15,74 @@ async function getConfig() {
 	const langMatch = configContent.match(/const SITE_LANG = ["'](.+?)["']/);
 	const lang = langMatch ? langMatch[1] : "zh_CN";
 
-	// 提取字体配置
-	const fontConfigMatch = configContent.match(/font:\s*\{([\s\S]*?)\n\t\},/);
-	if (!fontConfigMatch) {
-		console.log("⚠ Font config not found, using default settings");
-		return { lang, fonts: [] };
-	}
+	// 从 fontConfig.ts 读取字体配置
+	const fontConfigPath = path.join(__dirname, "../src/config/fontConfig.ts");
+	const fontConfigContent = fs.readFileSync(fontConfigPath, "utf-8");
 
-	const fontConfigStr = fontConfigMatch[1];
 	const fonts = [];
 
-	// 解析每个字体类别（asciiFont, cjkFont）
-	const fontTypes = ["asciiFont", "cjkFont"];
+	// 解析 fonts 数组：找到整个 fonts: [...] 块
+	const fontsArrayMatch = fontConfigContent.match(/fonts:\s*\[([\s\S]*?)\n\s*\],?\s*\n/);
+	if (!fontsArrayMatch) {
+		console.log("⚠ Font config array not found, using default settings");
+		return { lang, fonts };
+	}
 
-	for (const fontType of fontTypes) {
-		const regex = new RegExp(`${fontType}:\\s*\\{([\\s\\S]*?)\\}`, "m");
-		const match = fontConfigStr.match(regex);
+	const fontsArrayStr = fontsArrayMatch[1];
 
-		if (match) {
-			const fontConfig = match[1];
+	// 按顶层对象拆分每个字体选项（每个以 id: 开头）
+	const fontItemRegex = /\{\s*id:\s*["']([^"']+)["']/g;
+	const fontItems = [];
+	let itemMatch;
+	while ((itemMatch = fontItemRegex.exec(fontsArrayStr)) !== null) {
+		fontItems.push({ id: itemMatch[1], startIndex: itemMatch.index });
+	}
 
-			// 提取 enableCompress
-			const compressMatch = fontConfig.match(
-				/enableCompress:\s*(true|false)/,
-			);
-			const enableCompress = compressMatch
-				? compressMatch[1] === "true"
-				: false;
+	// 为每个字体选项提取其块内容（到下一个选项或数组末尾）
+	for (let i = 0; i < fontItems.length; i++) {
+		const start = fontItems[i].startIndex;
+		const end = i + 1 < fontItems.length ? fontItems[i + 1].startIndex : fontsArrayStr.length;
+		const blockContent = fontsArrayStr.slice(start, end);
 
-			// 提取 localFonts 数组
-			const localFontsMatch = fontConfig.match(
-				/localFonts:\s*\[(.*?)\]/s,
-			);
-			let localFonts = [];
+		// 检查是否有 localFonts
+		const localFontsMatch = blockContent.match(/localFonts:\s*\[([\s\S]*?)\]/);
+		if (!localFontsMatch) continue;
 
-			if (localFontsMatch?.[1].trim()) {
-				// 提取数组中的字符串
-				const fontsStr = localFontsMatch[1];
-				localFonts =
-					fontsStr
-						.match(/["']([^"']+)["']/g)
-						?.map((s) => s.replace(/["']/g, "")) || [];
+		const localFontsStr = localFontsMatch[1];
+
+		// 判断该字体选项是否有 cjkFontFamily
+		const hasCjkFont = /cjkFontFamily:/.test(blockContent);
+
+		// 提取 fontFamily 中的主字体名（取第一个字体名，去掉引号）
+		const fontFamilyMatch = blockContent.match(/fontFamily:\s*["']([^"']+)["']/);
+		const mainFontFamily = fontFamilyMatch ? fontFamilyMatch[1] : "";
+
+		// 提取每个 localFont 对象
+		const localFontObjects = localFontsStr.matchAll(/\{([\s\S]*?)\}/g);
+		for (const objMatch of localFontObjects) {
+			const objStr = objMatch[1];
+			const srcMatch = objStr.match(/src:\s*["']([^"']+)["']/);
+			const familyMatch = objStr.match(/family:\s*["']([^"']+)["']/);
+
+			if (!srcMatch) continue;
+			const src = srcMatch[1];
+			if (!src.startsWith("/")) continue;
+
+			const fileName = src.split("/").pop();
+			const family = familyMatch ? familyMatch[1] : "";
+
+			// 判断字体类型：对于有 cjkFontFamily 的字体选项，
+			// fontFamily 对应的 localFont 是 ASCII 字体，其余是 CJK 字体
+			let type = "cjkFont";
+			if (hasCjkFont && family === mainFontFamily) {
+				type = "asciiFont";
 			}
 
-			if (enableCompress && localFonts.length > 0) {
-				fonts.push({
-					type: fontType,
-					files: localFonts,
-					enableCompress,
-				});
-			}
+			fonts.push({
+				type,
+				files: [fileName],
+				enableCompress: true,
+			});
 		}
 	}
 
@@ -1091,7 +1109,7 @@ async function compressFonts() {
 				const baseName = path.basename(fontFile, ext);
 
 				if (!fs.existsSync(fontSrc)) {
-					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist   In config: "${fontFile}"\n   Expected path: public/assets/font/${fontFile}\n   \n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is ${fontConfig.type}.localFonts in src/config.ts correct?`;
+					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist   In config: "${fontFile}"\n   Expected path: public/assets/font/${fontFile}\n   \n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is the localFonts config in src/config/fontConfig.ts correct?`;
 
 					errors.push(errorMsg);
 					console.log(`\n${errorMsg}\n`);
