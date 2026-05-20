@@ -18,7 +18,7 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-import { siteConfig } from "./src/config.ts";
+import { siteConfig, plantumlConfig } from "./src/config.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
@@ -26,6 +26,7 @@ import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.
 import { rehypeImageWidth } from "./src/plugins/rehype-image-width.mjs";
 import { rehypeLazyImage } from "./src/plugins/rehype-lazy-image.mjs";
 import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
+import { rehypePlantuml } from "./src/plugins/rehype-plantuml.mjs";
 import { rehypeWrapTable } from "./src/plugins/rehype-wrap-table.mjs";
 import { remarkCodeLangAliases } from "./src/plugins/remark-code-lang-aliases.js";
 import { remarkContent } from "./src/plugins/remark-content.mjs";
@@ -33,6 +34,7 @@ import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
 import { remarkMark } from "./src/plugins/remark-mark.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
+import { remarkPlantuml } from "./src/plugins/remark-plantuml.js";
 import { remarkRelativeLinks } from "./src/plugins/remark-relative-links.mjs";
 import { remarkPlumeCompat } from "./src/plugins/remark-plume-compat.js";
 
@@ -139,6 +141,7 @@ export default defineConfig({
 			remarkSectionize,
 			parseDirectiveNode,
 			remarkMermaid,
+			[remarkPlantuml, plantumlConfig],
 			remarkRelativeLinks,
 		],
 		rehypePlugins: [
@@ -153,6 +156,7 @@ export default defineConfig({
 			rehypeSlug,
 			rehypeWrapTable,
 			rehypeMermaid,
+			rehypePlantuml,
 			[
 				rehypeComponents,
 				{

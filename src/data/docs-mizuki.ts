@@ -193,9 +193,63 @@ export const docsMizukiSidebar = [
 				"icon": "ri:layout-bottom-line"
 			},
 			{
+				"text": "背景壁纸",
+				"link": "background-wallpaper/",
+				"icon": "ri:image-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "字体配置",
+				"link": "font-config/",
+				"icon": "ri:font-size-2",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "OG图片",
+				"link": "og-images/",
+				"icon": "ri:image-add-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
 				"text": "页面自动缩放配置",
 				"link": "auto-res-algo/",
 				"icon": "ri:fullscreen-exit-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "文章列表布局",
+				"link": "post-list-layout/",
+				"icon": "ri:list-unordered",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "图片优化",
+				"link": "image-optimization/",
+				"icon": "ri:image-edit-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "配置模块化",
+				"link": "config-modularization/",
+				"icon": "ri:folder-settings-line",
 				"badge": {
 					"type": "warning",
 					"text": "新"
@@ -273,6 +327,69 @@ export const docsMizukiSidebar = [
 				"text": "Giscus评论系统配置",
 				"link": "Giscus/",
 				"icon": "ri:message-3-line"
+			},
+			{
+				"text": "Waline评论系统配置",
+				"link": "Waline/",
+				"icon": "ri:message-3-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "Artalk评论系统配置",
+				"link": "Artalk/",
+				"icon": "ri:message-3-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "Disqus评论系统配置",
+				"link": "Disqus/",
+				"icon": "ri:message-3-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "赞赏功能",
+				"link": "reward/",
+				"icon": "ri:heart-2-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "Live Photo",
+				"link": "live-photo/",
+				"icon": "ri:image-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "随机文章推荐",
+				"link": "random-posts/",
+				"icon": "ri:shuffle-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "相关文章",
+				"link": "related-posts/",
+				"icon": "ri:links-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
 			}
 		]
 	},
@@ -293,6 +410,15 @@ export const docsMizukiSidebar = [
 				"icon": "ri:robot-line"
 			},
 			{
+				"text": "Spine看板娘",
+				"link": "spine/",
+				"icon": "ri:robot-2-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
 				"text": "樱花飘落特效配置",
 				"link": "sakura/",
 				"icon": "ri:plant-line"
@@ -304,6 +430,51 @@ export const docsMizukiSidebar = [
 				"badge": {
 					"type": "info",
 					"text": "v3"
+				}
+			},
+			{
+				"text": "显示设置",
+				"link": "display-settings/",
+				"icon": "ri:settings-4-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "特效配置",
+				"link": "effects-config/",
+				"icon": "ri:sparkles-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "分享卡片",
+				"link": "share-card/",
+				"icon": "ri:share-box-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "搜索功能",
+				"link": "search/",
+				"icon": "ri:search-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "浮动控件与进度条",
+				"link": "floating-controls/",
+				"icon": "ri:arrow-up-circle-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
 				}
 			}
 		]
@@ -360,6 +531,15 @@ export const docsMizukiSidebar = [
 					"type": "warning",
 					"text": "新"
 				}
+			},
+			{
+				"text": "广告组件配置",
+				"link": "advertisement/",
+				"icon": "ri:advertisement-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
 			}
 		]
 	},
@@ -375,9 +555,18 @@ export const docsMizukiSidebar = [
 				"icon": "ri:information-line"
 			},
 			{
-				"text": "日记页面",
-				"link": "diary/",
+				"text": "日记/说说页面",
+				"link": "talking/",
 				"icon": "ri:book-line"
+			},
+			{
+				"text": "归档页面",
+				"link": "archive/",
+				"icon": "ri:archive-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
 			},
 			{
 				"text": "友链页面",
@@ -386,6 +575,42 @@ export const docsMizukiSidebar = [
 				"badge": {
 					"type": "info",
 					"text": "v3"
+				}
+			},
+			{
+				"text": "朋友圈",
+				"link": "friends-circle/",
+				"icon": "ri:chat-group-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "说说页面",
+				"link": "talking/",
+				"icon": "ri:chat-3-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "留言板",
+				"link": "guestbook/",
+				"icon": "ri:sticky-note-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "赞助页面",
+				"link": "sponsor/",
+				"icon": "ri:heart-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
 				}
 			},
 			{
@@ -461,6 +686,33 @@ export const docsMizukiSidebar = [
 						"text": "图表",
 						"link": "Markdown/chart/",
 						"icon": "ri:pie-chart-line"
+					},
+					{
+						"text": "PlantUML",
+						"link": "PlantUML/",
+						"icon": "ri:diagram-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
+						"text": "相对链接",
+						"link": "Markdown/relative-links/",
+						"icon": "ri:link",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
+						"text": "懒加载图片",
+						"link": "Markdown/lazy-images/",
+						"icon": "ri:lazy-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
 					}
 				]
 			},
@@ -486,6 +738,40 @@ export const docsMizukiSidebar = [
 				]
 			},
 			{
+				"text": "文章类型",
+				"icon": "ri:file-list-2-line",
+				"collapsed": true,
+				"items": [
+					{
+						"text": "系列/专栏",
+						"link": "series/",
+						"icon": "ri:list-indefinite",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
+						"text": "转载文章",
+						"link": "reposts/",
+						"icon": "ri:arrow-left-right-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
+						"text": "加密文章",
+						"link": "encrypted-posts/",
+						"icon": "ri:key-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					}
+				]
+			},
+			{
 				"text": "高级",
 				"icon": "ri:settings-3-line",
 				"collapsed": true,
@@ -494,6 +780,15 @@ export const docsMizukiSidebar = [
 						"text": "文章加密(可选)",
 						"link": "key/",
 						"icon": "ri:key-line"
+					},
+					{
+						"text": "版权许可",
+						"link": "copyright-license/",
+						"icon": "ri:copyright-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
 					},
 					{
 						"text": "固定链接",
@@ -508,6 +803,15 @@ export const docsMizukiSidebar = [
 						"text": "图片语法",
 						"link": "image/",
 						"icon": "ri:image-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
+						"text": "随机封面图",
+						"link": "random-cover/",
+						"icon": "ri-image-add-line",
 						"badge": {
 							"type": "warning",
 							"text": "新"
@@ -535,8 +839,8 @@ export const docsMizukiSidebar = [
 		]
 	},
 	{
-		"text": "内容分离",
-		"icon": "ri:database-2-line",
+		"text": "其他",
+		"icon": "ri:more-2-line",
 		"badge": {
 			"type": "warning",
 			"text": "新"
@@ -563,6 +867,78 @@ export const docsMizukiSidebar = [
 				"text": "迁移指南",
 				"link": "migration/",
 				"icon": "ri:arrow-left-right-line"
+			},
+			{
+				"text": "国际化",
+				"link": "i18n/",
+				"icon": "ri:translate-2",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "朋友圈RSS",
+				"link": "update-feeds/",
+				"icon": "ri:rss-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "文档系统",
+				"link": "docs-system/",
+				"icon": "ri:book-open-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "Bug基准",
+				"link": "benchmark-bugs/",
+				"icon": "ri:bug-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "RSS/Atom订阅",
+				"link": "rss-atom/",
+				"icon": "ri:rss-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "统计分析配置",
+				"link": "analytics/",
+				"icon": "ri:bar-chart-2-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "页面过渡动画",
+				"link": "swup-transitions/",
+				"icon": "ri:exchange-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
+			},
+			{
+				"text": "构建脚本",
+				"link": "build-scripts/",
+				"icon": "ri:terminal-line",
+				"badge": {
+					"type": "warning",
+					"text": "新"
+				}
 			}
 		]
 	},

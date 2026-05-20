@@ -95,6 +95,9 @@ importers:
       pagefind:
         specifier: ^1.5.2
         version: 1.5.2
+      pako:
+        specifier: ^2.1.0
+        version: 2.1.0
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4

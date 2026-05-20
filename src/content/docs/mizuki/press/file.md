@@ -43,27 +43,54 @@ frontmatter支持的字段包括：
 
 ### 必需字段
 - `title`：文章标题（必需）
-- `description`：文章描述（必需）
+- `published`：文章发布日期，格式为YYYY-MM-DD
 
 ### 发布相关
-- `published`：文章发布日期，格式为YYYY-MM-DD
-- `pubDate`：文章发布日期（与published类似）
-- `date`：文章创建日期
 - `draft`：是否为草稿，true表示草稿，false表示正式发布
-- `permalink`: 固定链接
+- `updated`：文章最后更新日期（格式同 published），配合 `siteConfig.showLastModified` 显示"上次编辑"信息
+- `pinned`：是否置顶文章，true表示置顶
+- `priority`：文章排序优先级，数字越大越靠前
+- `permalink`：自定义固定链接，优先级高于 alias
+- `slug`：URL 路径中的简短文本标识，只覆盖文件名部分
+- `alias`：别名路径，用于旧 URL 重定向
+- `redirect`：跳转到外部/静态资源页面
 
 ### 内容分类
 - `tags`：文章标签数组，用于标记文章主题
 - `category`：文章分类，用于组织文章
-- `pinned`：是否置顶文章，true表示置顶
+- `series`：专栏/系列名称
+- `seriesOrder`：在系列中的排序位置，默认 0
 
 ### 作者信息
 - `author`：文章作者姓名
 - `licenseName`：文章许可证名称，如"MIT"、"CC BY 4.0"等
+- `licenseUrl`：文章许可证 URL
 - `sourceLink`：文章源链接，通常指向GitHub仓库或原始来源
+- `copyright`：版权许可类型，支持 `"CC BY"`, `"CC BY-SA"`, `"CC BY-ND"`, `"CC BY-NC"`, `"CC BY-NC-SA"`, `"CC BY-NC-ND"`, `"CC0"`, `"ARR"`
 
 ### 图片设置
 - `image`：文章封面图片
+- `ogDescription`：自定义 OG 描述文本，覆盖默认生成的 OG 图片描述
+
+### 语言设置
+- `lang`：单篇文章的语言覆盖，如 `"en"`, `"zh_CN"`, `"ja"`
+
+### 评论设置
+- `comment`：是否在文章详情页显示评论区，默认 true
+
+### 加密设置
+- `encrypted`：是否启用文章加密，true 时文章内容需要密码才能查看
+- `password`：加密密码
+- `passwordHint`：密码提示文字
+- `hideHomeContent`：是否在首页隐藏文章内容摘要
+
+### 转载设置
+- `repost`：转载文章配置对象
+  - `repost.originalAuthor`：原作者姓名
+  - `repost.originalUrl`：原文 URL
+  - `repost.originalTitle`：原文标题（可选）
+  - `repost.originalSite`：原站点名称（可选）
+  - `repost.redirect`：是否重定向到原文（可选）
 
 3. 在frontmatter下方编写文章内容，可以使用标准的Markdown语法。
 

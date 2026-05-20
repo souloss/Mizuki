@@ -3,6 +3,7 @@ export { backgroundWallpaperConfig } from "./backgroundWallpaper";
 export { effectsConfig } from "./effectsConfig";
 export { fontConfig } from "./fontConfig";
 export { friendsConfig } from "./friendsConfig";
+export { plantumlConfig } from "./plantumlConfig";
 export { sponsorConfig } from "./sponsorConfig";
 
 // 导出类型
@@ -11,6 +12,7 @@ export type {
     EffectsConfig,
     FontConfig,
     FriendsPageConfig,
+    PlantUMLConfig,
     SakuraConfig,
     SponsorConfig,
 } from "../types/config";

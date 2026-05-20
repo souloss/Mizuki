@@ -1,5 +1,5 @@
 <script lang="ts">
-import LocalIcon from "@components/atoms/Icon/LocalIcon.svelte";
+import Icon from "@iconify/svelte";
 import {
 	WALLPAPER_BANNER,
 	WALLPAPER_FULLSCREEN,
@@ -432,7 +432,7 @@ $effect(() => {
 				{i18n(I18nKey.themeColor)}
 				<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} onclick={resetHue}>
 					<div class="text-[var(--btn-content)]">
-						<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+						<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 					</div>
 				</button>
 			</div>
@@ -453,27 +453,27 @@ $effect(() => {
 			{i18n(I18nKey.wallpaperMode)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={wallpaperMode === defaultWallpaperMode} class:pointer-events-none={wallpaperMode === defaultWallpaperMode} onclick={resetWallpaperMode}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
 		<div class="flex gap-2">
 			<button class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden" class:opacity-60={wallpaperMode !== WALLPAPER_BANNER} class:bg-[var(--btn-regular-bg-hover)]={wallpaperMode === WALLPAPER_BANNER} onclick={() => switchWallpaperMode(WALLPAPER_BANNER)}>
-				<LocalIcon icon="material-symbols:image-outline" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:image-outline" class="text-[1.25rem] shrink-0" />
 				<span class="text-xs font-medium">{i18n(I18nKey.wallpaperBanner)}</span>
 			</button>
 			<button class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden" class:opacity-60={wallpaperMode !== WALLPAPER_FULLSCREEN} class:bg-[var(--btn-regular-bg-hover)]={wallpaperMode === WALLPAPER_FULLSCREEN} onclick={() => switchWallpaperMode(WALLPAPER_FULLSCREEN)}>
-				<LocalIcon icon="material-symbols:wallpaper" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:wallpaper" class="text-[1.25rem] shrink-0" />
 				<span class="text-xs font-medium">{i18n(I18nKey.wallpaperFullscreen)}</span>
 			</button>
 		</div>
 		<div class="flex gap-2 mt-2">
 			<button class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden" class:opacity-60={wallpaperMode !== WALLPAPER_OVERLAY} class:bg-[var(--btn-regular-bg-hover)]={wallpaperMode === WALLPAPER_OVERLAY} onclick={() => switchWallpaperMode(WALLPAPER_OVERLAY)}>
-				<LocalIcon icon="material-symbols:full-coverage-outline-rounded" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:full-coverage-outline-rounded" class="text-[1.25rem] shrink-0" />
 				<span class="text-xs font-medium">{i18n(I18nKey.wallpaperOverlay)}</span>
 			</button>
 			<button class="flex-1 btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden" class:opacity-60={wallpaperMode !== WALLPAPER_NONE} class:bg-[var(--btn-regular-bg-hover)]={wallpaperMode === WALLPAPER_NONE} onclick={() => switchWallpaperMode(WALLPAPER_NONE)}>
-				<LocalIcon icon="material-symbols:hide-image-outline" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:hide-image-outline" class="text-[1.25rem] shrink-0" />
 				<span class="text-xs font-medium">{i18n(I18nKey.wallpaperNone)}</span>
 			</button>
 		</div>
@@ -487,7 +487,7 @@ $effect(() => {
 			{i18n(I18nKey.overlaySettings)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={overlaySettingsIsDefault} class:pointer-events-none={overlaySettingsIsDefault} onclick={resetOverlaySettings}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
@@ -514,7 +514,7 @@ $effect(() => {
 			{i18n(I18nKey.wallpaperSettings)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={bannerSettingsIsDefault} class:pointer-events-none={bannerSettingsIsDefault} onclick={resetBannerSettings}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
@@ -522,7 +522,7 @@ $effect(() => {
 			<!-- Banner Title Switch -->
 			{#if isBannerTitleSwitchable}
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={bannerTitleEnabled} onclick={toggleBannerTitleEnabled}>
-				<LocalIcon icon="material-symbols:titlecase-rounded" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:titlecase-rounded" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.wallpaperBannerTitle)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={bannerTitleEnabled} class:bg-[var(--btn-regular-bg-active)]={!bannerTitleEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!bannerTitleEnabled} class:left-5={bannerTitleEnabled}></div>
@@ -532,7 +532,7 @@ $effect(() => {
 			<!-- Banner Carousel Switch -->
 			{#if isBannerCarouselSwitchable}
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={bannerCarouselEnabled} onclick={toggleBannerCarouselEnabled}>
-				<LocalIcon icon="material-symbols:view-carousel-outline" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:view-carousel-outline" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.wallpaperCarousel)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={bannerCarouselEnabled} class:bg-[var(--btn-regular-bg-active)]={!bannerCarouselEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!bannerCarouselEnabled} class:left-5={bannerCarouselEnabled}></div>
@@ -542,7 +542,7 @@ $effect(() => {
 			<!-- Waves Animation Switch -->
 			{#if isWavesSwitchable}
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={wavesEnabled} onclick={toggleWavesEnabled}>
-				<LocalIcon icon="material-symbols:airwave-rounded" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:airwave-rounded" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.wavesAnimation)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={wavesEnabled} class:bg-[var(--btn-regular-bg-active)]={!wavesEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!wavesEnabled} class:left-5={wavesEnabled}></div>
@@ -552,7 +552,7 @@ $effect(() => {
 			<!-- Gradient Transition Switch -->
 			{#if isGradientSwitchable}
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={gradientEnabled} onclick={toggleGradientEnabled}>
-				<LocalIcon icon="material-symbols:gradient" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:gradient" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.gradientTransition)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={gradientEnabled} class:bg-[var(--btn-regular-bg-active)]={!gradientEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!gradientEnabled} class:left-5={gradientEnabled}></div>
@@ -570,13 +570,13 @@ $effect(() => {
 			{i18n(I18nKey.effectsSettings)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={sakuraEnabled === defaultSakuraEnabled} class:pointer-events-none={sakuraEnabled === defaultSakuraEnabled} onclick={() => { sakuraEnabled = defaultSakuraEnabled; setSakuraEnabled(defaultSakuraEnabled); }}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
 		<div class="space-y-1">
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={sakuraEnabled} onclick={toggleSakuraEnabled}>
-				<LocalIcon icon="mdi:flower-poppy" class="text-[1.25rem] shrink-0" />
+				<Icon icon="mdi:flower-poppy" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.sakuraEffect)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={sakuraEnabled} class:bg-[var(--btn-regular-bg-active)]={!sakuraEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!sakuraEnabled} class:left-5={sakuraEnabled}></div>
@@ -592,13 +592,13 @@ $effect(() => {
 			{i18n(I18nKey.stickyNavbar)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={stickyNavbarEnabled === defaultStickyNavbar} class:pointer-events-none={stickyNavbarEnabled === defaultStickyNavbar} onclick={() => { stickyNavbarEnabled = defaultStickyNavbar; setStickyNavbar(defaultStickyNavbar); }}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
 		<div class="space-y-1">
 			<button class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden" class:bg-[var(--btn-regular-bg-hover)]={stickyNavbarEnabled} onclick={toggleStickyNavbar}>
-				<LocalIcon icon="material-symbols:push-pin-outline" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:push-pin-outline" class="text-[1.25rem] shrink-0" />
 				<span class="text-sm flex-1">{i18n(I18nKey.stickyNavbar)}</span>
 				<div class="w-10 h-5 rounded-full transition-all duration-200 relative" class:bg-[var(--primary)]={stickyNavbarEnabled} class:bg-[var(--btn-regular-bg-active)]={!stickyNavbarEnabled}>
 					<div class="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all duration-200" class:left-0.5={!stickyNavbarEnabled} class:left-5={stickyNavbarEnabled}></div>
@@ -614,14 +614,14 @@ $effect(() => {
 			{i18n(I18nKey.fontSelector)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={currentFont === defaultFont} class:pointer-events-none={currentFont === defaultFont} onclick={resetFont}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
 		<div class="grid grid-cols-2 gap-2">
 			{#each fontConfig.fonts as font}
 			<button class="btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden" class:opacity-60={currentFont !== font.id} class:bg-[var(--btn-regular-bg-hover)]={currentFont === font.id} onclick={() => switchFont(font.id)}>
-				<LocalIcon icon="material-symbols:font-download-outline" class="text-[1.25rem] shrink-0" />
+				<Icon icon="material-symbols:font-download-outline" class="text-[1.25rem] shrink-0" />
 				<span class="text-xs font-medium">{i18n(font.i18nKey as I18nKey) || font.name}</span>
 			</button>
 			{/each}
@@ -636,7 +636,7 @@ $effect(() => {
 			{i18n(I18nKey.postListLayout)}
 			<button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-95" class:opacity-0={currentLayout === effectiveDefaultLayout} class:pointer-events-none={currentLayout === effectiveDefaultLayout} onclick={resetLayout}>
 				<div class="text-[var(--btn-content)]">
-					<LocalIcon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
+					<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]" />
 				</div>
 			</button>
 		</div>
