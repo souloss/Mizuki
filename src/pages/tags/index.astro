@@ -150,21 +150,23 @@ function getTagHue(name: string): number {
 </style>
 
 <script>
-	const searchInput = document.getElementById("tag-search") as HTMLInputElement;
+	// @ts-nocheck
+	const searchInput = document.getElementById("tag-search");
 	const tagCloud = document.getElementById("tag-cloud");
 	const noResults = document.getElementById("tag-no-results");
 	const tagItems = document.querySelectorAll(".tag-item");
 
 	if (searchInput && tagCloud && noResults) {
 		searchInput.addEventListener("input", () => {
-			const query = searchInput.value.trim().toLowerCase();
+			const query = /** @type {any} */ (searchInput).value.trim().toLowerCase();
 			let visibleCount = 0;
 
 			tagItems.forEach((item) => {
-				const name = (item as HTMLElement).dataset.name || "";
+				const htmlItem = /** @type {any} */ (item);
+				const name = htmlItem.dataset.name || "";
 				const match = !query || name.includes(query);
-				(item as HTMLElement).style.display = match ? "" : "none";
-				if (match) visibleCount++;
+				htmlItem.style.display = match ? "" : "none";
+				if (match) {visibleCount++;}
 			});
 
 			tagCloud.style.display = visibleCount > 0 ? "" : "none";

@@ -13,8 +13,11 @@ export const ja: Translation = {
 	[Key.navMy]: "私の",
 	[Key.navAbout]: "情報",
 	[Key.navOthers]: "その他",
+	[Key.navContent]: "コンテンツ",
+	[Key.navInteraction]: "インタラクション",
 
 	[Key.tags]: "タグ",
+	[Key.tagAll]: "すべて",
 	[Key.categories]: "カテゴリー",
 	[Key.recentPosts]: "最近の投稿",
 	[Key.postList]: "投稿の一覧",
@@ -27,6 +30,8 @@ export const ja: Translation = {
 
 	[Key.comments]: "コメント",
 	[Key.friends]: "友達",
+	[Key.friendsTitle]: "友達",
+	[Key.friendsDescription]: "もっと素敵なウェブサイトを見つける",
 	[Key.friendsSubtitle]: "もっと素敵なウェブサイトを見つける",
 	[Key.friendsSearchPlaceholder]: "友達の名前または説明を検索...",
 	[Key.friendsFilterAll]: "すべて",
@@ -58,7 +63,7 @@ export const ja: Translation = {
 	[Key.publishedAt]: "公開日",
 	[Key.license]: "ライセンス",
 	[Key.anime]: "視聴したアニメ",
-	[Key.diary]: "日記",
+	[Key.talking]: "つぶやき",
 
 	// アニメページ
 	[Key.animeTitle]: "視聴したアニメ",
@@ -84,14 +89,14 @@ export const ja: Translation = {
 		"src/config.tsファイルにBangumiのユーザーIDを設定してください",
 
 	// 日記ページ
-	[Key.diarySubtitle]: "いつでも、どこでも生活を共有",
-	[Key.diaryNoResults]: "一致するモーメントはありません",
-	[Key.diaryCount]: "件の日記のエントリー",
+	[Key.talkingSubtitle]: "いつでも、どこでも生活を共有",
+	[Key.talkingNoResults]: "一致するつぶやきはありません",
+	[Key.talkingCount]: "件のつぶやき",
 
-	[Key.diaryTips]: "最新の30件の日記のエントリーのみを表示",
-	[Key.diaryMinutesAgo]: "分前",
-	[Key.diaryHoursAgo]: "時間前",
-	[Key.diaryDaysAgo]: "日前",
+	[Key.talkingTips]: "最新の30件のつぶやきを表示",
+	[Key.talkingMinutesAgo]: "分前",
+	[Key.talkingHoursAgo]: "時間前",
+	[Key.talkingDaysAgo]: "日前",
 
 	// 404ページ
 	[Key.notFound]: "404",
@@ -347,6 +352,10 @@ export const ja: Translation = {
 	[Key.shareOnSocial]: "共有",
 	[Key.shareOnSocialDescription]:
 		"この記事が役に立ったときは、ぜひ他の人に共有してください!",
+	[Key.shareCopy]: "リンクをコピー",
+	[Key.shareOnX]: "X",
+	[Key.shareOnTelegram]: "Telegram",
+	[Key.shareOnWeibo]: "Weibo",
 
 	// プロフィールの統計
 	[Key.profileStatsLoading]: "統計を読み込み中...",
@@ -414,13 +423,6 @@ export const ja: Translation = {
 	[Key.friendsCircleLoading]: "読み込み中...",
 	[Key.friendsCircleError]: "データの取得に失敗しました",
 
-	// つぶやき
-	[Key.talking]: "つぶやき",
-	[Key.talkingSubtitle]: "いつでも、どこでも生活を共有",
-	[Key.talkingEmpty]: "つぶやきはありません",
-	[Key.talkingTags]: "タグ",
-	[Key.talkingFilterAll]: "すべて",
-
 	// 関連した投稿とランダムな投稿
 	[Key.relatedPosts]: "関連した投稿",
 	[Key.randomPosts]: "ランダムな投稿",
@@ -455,4 +457,114 @@ export const ja: Translation = {
 	[Key.docsLastUpdated]: "最終更新",
 	[Key.docsWordCount]: "文字",
 	[Key.docsReadingTime]: "読了時間",
+
+	// ========================================
+	// 追加：Fireflyから移行した機能の翻訳
+	// ========================================
+
+	// 設定パネル
+	[Key.settings]: "設定",
+	[Key.settingsTitle]: "表示設定",
+	[Key.settingsTheme]: "テーマ",
+	[Key.settingsWallpaper]: "壁紙",
+	[Key.settingsEffects]: "エフェクト",
+	[Key.settingsPostLayout]: "投稿レイアウト",
+	[Key.settingsFont]: "フォント",
+	[Key.themeHue]: "テーマカラー",
+	[Key.themeMode]: "テーマモード",
+	[Key.wallpaperMode]: "壁紙モード",
+	[Key.wallpaperOverlay]: "オーバーレイモード",
+	[Key.wallpaperSettings]: "壁紙設定",
+	[Key.wallpaperWaves]: "ウェーブ効果",
+	[Key.wallpaperGradient]: "グラデーションオーバーレイ",
+	[Key.wallpaperCarousel]: "カルーセル",
+	[Key.wallpaperBannerTitle]: "バナータイトル",
+	[Key.wallpaperPosition]: "壁紙の位置",
+	[Key.effectsSakura]: "桜のエフェクト",
+	[Key.postListLayoutList]: "リストモード",
+	[Key.postListLayoutGrid]: "グリッドモード",
+	[Key.fontSelector]: "フォント選択",
+	[Key.fontSystem]: "システムデフォルト",
+	[Key.fontLiterata]: "Literata",
+	[Key.fontLxgw]: "霞鹜文楷",
+	[Key.font2D]: "二次元",
+	[Key.stickyNavbar]: "固定ナビゲーションバー",
+
+	// Wallpaper mode buttons
+	[Key.wallpaperBannerMode]: "バナーモード",
+	[Key.wallpaperFullscreenMode]: "フルスクリーンモード",
+	[Key.wallpaperOverlayMode]: "オーバーレイモード",
+	[Key.wallpaperNoneMode]: "壁紙なし",
+
+	// Overlay settings
+	[Key.overlayOpacity]: "不透明度",
+	[Key.overlayBlur]: "ぼかし",
+	[Key.overlayCardOpacity]: "カードの不透明度",
+	[Key.overlaySettings]: "オーバーレイ設定",
+
+	// Wallpaper effects
+	[Key.wavesAnimation]: "ウェーブアニメーション",
+	[Key.gradientTransition]: "グラデーショントランジション",
+	[Key.wallpaperTitle]: "壁紙のタイトル",
+
+	// Effects settings
+	[Key.effectsSettings]: "エフェクト設定",
+	[Key.sakuraEffect]: "桜のエフェクト",
+
+	// Post list layout
+	[Key.postListLayout]: "投稿リストレイアウト",
+
+	// スポンサーページ
+	[Key.sponsor]: "スポンサー",
+	[Key.sponsorTitle]: "サポートとスポンサー",
+	[Key.sponsorDescription]: "このプロジェクトが役立ったら、継続的な開発をサポートしてください",
+	[Key.sponsorMessage]: "あなたのサポートが開発の最大の原動力です！",
+	[Key.sponsorSupportAndShare]: "サポートと共有",
+	[Key.sponsorSupport]: "作者をサポート",
+	[Key.sponsorAlipay]: "Alipay",
+	[Key.sponsorWechat]: "WeChat Pay",
+	[Key.sponsorQRCode]: "QRコード",
+	[Key.sponsorScanToPay]: "スキャンして支払い",
+	[Key.sponsorGoTo]: "サポートへ",
+	[Key.sponsorEmpty]: "スポンサーはまだいません",
+	[Key.sponsorList]: "スポンサーリスト",
+	[Key.sponsorThanks]: "すべてのスポンサーのサポートに感謝します！",
+	[Key.sponsorAmount]: "金額",
+	[Key.sponsorDate]: "日付",
+	[Key.sponsorNoSponsors]: "スポンサーはまだいません",
+	[Key.sponsorApplyInfo]: "スポンサーになる",
+	[Key.sponsorButton]: "サポート＆シェア",
+	[Key.sponsorButtonText]: "この記事が役に立ったら、著者をサポートするかシェアしてください",
+
+	// ゲストブック
+	[Key.guestbook]: "ゲストブック",
+	[Key.guestbookTitle]: "ゲストブック",
+	[Key.guestbookSubtitle]: "ここにあなたの考えやフィードバックを残してください",
+	[Key.guestbookMessage]: "メッセージを書く...",
+	[Key.guestbookLeaveMessage]: "メッセージを残す",
+	[Key.guestbookYourName]: "あなたの名前",
+	[Key.guestbookYourEmail]: "メールアドレス（公開されません）",
+	[Key.guestbookYourMessage]: "メッセージ",
+	[Key.guestbookSubmit]: "送信",
+	[Key.guestbookSubmitting]: "送信中...",
+	[Key.guestbookSubmitSuccess]: "メッセージが送信されました！",
+	[Key.guestbookSubmitError]: "メッセージの送信に失敗しました。再試行してください。",
+	[Key.guestbookMessages]: "すべてのメッセージ",
+	[Key.guestbookNoMessages]: "メッセージはまだありません。最初のメッセージを残してください！",
+	[Key.guestbookReplied]: "返信済み",
+	[Key.guestbookReply]: "返信",
+	[Key.guestbookCommentHint]: "メッセージを残す...",
+	[Key.commentNotConfigured]: "コメントシステムは未設定です",
+	[Key.commentNotConfiguredHint]: "設定ファイルでコメントシステムが有効化されていません。有効化すると、訪問者がメッセージを残せるようになります。",
+
+	// サポートと共有（記事下部）
+	[Key.supportAndShare]: "サポートと共有",
+	[Key.supportAuthor]: "作者をサポート",
+
+	// ナビゲーション
+	[Key.navGuestbook]: "ゲストブック",
+	[Key.navSponsor]: "スポンサー",
+	[Key.navGitHub]: "GitHub",
+	[Key.navBilibili]: "ビリビリ",
+	[Key.navGitee]: "Gitee",
 };

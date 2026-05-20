@@ -13,8 +13,11 @@ export const en: Translation = {
 	[Key.navMy]: "My",
 	[Key.navAbout]: "About",
 	[Key.navOthers]: "Others",
+	[Key.navContent]: "Content",
+	[Key.navInteraction]: "Interaction",
 
 	[Key.tags]: "Tags",
+	[Key.tagAll]: "All",
 	[Key.categories]: "Categories",
 	[Key.recentPosts]: "Recent Posts",
 	[Key.postList]: "Post List",
@@ -27,6 +30,8 @@ export const en: Translation = {
 
 	[Key.comments]: "Comments",
 	[Key.friends]: "Friends",
+	[Key.friendsTitle]: "Friends",
+	[Key.friendsDescription]: "Discover more great websites",
 	[Key.friendsSubtitle]: "Discover more great websites",
 	[Key.friendsSearchPlaceholder]: "Search friend's name or description...",
 	[Key.friendsFilterAll]: "All",
@@ -58,7 +63,7 @@ export const en: Translation = {
 	[Key.publishedAt]: "Published at",
 	[Key.license]: "License",
 	[Key.anime]: "Anime",
-	[Key.diary]: "Diary",
+	[Key.talking]: "Moments",
 
 	// Anime Page
 	[Key.animeTitle]: "My Anime List",
@@ -84,14 +89,14 @@ export const en: Translation = {
 		"Please set your Bangumi userId in the src/config.ts file",
 
 	// Diary Page
-	[Key.diarySubtitle]: "Share life, anytime, anywhere",
-	[Key.diaryNoResults]: "No matching moments",
-	[Key.diaryCount]: "entries",
+	[Key.talkingSubtitle]: "Share life, anytime, anywhere",
+	[Key.talkingNoResults]: "No matching moments",
+	[Key.talkingCount]: "moments",
 
-	[Key.diaryTips]: "Only show the latest 30 diary entries",
-	[Key.diaryMinutesAgo]: "minutes ago",
-	[Key.diaryHoursAgo]: "hours ago",
-	[Key.diaryDaysAgo]: "days ago",
+	[Key.talkingTips]: "Only show the latest 30 moments",
+	[Key.talkingMinutesAgo]: "minutes ago",
+	[Key.talkingHoursAgo]: "hours ago",
+	[Key.talkingDaysAgo]: "days ago",
 
 	// 404 Page
 	[Key.notFound]: "404",
@@ -344,6 +349,10 @@ export const en: Translation = {
 	[Key.shareOnSocial]: "Share",
 	[Key.shareOnSocialDescription]:
 		"If this article helped you, please share it with others!",
+	[Key.shareCopy]: "Copy Link",
+	[Key.shareOnX]: "X",
+	[Key.shareOnTelegram]: "Telegram",
+	[Key.shareOnWeibo]: "Weibo",
 
 	// Profile Stats
 	[Key.profileStatsLoading]: "Loading stats...",
@@ -411,13 +420,6 @@ export const en: Translation = {
 	[Key.friendsCircleLoading]: "Loading...",
 	[Key.friendsCircleError]: "Failed to fetch data",
 
-	// Talking/Moments
-	[Key.talking]: "Moments",
-	[Key.talkingSubtitle]: "Share your life, anytime, anywhere",
-	[Key.talkingEmpty]: "No moments yet",
-	[Key.talkingTags]: "Tags",
-	[Key.talkingFilterAll]: "All",
-
 	// Related Posts & Random Posts
 	[Key.relatedPosts]: "Related Posts",
 	[Key.randomPosts]: "Random Posts",
@@ -452,4 +454,114 @@ export const en: Translation = {
 	[Key.docsLastUpdated]: "Last updated",
 	[Key.docsWordCount]: "words",
 	[Key.docsReadingTime]: "Reading time",
+
+	// ========================================
+	// New: Translations for features migrated from Firefly
+	// ========================================
+
+	// Settings Panel
+	[Key.settings]: "Settings",
+	[Key.settingsTitle]: "Display Settings",
+	[Key.settingsTheme]: "Theme",
+	[Key.settingsWallpaper]: "Wallpaper",
+	[Key.settingsEffects]: "Effects",
+	[Key.settingsPostLayout]: "Post Layout",
+	[Key.settingsFont]: "Font",
+	[Key.themeHue]: "Theme Hue",
+	[Key.themeMode]: "Theme Mode",
+	[Key.wallpaperMode]: "Wallpaper Mode",
+	[Key.wallpaperOverlay]: "Overlay Mode",
+	[Key.wallpaperSettings]: "Wallpaper Settings",
+	[Key.wallpaperWaves]: "Wave Effect",
+	[Key.wallpaperGradient]: "Gradient Overlay",
+	[Key.wallpaperCarousel]: "Carousel",
+	[Key.wallpaperBannerTitle]: "Banner Title",
+	[Key.wallpaperPosition]: "Wallpaper Position",
+	[Key.effectsSakura]: "Sakura Effect",
+	[Key.postListLayoutList]: "List Mode",
+	[Key.postListLayoutGrid]: "Grid Mode",
+	[Key.fontSelector]: "Font Selector",
+	[Key.fontSystem]: "System Default",
+	[Key.fontLiterata]: "Literata",
+	[Key.fontLxgw]: "LXGW WenKai",
+	[Key.font2D]: "Anime",
+	[Key.stickyNavbar]: "Sticky Navbar",
+
+	// Wallpaper mode buttons
+	[Key.wallpaperBannerMode]: "Banner Mode",
+	[Key.wallpaperFullscreenMode]: "Fullscreen Mode",
+	[Key.wallpaperOverlayMode]: "Overlay Mode",
+	[Key.wallpaperNoneMode]: "No Wallpaper",
+
+	// Overlay settings
+	[Key.overlayOpacity]: "Opacity",
+	[Key.overlayBlur]: "Blur",
+	[Key.overlayCardOpacity]: "Card Opacity",
+	[Key.overlaySettings]: "Overlay Settings",
+
+	// Wallpaper effects
+	[Key.wavesAnimation]: "Wave Animation",
+	[Key.gradientTransition]: "Gradient Transition",
+	[Key.wallpaperTitle]: "Wallpaper Title",
+
+	// Effects settings
+	[Key.effectsSettings]: "Effects Settings",
+	[Key.sakuraEffect]: "Sakura Effect",
+
+	// Post list layout
+	[Key.postListLayout]: "Post List Layout",
+
+	// Sponsor Page
+	[Key.sponsor]: "Sponsor",
+	[Key.sponsorTitle]: "Support & Sponsor",
+	[Key.sponsorDescription]: "If this project has helped you, consider supporting me to keep creating",
+	[Key.sponsorMessage]: "Your support is my greatest motivation!",
+	[Key.sponsorSupportAndShare]: "Support & Share",
+	[Key.sponsorSupport]: "Support the Author",
+	[Key.sponsorAlipay]: "Alipay",
+	[Key.sponsorWechat]: "WeChat Pay",
+	[Key.sponsorQRCode]: "QR Code",
+	[Key.sponsorScanToPay]: "Scan to Pay",
+	[Key.sponsorGoTo]: "Go to Support",
+	[Key.sponsorEmpty]: "No sponsors yet",
+	[Key.sponsorList]: "Sponsor List",
+	[Key.sponsorThanks]: "Thanks to all sponsors for your support!",
+	[Key.sponsorAmount]: "Amount",
+	[Key.sponsorDate]: "Date",
+	[Key.sponsorNoSponsors]: "No sponsors yet",
+	[Key.sponsorApplyInfo]: "Become a Sponsor",
+	[Key.sponsorButton]: "Support & Share",
+	[Key.sponsorButtonText]: "If this article helped you, consider supporting the author or sharing it",
+
+	// Guestbook
+	[Key.guestbook]: "Guestbook",
+	[Key.guestbookTitle]: "Guestbook",
+	[Key.guestbookSubtitle]: "Leave your thoughts and feedback here",
+	[Key.guestbookMessage]: "Write a message...",
+	[Key.guestbookLeaveMessage]: "Leave a Message",
+	[Key.guestbookYourName]: "Your name",
+	[Key.guestbookYourEmail]: "Your email (not public)",
+	[Key.guestbookYourMessage]: "Your message",
+	[Key.guestbookSubmit]: "Submit",
+	[Key.guestbookSubmitting]: "Submitting...",
+	[Key.guestbookSubmitSuccess]: "Message submitted successfully!",
+	[Key.guestbookSubmitError]: "Failed to submit message, please try again",
+	[Key.guestbookMessages]: "All Messages",
+	[Key.guestbookNoMessages]: "No messages yet, be the first to say something!",
+	[Key.guestbookReplied]: "Replied",
+	[Key.guestbookReply]: "Reply",
+	[Key.guestbookCommentHint]: "Leave a message...",
+	[Key.commentNotConfigured]: "Comment system is not configured",
+	[Key.commentNotConfiguredHint]: "The comment system has not been enabled in the configuration file. Visitors will be able to leave messages once it is enabled.",
+
+	// Support & Share (at the bottom of articles)
+	[Key.supportAndShare]: "Support & Share",
+	[Key.supportAuthor]: "Support the Author",
+
+	// Navigation
+	[Key.navGuestbook]: "Guestbook",
+	[Key.navSponsor]: "Sponsor",
+	[Key.navGitHub]: "GitHub",
+	[Key.navBilibili]: "Bilibili",
+	[Key.navGitee]: "Gitee",
 };

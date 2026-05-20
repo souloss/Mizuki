@@ -192,6 +192,10 @@ export class SwupHooksManager {
 	 * 处理链接点击时的 navbar 隐藏
 	 */
 	private handleNavbarHideOnLinkClick(): void {
+		// Sticky navbar 模式下不隐藏导航栏
+		if (document.body.classList.contains("sticky-navbar")) {
+			return;
+		}
 		const navbar = this.getCachedElement(SWUP_SELECTORS.navbarWrapper);
 		if (navbar && document.body.classList.contains("lg:is-home")) {
 			const threshold = window.innerHeight * (BANNER_HEIGHT / 100) - 88;

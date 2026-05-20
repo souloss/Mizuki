@@ -10,8 +10,11 @@ enum I18nKey {
 	navMy = "navMy",
 	navAbout = "navAbout",
 	navOthers = "navOthers",
+	navContent = "navContent",
+	navInteraction = "navInteraction",
 
 	tags = "tags",
+	tagAll = "tagAll",
 	categories = "categories",
 	recentPosts = "recentPosts",
 	postList = "postList",
@@ -47,6 +50,8 @@ enum I18nKey {
 	publishedAt = "publishedAt",
 	license = "license",
 	friends = "friends",
+	friendsTitle = "friendsTitle",
+	friendsDescription = "friendsDescription",
 	friendsSubtitle = "friendsSubtitle",
 	friendsSearchPlaceholder = "friendsSearchPlaceholder",
 	friendsFilterAll = "friendsFilterAll",
@@ -56,7 +61,7 @@ enum I18nKey {
 	friendsCopySuccess = "friendsCopySuccess",
 	friendsTags = "friendsTags",
 	anime = "anime",
-	diary = "diary",
+	talking = "talking",
 
 	// 番剧页面
 	animeTitle = "animeTitle",
@@ -77,14 +82,14 @@ enum I18nKey {
 	animeConfigBangumi = "animeConfigBangumi",
 
 	// 短文页面
-	diarySubtitle = "diarySubtitle",
-	diaryNoResults = "diaryNoResults",
-	diaryCount = "diaryCount",
+	talkingSubtitle = "talkingSubtitle",
+	talkingNoResults = "talkingNoResults",
+	talkingCount = "talkingCount",
 
-	diaryTips = "diaryTips",
-	diaryMinutesAgo = "diaryMinutesAgo",
-	diaryHoursAgo = "diaryHoursAgo",
-	diaryDaysAgo = "diaryDaysAgo",
+	talkingTips = "talkingTips",
+	talkingMinutesAgo = "talkingMinutesAgo",
+	talkingHoursAgo = "talkingHoursAgo",
+	talkingDaysAgo = "talkingDaysAgo",
 
 	// 404页面
 	notFound = "notFound",
@@ -279,6 +284,28 @@ enum I18nKey {
 	wallpaperBanner = "wallpaperBanner",
 	wallpaperFullscreen = "wallpaperFullscreen",
 	wallpaperNone = "wallpaperNone",
+	wallpaperBannerMode = "wallpaperBannerMode",
+	wallpaperFullscreenMode = "wallpaperFullscreenMode",
+	wallpaperOverlayMode = "wallpaperOverlayMode",
+	wallpaperNoneMode = "wallpaperNoneMode",
+
+	// Overlay settings
+	overlayOpacity = "overlayOpacity",
+	overlayBlur = "overlayBlur",
+	overlayCardOpacity = "overlayCardOpacity",
+	overlaySettings = "overlaySettings",
+
+	// Wallpaper effects
+	wavesAnimation = "wavesAnimation",
+	gradientTransition = "gradientTransition",
+	wallpaperTitle = "wallpaperTitle",
+
+	// Effects settings
+	effectsSettings = "effectsSettings",
+	sakuraEffect = "sakuraEffect",
+
+	// Post list layout
+	postListLayout = "postListLayout",
 
 	// 站点统计
 	siteStats = "siteStats",
@@ -321,6 +348,10 @@ enum I18nKey {
 	scanToRead = "scanToRead",
 	shareOnSocial = "shareOnSocial",
 	shareOnSocialDescription = "shareOnSocialDescription",
+	shareCopy = "shareCopy",
+	shareOnX = "shareOnX",
+	shareOnTelegram = "shareOnTelegram",
+	shareOnWeibo = "shareOnWeibo",
 
 	// 个人资料统计
 	profileStatsLoading = "profileStatsLoading",
@@ -388,13 +419,6 @@ enum I18nKey {
 	friendsCircleLoading = "friendsCircleLoading",
 	friendsCircleError = "friendsCircleError",
 
-	// 说说/动态
-	talking = "talking",
-	talkingSubtitle = "talkingSubtitle",
-	talkingEmpty = "talkingEmpty",
-	talkingTags = "talkingTags",
-	talkingFilterAll = "talkingFilterAll",
-
 	// 相关文章与随机文章
 	relatedPosts = "relatedPosts",
 	randomPosts = "randomPosts",
@@ -429,6 +453,92 @@ enum I18nKey {
 	docsLastUpdated = "docsLastUpdated",
 	docsWordCount = "docsWordCount",
 	docsReadingTime = "docsReadingTime",
+
+	// ========================================
+	// 新增：从 Firefly 迁移的功能 i18n 键
+	// ========================================
+
+	// 设置面板
+	settings = "settings",
+	settingsTitle = "settingsTitle",
+	settingsTheme = "settingsTheme",
+	settingsWallpaper = "settingsWallpaper",
+	settingsEffects = "settingsEffects",
+	settingsPostLayout = "settingsPostLayout",
+	settingsFont = "settingsFont",
+	themeHue = "themeHue",
+	themeMode = "themeMode",
+	wallpaperMode = "wallpaperMode",
+	wallpaperOverlay = "wallpaperOverlay",
+	wallpaperSettings = "wallpaperSettings",
+	wallpaperWaves = "wallpaperWaves",
+	wallpaperGradient = "wallpaperGradient",
+	wallpaperCarousel = "wallpaperCarousel",
+	wallpaperBannerTitle = "wallpaperBannerTitle",
+	wallpaperPosition = "wallpaperPosition",
+	effectsSakura = "effectsSakura",
+	postListLayoutList = "postListLayoutList",
+	postListLayoutGrid = "postListLayoutGrid",
+	fontSelector = "fontSelector",
+	fontSystem = "fontSystem",
+	fontLiterata = "fontLiterata",
+	fontLxgw = "fontLxgw",
+	font2D = "font2D",
+	stickyNavbar = "stickyNavbar",
+
+	// 赞助页面
+	sponsor = "sponsor",
+	sponsorTitle = "sponsorTitle",
+	sponsorDescription = "sponsorDescription",
+	sponsorMessage = "sponsorMessage",
+	sponsorSupportAndShare = "sponsorSupportAndShare",
+	sponsorSupport = "sponsorSupport",
+	sponsorAlipay = "sponsorAlipay",
+	sponsorWechat = "sponsorWechat",
+	sponsorQRCode = "sponsorQRCode",
+	sponsorScanToPay = "sponsorScanToPay",
+	sponsorGoTo = "sponsorGoTo",
+	sponsorEmpty = "sponsorEmpty",
+	sponsorList = "sponsorList",
+	sponsorThanks = "sponsorThanks",
+	sponsorAmount = "sponsorAmount",
+	sponsorDate = "sponsorDate",
+	sponsorNoSponsors = "sponsorNoSponsors",
+	sponsorApplyInfo = "sponsorApplyInfo",
+	sponsorButton = "sponsorButton",
+	sponsorButtonText = "sponsorButtonText",
+
+	// 留言板
+	guestbook = "guestbook",
+	guestbookTitle = "guestbookTitle",
+	guestbookSubtitle = "guestbookSubtitle",
+	guestbookMessage = "guestbookMessage",
+	guestbookLeaveMessage = "guestbookLeaveMessage",
+	guestbookYourName = "guestbookYourName",
+	guestbookYourEmail = "guestbookYourEmail",
+	guestbookYourMessage = "guestbookYourMessage",
+	guestbookSubmit = "guestbookSubmit",
+	guestbookSubmitting = "guestbookSubmitting",
+	guestbookSubmitSuccess = "guestbookSubmitSuccess",
+	guestbookSubmitError = "guestbookSubmitError",
+	guestbookMessages = "guestbookMessages",
+	guestbookNoMessages = "guestbookNoMessages",
+	guestbookReplied = "guestbookReplied",
+	guestbookReply = "guestbookReply",
+	guestbookCommentHint = "guestbookCommentHint",
+	commentNotConfigured = "commentNotConfigured",
+	commentNotConfiguredHint = "commentNotConfiguredHint",
+
+	// 支持与分享（文章底部）
+	supportAndShare = "supportAndShare",
+	supportAuthor = "supportAuthor",
+
+	// 导航
+	navGuestbook = "navGuestbook",
+	navSponsor = "navSponsor",
+	navGitHub = "navGitHub",
+	navBilibili = "navBilibili",
+	navGitee = "navGitee",
 }
 
 export default I18nKey;

@@ -162,7 +162,7 @@ function formatTag(tagList: string[]) {
 		const uncategorizedEl = document.getElementById("archive-filter-uncategorized");
 		const noResults = document.getElementById("archive-no-results");
 
-		if (!indicator || !tagsContainer || !catsContainer || !uncategorizedEl || !noResults) return;
+		if (!indicator || !tagsContainer || !catsContainer || !uncategorizedEl || !noResults) {return;}
 
 		// Show filter indicator
 		indicator.classList.remove("hidden");
@@ -215,7 +215,7 @@ function formatTag(tagList: string[]) {
 			}
 
 			el.style.display = visible ? "" : "none";
-			if (visible) visibleCount++;
+			if (visible) {visibleCount++;}
 		});
 
 		// Update group counts and hide empty groups
@@ -224,10 +224,10 @@ function formatTag(tagList: string[]) {
 			const visiblePosts = group.querySelectorAll<HTMLElement>(".archive-post-link");
 			let count = 0;
 			visiblePosts.forEach((p) => {
-				if (p.style.display !== "none") count++;
+				if (p.style.display !== "none") {count++;}
 			});
 			const countEl = group.querySelector(".archive-group-count");
-			if (countEl) countEl.textContent = String(count);
+			if (countEl) {countEl.textContent = String(count);}
 			group.style.display = count === 0 ? "none" : "";
 		});
 

@@ -9,13 +9,13 @@ import {
 	RandomPosts,
 	RelatedPosts,
 	Reward,
-	ShareCard,
 } from "@components/features/posts";
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import RepostNotice from "@components/features/posts/RepostNotice.astro";
 import SeriesNav from "@components/features/posts/SeriesNav.astro";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
+import SharePoster from "@components/misc/SharePoster.svelte";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
@@ -24,14 +24,18 @@ import { getFileDirFromPath, getPostUrl, removeFileExtension } from "@utils/url-
 import { getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import { render } from "astro:content";
+import { Icon } from "astro-icon/components";
 import {
 	licenseConfig,
 	permalinkConfig,
 	randomPostsConfig,
 	relatedPostsConfig,
 	rewardConfig,
-	shareConfig,
+	sponsorConfig,
 } from "src/config";
+
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
 
 import Image from "../../components/atoms/Image/Image.astro";
 import Encryptor from "../../components/features/auth/Encryptor.astro";
@@ -397,19 +401,56 @@ const jsonLd = {
 				/>
 			)}
 
+			{/* 赞助按钮 & 分享按钮 */}
 			{
-				shareConfig.enable && (
-					<ShareCard
-						class:list={[{ "encrypted-hidden": isEncrypted }]}
-						title={entry.data.title}
-						author={entry.data.author}
-						description={publicDescription}
-						pubDate={formatDateToYYYYMMDD(entry.data.published)}
-						coverImage={posterCoverUrl}
-						url={Astro.url.toString()}
-						siteTitle={siteConfig.title}
-						avatar={posterAvatarUrl}
-					/>
+				(siteConfig.sharePoster || (sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor)) && (
+					<div class:list={["mb-6 rounded-xl onload-animation", { "encrypted-hidden": isEncrypted }]}>
+						<div class="p-6 bg-[var(--license-block-bg)] rounded-xl">
+							<div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+								<div class="flex items-center gap-3 flex-1">
+									<div class="h-12 w-12 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white dark:text-black/70 shrink-0">
+										<Icon name={sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor ? "material-symbols:favorite" : "material-symbols:share"} class="text-2xl" />
+									</div>
+									<div>
+										<h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 mb-1">
+											{i18n(sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor ? I18nKey.sponsorButton : I18nKey.shareOnSocial)}
+										</h3>
+										<p class="text-sm text-neutral-600 dark:text-neutral-400">
+											{i18n(sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor ? I18nKey.sponsorButtonText : I18nKey.shareOnSocialDescription)}
+										</p>
+									</div>
+								</div>
+								<div class="flex items-center gap-3">
+									{
+										siteConfig.sharePoster && (
+											<SharePoster
+												client:load
+												title={entry.data.title}
+												author={profileConfig.name}
+												description={entry.data.description || entry.data.title}
+												pubDate={formatDateToYYYYMMDD(entry.data.published)}
+												coverImage={posterCoverUrl}
+												url={Astro.url.href}
+												siteTitle={siteConfig.title}
+												avatar={posterAvatarUrl}
+											/>
+										)
+									}
+									{
+										sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor && (
+											<a
+												href="/sponsor/"
+												class="inline-flex items-center gap-2 px-6 py-3 bg-[var(--primary)] text-white dark:text-black/70 rounded-lg font-medium hover:bg-[var(--primary)]/80 hover:scale-105 active:scale-95 transition-all whitespace-nowrap"
+											>
+												<span>{i18n(I18nKey.sponsor)}</span>
+												<Icon name="fa7-solid:arrow-right" class="text-sm" />
+											</a>
+										)
+									}
+								</div>
+							</div>
+						</div>
+					</div>
 				)
 			}
 

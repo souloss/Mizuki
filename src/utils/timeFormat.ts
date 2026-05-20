@@ -1,5 +1,5 @@
 /**
- * Format relative time for diary moments
+ * Format relative time for talking moments
  * @param dateString ISO date string
  * @param minutesAgo text for minutes
  * @param hoursAgo text for hours

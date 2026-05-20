@@ -8,6 +8,9 @@ export interface FriendItem {
 	desc: string;
 	siteurl: string;
 	tags: string[];
+	weight?: number; // 排序权重，数值越大越靠前，默认为0
+	enabled?: boolean; // 是否启用，默认为true
+	rss?: string; // RSS/Atom feed URL 用于朋友圈动态聚合
 }
 
 // 友情链接数据
@@ -19,6 +22,8 @@ export const friendsData: FriendItem[] = [
 		desc: "The web framework for content-driven websites",
 		siteurl: "https://github.com/withastro/astro",
 		tags: ["Framework"],
+		weight: 10,
+		enabled: true,
 	},
 	{
 		id: 2,
@@ -27,6 +32,8 @@ export const friendsData: FriendItem[] = [
 		desc: "Mizuki User Manual",
 		siteurl: "https://docs.mizuki.mysqil.com",
 		tags: ["Docs"],
+		weight: 20,
+		enabled: true,
 	},
 	{
 		id: 3,
@@ -35,6 +42,8 @@ export const friendsData: FriendItem[] = [
 		desc: "Develop. Preview. Ship.",
 		siteurl: "https://vercel.com",
 		tags: ["Hosting", "Cloud"],
+		weight: 5,
+		enabled: true,
 	},
 	{
 		id: 4,
@@ -43,6 +52,7 @@ export const friendsData: FriendItem[] = [
 		desc: "A utility-first CSS framework for rapidly building custom designs",
 		siteurl: "https://tailwindcss.com",
 		tags: ["CSS", "Framework"],
+		enabled: true,
 	},
 	{
 		id: 5,
@@ -51,6 +61,7 @@ export const friendsData: FriendItem[] = [
 		desc: "TypeScript is JavaScript with syntax for types",
 		siteurl: "https://www.typescriptlang.org",
 		tags: ["Language", "JavaScript"],
+		enabled: true,
 	},
 	{
 		id: 6,
@@ -59,6 +70,7 @@ export const friendsData: FriendItem[] = [
 		desc: "A JavaScript library for building user interfaces",
 		siteurl: "https://reactjs.org",
 		tags: ["Framework", "JavaScript"],
+		enabled: true,
 	},
 	{
 		id: 7,
@@ -67,6 +79,7 @@ export const friendsData: FriendItem[] = [
 		desc: "Where the world builds software",
 		siteurl: "https://github.com",
 		tags: ["Development", "Platform"],
+		enabled: true,
 	},
 	{
 		id: 8,
@@ -75,20 +88,39 @@ export const friendsData: FriendItem[] = [
 		desc: "The web's most comprehensive resource for web developers",
 		siteurl: "https://developer.mozilla.org",
 		tags: ["Docs", "Reference"],
+		enabled: true,
 	},
 ];
 
-// 获取所有友情链接数据
+// 获取所有友情链接数据（包含禁用的）
 export function getFriendsList(): FriendItem[] {
 	return friendsData;
 }
 
+// 获取已启用的友情链接数据
+export function getEnabledFriendsList(): FriendItem[] {
+	return friendsData.filter((f) => f.enabled !== false);
+}
+
+// 获取按权重排序的友情链接数据（权重降序）
+export function getWeightedFriendsList(): FriendItem[] {
+	return getEnabledFriendsList().sort((a, b) => (b.weight || 0) - (a.weight || 0));
+}
+
 // 获取随机排序的友情链接数据
 export function getShuffledFriendsList(): FriendItem[] {
-	const shuffled = [...friendsData];
+	const shuffled = [...getEnabledFriendsList()];
 	for (let i = shuffled.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));
 		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
 	}
 	return shuffled;
+}
+
+// 根据配置获取友情链接列表
+export function getFriendsListByConfig(randomize: boolean): FriendItem[] {
+	if (randomize) {
+		return getShuffledFriendsList();
+	}
+	return getWeightedFriendsList();
 }

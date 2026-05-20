@@ -147,6 +147,12 @@ export class BackToTopHandler {
 			return;
 		}
 
+		// Sticky navbar 模式下不隐藏导航栏
+		if (document.body.classList.contains("sticky-navbar")) {
+			this.navbar.classList.remove("navbar-hidden");
+			return;
+		}
+
 		const isHome =
 			document.body.classList.contains("lg:is-home") &&
 			window.innerWidth >= 1280;

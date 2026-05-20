@@ -50,8 +50,8 @@ const {
 	headings = [],
 	canonicalUrl,
 } = Astro.props;
-const hasBannerCredit = siteConfig.banner.credit.enable;
-const hasBannerLink = !!siteConfig.banner.credit.url;
+const hasBannerCredit = siteConfig.banner.credit?.enable ?? false;
+const hasBannerLink = !!siteConfig.banner.credit?.url;
 
 // 检查是否为首页
 const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
@@ -90,6 +90,9 @@ const transparentClass = getTransparencyClass(shouldEnable);
 
 // 布局模式
 const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
+
+// 导航栏固定配置
+const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 ---
 
 <Layout
@@ -121,12 +124,11 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 	<slot slot="head" name="head" />
 	<div
 		id="top-row"
-		class="z-50 pointer-events-none relative transition-all duration-700 max-w-(--page-width) px-0 md:px-4 mx-auto"
-		class:list={[""]}
+		class="z-50 pointer-events-none relative transition-all duration-700 max-w-(--page-width) mx-auto px-0 md:px-4"
 	>
 		<div
 			id="navbar-wrapper"
-			class="pointer-events-auto sticky top-0 transition-all"
+			class="pointer-events-auto transition-all sticky top-0"
 		>
 			<Navbar />
 		</div>
@@ -156,7 +158,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 				{
 					hasBannerCredit && (
 						<a
-							href={siteConfig.banner.credit.url}
+							href={siteConfig.banner.credit?.url}
 							id="banner-credit"
 							target="_blank"
 							rel="noopener"
@@ -175,7 +177,7 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 								name="material-symbols:copyright-outline-rounded"
 							/>
 							<div class="text-white/75 text-xs">
-								{siteConfig.banner.credit.text}
+								{siteConfig.banner.credit?.text}
 							</div>
 							<Icon
 								class:list={[
@@ -296,6 +298,53 @@ const defaultPostListLayout = siteConfig.postListLayout?.defaultMode || "list";
 			<div id="toc-container" class="hidden" />
 		)
 	}
+
+	<!-- Sticky Navbar 初始化脚本 -->
+	<script is:inline data-swup-ignore-script>
+		(function initStickyNavbar() {
+			// 检查是否有存储的设置
+			let stickyEnabled;
+			const stored = localStorage.getItem('stickyNavbar');
+			if (stored !== null) {
+				stickyEnabled = stored === 'true';
+			} else {
+				// 使用配置的默认值
+				stickyEnabled = {stickyNavbar};
+			}
+
+			// 应用设置到 data 属性
+			document.documentElement.setAttribute('data-sticky-navbar', String(stickyEnabled));
+
+			// 使用 body class 作为主要机制 - CSS !important 规则强制固定定位
+			if (stickyEnabled) {
+				document.body.classList.add('sticky-navbar');
+			} else {
+				document.body.classList.remove('sticky-navbar');
+			}
+
+			// 处理 navbar 阴影和 scrolled 状态
+			const navbar = document.getElementById('navbar');
+			const navbarWrapper = document.getElementById('navbar-wrapper');
+			if (stickyEnabled) {
+				if (navbar) {
+					navbar.classList.add('navbar-sticky-shadow');
+					navbar.classList.add('scrolled');
+					navbar.classList.remove('navbar-hidden');
+				}
+				if (navbarWrapper) {
+					navbarWrapper.classList.remove('navbar-hidden');
+				}
+			} else {
+				if (navbar) {
+					navbar.classList.remove('navbar-sticky-shadow');
+				}
+				// 重新初始化滚动检测
+				if (typeof window.initSemifullScrollDetection === 'function') {
+					window.initSemifullScrollDetection();
+				}
+			}
+		})();
+	</script>
 </Layout>
 
 <!--

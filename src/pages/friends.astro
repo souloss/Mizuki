@@ -1,195 +1,177 @@
 ---
 import Comment from "@components/comment/index.astro";
-import FriendCard from "@components/features/friends/FriendCard.astro";
 import FriendsCircle from "@components/features/friends/FriendsCircle.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getEntry, render } from "astro:content";
+import { Icon } from "astro-icon/components";
 
-import { siteConfig } from "../config";
-import { getShuffledFriendsList } from "../data/friends";
-import { getFriendsCircleList } from "../data/friends-circle";
-import I18nKey from "../i18n/i18nKey";
-import { i18n } from "../i18n/translation";
+import { commentConfig, friendsConfig,siteConfig } from "@/config";
+import { getFriendsListByConfig } from "@/data/friends";
+import { getFriendsCircleLastUpdated,getFriendsCircleList } from "@/data/friends-circle";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
 
 export const prerender = true;
 
 if (!siteConfig.featurePages.friends) {
-	return Astro.redirect("/404/");
+  return Astro.redirect("/404/");
 }
 
 const friendsPost = await getEntry("spec", "friends");
+const { Content } = friendsPost ? await render(friendsPost) : { Content: () => {} };
 
-if (!friendsPost) {
-	throw new Error("friends page content not found");
-}
+const isCommentEnabled = commentConfig?.enable && friendsConfig.showComment !== false;
+const title = friendsConfig.title || i18n(I18nKey.friendsTitle);
+const description = friendsConfig.description || i18n(I18nKey.friendsDescription);
+const randomize = friendsConfig.randomizeSort ?? true;
+const friendsList = getFriendsListByConfig(randomize);
+const friendsCircleList = friendsConfig.showFriendsCircle !== false ? getFriendsCircleList() : [];
+const friendsCircleLastUpdated = friendsConfig.showFriendsCircle !== false ? getFriendsCircleLastUpdated() : "";
 
-const { Content } = await render(friendsPost);
-const friendsList = getShuffledFriendsList();
-const allTags = Array.from(new Set(friendsList.flatMap((item) => item.tags)));
-const circleItems = getFriendsCircleList();
+// 收集所有标签
+const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
 ---
 
-<MainGridLayout
-	title={i18n(I18nKey.friends)}
-	description={i18n(I18nKey.friends)}
->
-	<script is:inline>
-		window.isFriendsPage = true;
-	</script>
-	<script>
-		import("../scripts/right-sidebar-layout.js");
-	</script>
+<MainGridLayout title={title} description={description}>
+  <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+    <div class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
+      <PageHeader title={title} subtitle={description} icon="material-symbols:group" />
 
-	<div
-		class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32"
-	>
-		<div class="card-base z-10 px-9 py-6 relative w-full">
-			<PageHeader
-				title={i18n(I18nKey.friends)}
-				subtitle={i18n(I18nKey.friendsSubtitle)}
-			/>
+      <!-- 自定义内容 -->
+      {friendsPost && friendsConfig.showCustomContent !== false && (
+        <>
+          <div class="mt-4 border-[var(--line-divider)] border-dashed border-b-[1px] mb-6" />
+          <Markdown class="mb-6"><Content /></Markdown>
+        </>
+      )}
+    </div>
+  </div>
 
-			<!-- 搜索和筛选栏 -->
-			<div class="mb-6 space-y-3">
-				<!-- 搜索框 -->
-				<div class="w-full">
-					<div class="relative">
-						<input
-							type="text"
-							id="friend-search"
-							placeholder={i18n(I18nKey.friendsSearchPlaceholder)}
-							class="w-full px-4 py-2 pl-10 rounded-lg bg-[var(--btn-regular-bg)]
-									text-black/90 dark:text-white/90
-									border border-black/10 dark:border-white/10
-									focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/50
-									transition-all duration-200"
-						/>
-						<svg
-							class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black/40 dark:text-white/40"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-							></path>
-						</svg>
-					</div>
-				</div>
+  <!-- 友链卡片网格 -->
+  <div class="mt-4 flex w-full rounded-[var(--radius-large)] overflow-hidden relative">
+    <div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
+      <!-- 标签筛选 -->
+      {allTags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mb-6">
+          <button
+            class="friend-tag active px-3 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20 hover:bg-[var(--primary)]/20 transition-colors cursor-pointer"
+            data-tag="all"
+          >
+            {i18n(I18nKey.tagAll) || "全部"}
+          </button>
+          {allTags.map((tag) => (
+            <button
+              class="friend-tag px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] hover:border-[var(--primary)]/20 transition-colors cursor-pointer"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      )}
 
-				<!-- 标签筛选 -->
-				<div class="filter-container flex flex-wrap gap-2">
-					<button class="filter-tag active" data-tag="all">
-						{i18n(I18nKey.friendsFilterAll)}
-					</button>
-					{
-						allTags.map((tag) => (
-							<button class="filter-tag" data-tag={tag}>
-								{tag}
-							</button>
-						))
-					}
-				</div>
-			</div>
+      <!-- 友链列表 -->
+      <div class="friends-grid">
+        {friendsList.map((friend) => (
+          <a
+            href={friend.siteurl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="friend-card group flex items-center gap-3 p-3 rounded-xl border border-[var(--line-divider)] hover:border-[var(--primary)] transition-all duration-200 hover:shadow-md"
+            data-tags={friend.tags?.join(",") || ""}
+          >
+            {/* 头像 */}
+            <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-neutral-100 dark:bg-neutral-800">
+              <img
+                src={friend.imgurl}
+                alt={friend.title}
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                loading="lazy"
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2240%22 fill=%22%23999%22>?</text></svg>'"
+              />
+            </div>
 
-			<!-- 友链卡片网格 -->
-			<div
-				id="friends-grid"
-				class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6"
-			>
-				{friendsList.map((item) => <FriendCard friend={item} />)}
-			</div>
+            {/* 信息 */}
+            <div class="flex-1 min-w-0">
+              <div class="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate group-hover:text-[var(--primary)] transition-colors">
+                {friend.title}
+              </div>
+              <div class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 line-clamp-2">
+                {friend.desc}
+              </div>
+            </div>
 
-			<!-- 无结果提示 -->
-			<div id="no-results" class="hidden text-center py-12">
-				<svg
-					class="w-16 h-16 mx-auto mb-4 text-black/20 dark:text-white/20"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-					></path>
-				</svg>
-				<p class="text-black/50 dark:text-white/50 text-lg">
-					{i18n(I18nKey.friendsNoResults)}
-				</p>
-			</div>
+            {/* 箭头 */}
+            <div class="shrink-0 text-neutral-400 dark:text-neutral-600 group-hover:text-[var(--primary)] transition-colors">
+              <Icon name="material-symbols:arrow-outward" class="text-base" />
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
 
-			<!-- 说明文档 -->
-			<Markdown class="mt-8 prose dark:prose-invert max-w-none">
-				<Content />
-			</Markdown>
+  <!-- 朋友圈 -->
+  {friendsCircleList.length > 0 && (
+    <div class="mt-4 flex w-full rounded-[var(--radius-large)] overflow-hidden relative">
+      <div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
+        <FriendsCircle items={friendsCircleList} lastUpdated={friendsCircleLastUpdated} />
+      </div>
+    </div>
+  )}
 
-			<!-- 朋友圈 -->
-			<FriendsCircle items={circleItems} />
-
-			<!-- 隐藏元素用于传递 i18n 文本到全局脚本 -->
-			<div id="friends-copy-success-text" style="display: none;">
-				{i18n(I18nKey.friendsCopySuccess)}
-			</div>
-		</div>
-	</div>
-
-	<!-- 引用全局脚本 -->
-	<script is:inline src="/js/friends-page-handler.js"></script>
-
-	<div class="mt-4">
-		<Comment path="/friends/" />
-	</div>
+  <!-- 评论区 -->
+  {isCommentEnabled && (
+    <div class="mt-4">
+      <Comment path="/friends/" />
+    </div>
+  )}
 </MainGridLayout>
 
-<style>
-	/* 搜索框焦点效果 */
-	#friend-search:focus {
-		box-shadow: 0 0 0 3px var(--primary) / 0.1;
-	}
+<style is:global>
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.75rem;
+  }
 
-	/* 标签筛选按钮样式 */
-	.filter-container {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.filter-tag {
-		padding: 0.5rem 1rem;
-		border: 1px solid var(--line-divider);
-		border-radius: var(--radius-large);
-		background: var(--btn-regular-bg);
-		color: var(--btn-content);
-		font-size: 0.875rem;
-		font-weight: 500;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		white-space: nowrap;
-	}
-
-	.filter-tag:hover:not(.active) {
-		background: var(--btn-hover-bg);
-		border-color: var(--primary);
-		transform: translateY(-1px);
-	}
-
-	.filter-tag.active {
-		background: var(--primary);
-		color: white;
-		border-color: var(--primary);
-	}
-
-	.filter-tag.active:hover {
-		background: var(--primary) !important;
-		color: white !important;
-		border-color: var(--primary) !important;
-		transform: translateY(-1px);
-	}
+  .friend-tag.active {
+    background-color: oklch(from var(--primary) l c h / 0.15);
+    color: var(--primary);
+    border-color: oklch(from var(--primary) l c h / 0.3);
+  }
 </style>
+
+<script>
+  // @ts-nocheck
+  // 标签筛选功能
+  const tags = document.querySelectorAll(".friend-tag");
+  const cards = document.querySelectorAll(".friend-card");
+
+  tags.forEach((tag) => {
+    tag.addEventListener("click", () => {
+      // 更新激活状态
+      tags.forEach((t) => {
+        t.classList.remove("active");
+        t.classList.remove("bg-[var(--primary)]/10", "text-[var(--primary)]", "border-[var(--primary)]/20");
+        t.classList.add("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400", "border-neutral-200", "dark:border-neutral-700");
+      });
+      tag.classList.add("active");
+      tag.classList.remove("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400", "border-neutral-200", "dark:border-neutral-700");
+
+      const selectedTag = /** @type {any} */ (tag).dataset.tag;
+
+      cards.forEach((card) => {
+        const htmlCard = /** @type {any} */ (card);
+        const cardTags = htmlCard.dataset.tags || "";
+        if (selectedTag === "all" || cardTags.split(",").includes(selectedTag)) {
+          htmlCard.style.display = "";
+        } else {
+          htmlCard.style.display = "none";
+        }
+      });
+    });
+  });
+</script>

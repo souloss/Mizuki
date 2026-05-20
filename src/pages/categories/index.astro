@@ -403,32 +403,35 @@ function getCatHue(name: string): number {
 </style>
 
 <script>
-	const searchInput = document.getElementById("category-search") as HTMLInputElement;
+	// @ts-nocheck
+	const searchInput = document.getElementById("category-search");
 	const categoryTree = document.getElementById("category-tree");
 	const noResults = document.getElementById("category-no-results");
 	const categoryGroups = document.querySelectorAll(".category-group");
 
 	if (searchInput && categoryTree && noResults) {
 		searchInput.addEventListener("input", () => {
-			const query = searchInput.value.trim().toLowerCase();
+			const query = /** @type {any} */ (searchInput).value.trim().toLowerCase();
 			let visibleCount = 0;
 
 			categoryGroups.forEach((group) => {
-				const groupName = (group as HTMLElement).dataset.name || "";
+				const htmlGroup = /** @type {any} */ (group);
+				const groupName = htmlGroup.dataset.name || "";
 				const childItems = group.querySelectorAll(".category-item");
-				let groupMatch = groupName.includes(query);
+				const groupMatch = groupName.includes(query);
 				let visibleChildren = 0;
 
 				childItems.forEach((item) => {
-					const childName = (item as HTMLElement).dataset.name || "";
+					const htmlItem = /** @type {any} */ (item);
+					const childName = htmlItem.dataset.name || "";
 					const match = !query || childName.includes(query);
-					(item as HTMLElement).style.display = match ? "" : "none";
-					if (match) visibleChildren++;
+					htmlItem.style.display = match ? "" : "none";
+					if (match) {visibleChildren++;}
 				});
 
 				const groupVisible = !query || groupMatch || visibleChildren > 0;
-				(group as HTMLElement).style.display = groupVisible ? "" : "none";
-				if (groupVisible) visibleCount++;
+				htmlGroup.style.display = groupVisible ? "" : "none";
+				if (groupVisible) {visibleCount++;}
 			});
 
 			categoryTree.style.display = visibleCount > 0 ? "" : "none";

@@ -13,8 +13,11 @@ export const zh_CN: Translation = {
 	[Key.navMy]: "我的",
 	[Key.navAbout]: "关于",
 	[Key.navOthers]: "其他",
+	[Key.navContent]: "内容",
+	[Key.navInteraction]: "互动",
 
 	[Key.tags]: "标签",
+	[Key.tagAll]: "全部",
 	[Key.categories]: "分类",
 	[Key.recentPosts]: "最新文章",
 	[Key.postList]: "文章列表",
@@ -27,6 +30,8 @@ export const zh_CN: Translation = {
 
 	[Key.comments]: "评论",
 	[Key.friends]: "友链",
+	[Key.friendsTitle]: "友链",
+	[Key.friendsDescription]: "发现更多优质网站",
 	[Key.friendsSubtitle]: "发现更多优质网站",
 	[Key.friendsSearchPlaceholder]: "搜索友链名称或描述...",
 	[Key.friendsFilterAll]: "全部",
@@ -58,7 +63,7 @@ export const zh_CN: Translation = {
 	[Key.publishedAt]: "发布于",
 	[Key.license]: "许可协议",
 	[Key.anime]: "追番",
-	[Key.diary]: "日记",
+	[Key.talking]: "动态",
 
 	// 番剧页面
 	[Key.animeTitle]: "我的追番记录",
@@ -81,14 +86,14 @@ export const zh_CN: Translation = {
 		"请在 src/config.ts 文件中设置您的 Bangumi userId",
 
 	// 短文页面
-	[Key.diarySubtitle]: "随时随地，分享生活",
-	[Key.diaryNoResults]: "没有匹配的日记",
-	[Key.diaryCount]: "条日记",
+	[Key.talkingSubtitle]: "随时随地，分享生活",
+	[Key.talkingNoResults]: "没有匹配的动态",
+	[Key.talkingCount]: "条动态",
 
-	[Key.diaryTips]: "只展示最近30条日记",
-	[Key.diaryMinutesAgo]: "分钟前",
-	[Key.diaryHoursAgo]: "小时前",
-	[Key.diaryDaysAgo]: "天前",
+	[Key.talkingTips]: "只展示最近30条动态",
+	[Key.talkingMinutesAgo]: "分钟前",
+	[Key.talkingHoursAgo]: "小时前",
+	[Key.talkingDaysAgo]: "天前",
 
 	// 404页面
 	[Key.notFound]: "404",
@@ -331,6 +336,10 @@ export const zh_CN: Translation = {
 	[Key.shareOnSocial]: "分享",
 	[Key.shareOnSocialDescription]:
 		"如果这篇文章对你有帮助，欢迎分享给更多人！",
+	[Key.shareCopy]: "复制链接",
+	[Key.shareOnX]: "X",
+	[Key.shareOnTelegram]: "Telegram",
+	[Key.shareOnWeibo]: "微博",
 
 	// 个人资料
 	[Key.profileStatsLoading]: "统计加载中...",
@@ -398,13 +407,6 @@ export const zh_CN: Translation = {
 	[Key.friendsCircleLoading]: "加载中...",
 	[Key.friendsCircleError]: "获取数据失败",
 
-	// 说说/动态
-	[Key.talking]: "说说",
-	[Key.talkingSubtitle]: "随时随地，分享生活",
-	[Key.talkingEmpty]: "暂无说说",
-	[Key.talkingTags]: "标签",
-	[Key.talkingFilterAll]: "全部",
-
 	// 相关文章与随机文章
 	[Key.relatedPosts]: "相关文章",
 	[Key.randomPosts]: "随机文章",
@@ -439,4 +441,114 @@ export const zh_CN: Translation = {
 	[Key.docsLastUpdated]: "最后更新于",
 	[Key.docsWordCount]: "字",
 	[Key.docsReadingTime]: "阅读时间",
+
+	// ========================================
+	// 新增：从 Firefly 迁移的功能翻译
+	// ========================================
+
+	// 设置面板
+	[Key.settings]: "设置",
+	[Key.settingsTitle]: "显示设置",
+	[Key.settingsTheme]: "主题",
+	[Key.settingsWallpaper]: "壁纸",
+	[Key.settingsEffects]: "特效",
+	[Key.settingsPostLayout]: "文章布局",
+	[Key.settingsFont]: "字体",
+	[Key.themeHue]: "主题色相",
+	[Key.themeMode]: "主题模式",
+	[Key.wallpaperMode]: "壁纸模式",
+	[Key.wallpaperOverlay]: "叠加模式",
+	[Key.wallpaperSettings]: "壁纸设置",
+	[Key.wallpaperWaves]: "水波纹效果",
+	[Key.wallpaperGradient]: "渐变遮罩",
+	[Key.wallpaperCarousel]: "轮播效果",
+	[Key.wallpaperBannerTitle]: "横幅标题",
+	[Key.wallpaperPosition]: "壁纸位置",
+	[Key.effectsSakura]: "樱花特效",
+	[Key.postListLayoutList]: "列表模式",
+	[Key.postListLayoutGrid]: "网格模式",
+	[Key.fontSelector]: "字体选择",
+	[Key.fontSystem]: "系统默认",
+	[Key.fontLiterata]: "Literata",
+	[Key.fontLxgw]: "霞鹜文楷",
+	[Key.font2D]: "二次元",
+	[Key.stickyNavbar]: "固定导航栏",
+
+	// Wallpaper mode buttons
+	[Key.wallpaperBannerMode]: "横幅模式",
+	[Key.wallpaperFullscreenMode]: "全屏模式",
+	[Key.wallpaperOverlayMode]: "叠加模式",
+	[Key.wallpaperNoneMode]: "无壁纸",
+
+	// Overlay settings
+	[Key.overlayOpacity]: "透明度",
+	[Key.overlayBlur]: "模糊度",
+	[Key.overlayCardOpacity]: "卡片透明度",
+	[Key.overlaySettings]: "叠加设置",
+
+	// Wallpaper effects
+	[Key.wavesAnimation]: "水波纹动画",
+	[Key.gradientTransition]: "渐变过渡",
+	[Key.wallpaperTitle]: "壁纸标题",
+
+	// Effects settings
+	[Key.effectsSettings]: "特效设置",
+	[Key.sakuraEffect]: "樱花特效",
+
+	// Post list layout
+	[Key.postListLayout]: "文章列表布局",
+
+	// 赞助页面
+	[Key.sponsor]: "赞助",
+	[Key.sponsorTitle]: "支持与赞助",
+	[Key.sponsorDescription]: "如果这个项目对你有帮助，欢迎支持我继续创作",
+	[Key.sponsorMessage]: "你的支持是我创作的最大动力！",
+	[Key.sponsorSupportAndShare]: "支持与分享",
+	[Key.sponsorSupport]: "支持作者",
+	[Key.sponsorAlipay]: "支付宝",
+	[Key.sponsorWechat]: "微信支付",
+	[Key.sponsorQRCode]: "二维码",
+	[Key.sponsorScanToPay]: "扫码支付",
+	[Key.sponsorGoTo]: "前往支持",
+	[Key.sponsorEmpty]: "暂无赞助记录",
+	[Key.sponsorList]: "赞助列表",
+	[Key.sponsorThanks]: "感谢以下支持者的厚爱！",
+	[Key.sponsorAmount]: "金额",
+	[Key.sponsorDate]: "日期",
+	[Key.sponsorNoSponsors]: "暂无赞助记录",
+	[Key.sponsorApplyInfo]: "成为赞助商",
+	[Key.sponsorButton]: "支持与分享",
+	[Key.sponsorButtonText]: "如果这篇文章对你有帮助，欢迎支持作者或分享给更多人",
+
+	// 留言板
+	[Key.guestbook]: "留言板",
+	[Key.guestbookTitle]: "留言板",
+	[Key.guestbookSubtitle]: "欢迎在这里留下你的想法和反馈",
+	[Key.guestbookMessage]: "在这里留言...",
+	[Key.guestbookLeaveMessage]: "发表留言",
+	[Key.guestbookYourName]: "你的昵称",
+	[Key.guestbookYourEmail]: "你的邮箱（不会公开）",
+	[Key.guestbookYourMessage]: "留言内容",
+	[Key.guestbookSubmit]: "提交",
+	[Key.guestbookSubmitting]: "提交中...",
+	[Key.guestbookSubmitSuccess]: "留言提交成功！",
+	[Key.guestbookSubmitError]: "留言提交失败，请重试",
+	[Key.guestbookMessages]: "全部留言",
+	[Key.guestbookNoMessages]: "暂无留言，来说点什么吧~",
+	[Key.guestbookReplied]: "已回复",
+	[Key.guestbookReply]: "回复",
+	[Key.guestbookCommentHint]: "留下你的留言...",
+	[Key.commentNotConfigured]: "评论系统暂未配置",
+	[Key.commentNotConfiguredHint]: "您还未在配置文件中启用评论系统，启用后访客才可在此留言",
+
+	// 支持与分享（文章底部）
+	[Key.supportAndShare]: "支持与分享",
+	[Key.supportAuthor]: "支持作者",
+
+	// 导航
+	[Key.navGuestbook]: "留言",
+	[Key.navSponsor]: "赞助",
+	[Key.navGitHub]: "GitHub",
+	[Key.navBilibili]: "哔哩哔哩",
+	[Key.navGitee]: "Gitee",
 };

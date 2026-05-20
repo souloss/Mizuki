@@ -7,9 +7,10 @@ import { i18n } from "@/i18n/translation";
 
 interface Props {
 	items: FriendsCircleItem[];
+	lastUpdated?: string;
 }
 
-const { items } = Astro.props;
+const { items, lastUpdated } = Astro.props;
 
 function formatRelativeTime(dateStr: string): string {
 	const date = new Date(dateStr);
@@ -30,6 +31,16 @@ function formatRelativeTime(dateStr: string): string {
 	}
 	return i18n(I18nKey.friendsCircleAgo);
 }
+
+function formatLastUpdate(dateStr: string): string {
+	if (!dateStr) {return "";}
+	try {
+		const date = new Date(dateStr);
+		return date.toLocaleString();
+	} catch {
+		return "";
+	}
+}
 ---
 
 <div class="friends-circle-section mt-8">
@@ -40,6 +51,12 @@ function formatRelativeTime(dateStr: string): string {
 		subtitle={i18n(I18nKey.friendsCircleSubtitle)}
 		icon="material-symbols:group-work"
 	/>
+
+	{lastUpdated && (
+		<div class="text-xs text-black/40 dark:text-white/40 mt-2">
+			{formatLastUpdate(lastUpdated)}
+		</div>
+	)}
 
 	{items.length === 0 ? (
 		<div class="text-center py-12">
@@ -54,24 +71,45 @@ function formatRelativeTime(dateStr: string): string {
 					<a
 						href={item.link}
 						target="_blank"
-					 rel="noopener noreferrer"
+						rel="noopener noreferrer"
 						class="block group"
 					>
 						<div class="flex items-center gap-3 mb-2">
-							<div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center">
-								<img
-									src={`https://icon.bqb.cool/?url=${new URL(item.link).hostname}`}
-									alt={item.author}
-									class="w-6 h-6 rounded-full"
-									loading="lazy"
-									onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs font-bold text-[var(--primary)]\'>${item.author.charAt(0)}</span>'"
-								/>
+							<div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center overflow-hidden">
+								{item.avatar ? (
+									<img
+										src={item.avatar}
+										alt={item.author}
+										class="w-8 h-8 object-cover"
+										loading="lazy"
+										onerror="this.style.display='none'"
+									/>
+								) : (
+									<img
+										src={`https://icon.bqb.cool/?url=${item.siteUrl ? new URL(item.siteUrl).hostname : (item.link ? new URL(item.link).hostname : "")}`}
+										alt={item.author}
+										class="w-6 h-6 rounded-full"
+										loading="lazy"
+										onerror={`this.style.display='none'; this.parentElement.innerHTML='<span class="text-xs font-bold text-[var(--primary)]">${item.author.charAt(0)}</span>'`}
+									/>
+								)}
 							</div>
 							<div class="flex-1 min-w-0">
 								<div class="flex items-center gap-2">
-									<span class="text-sm font-medium text-black/80 dark:text-white/80 truncate">
-										{item.author}
-									</span>
+									{item.siteUrl ? (
+										<a
+											href={item.siteUrl}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-sm font-medium text-black/80 dark:text-white/80 truncate hover:text-[var(--primary)] transition-colors"
+										>
+											{item.author}
+										</a>
+									) : (
+										<span class="text-sm font-medium text-black/80 dark:text-white/80 truncate">
+											{item.author}
+										</span>
+									)}
 									<span class="text-xs text-black/40 dark:text-white/40">
 										{formatRelativeTime(item.date)}
 									</span>

@@ -6,9 +6,9 @@ import "../styles/markdown.css";
 import "../styles/markdown-extend.styl";
 import "../styles/docs-layout.css";
 
-import { PageProgressBar } from "@components/control/PageProgressBar";
 import BackToHome from "@components/control/BackToHome.astro";
 import BackToTop from "@components/control/BackToTop.astro";
+import { PageProgressBar } from "@components/control/PageProgressBar";
 import DocLangSwitcher from "@components/features/docs/DocLangSwitcher.astro";
 import DocSearch from "@components/features/docs/DocSearch.svelte";
 import { SidebarTOC } from "@components/features/toc";
@@ -389,9 +389,10 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 </script>
 
 <script>
+	// @ts-nocheck
 	// Reinitialize TOC after Swup page transitions within docs
 	function refreshDocsTOC() {
-		const tocEl = document.querySelector("table-of-contents") as (HTMLElement & { regenerateTOC?: () => void }) | null;
+		const tocEl = /** @type {HTMLElement & { regenerateTOC?: () => void }} */ (document.querySelector("table-of-contents"));
 		if (tocEl && typeof tocEl.regenerateTOC === "function") {
 			tocEl.regenerateTOC();
 		}
