@@ -18,7 +18,7 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-import { siteConfig, plantumlConfig } from "./src/config.ts";
+import { siteConfig, plantumlConfig, markmapConfig } from "./src/config.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
@@ -35,8 +35,10 @@ import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admo
 import { remarkMark } from "./src/plugins/remark-mark.js";
 import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
 import { remarkPlantuml } from "./src/plugins/remark-plantuml.js";
+import { remarkMarkmap } from "./src/plugins/remark-markmap.js";
 import { remarkRelativeLinks } from "./src/plugins/remark-relative-links.mjs";
 import { remarkPlumeCompat } from "./src/plugins/remark-plume-compat.js";
+import { rehypeMarkmap } from "./src/plugins/rehype-markmap.mjs";
 
 // https://astro.build/config
 export default defineConfig({
@@ -142,6 +144,7 @@ export default defineConfig({
 			parseDirectiveNode,
 			remarkMermaid,
 			[remarkPlantuml, plantumlConfig],
+			[remarkMarkmap, markmapConfig],
 			remarkRelativeLinks,
 		],
 		rehypePlugins: [
@@ -157,6 +160,7 @@ export default defineConfig({
 			rehypeWrapTable,
 			rehypeMermaid,
 			rehypePlantuml,
+			rehypeMarkmap,
 			[
 				rehypeComponents,
 				{

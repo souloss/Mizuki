@@ -68,55 +68,55 @@ function formatLastUpdate(dateStr: string): string {
 		<div class="circle-list space-y-4 mt-6">
 			{items.map((item) => (
 				<article class="circle-item card-base p-4 transition-all duration-300 hover:shadow-md">
+					<div class="flex items-center gap-3 mb-2">
+						<div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center overflow-hidden">
+							{item.avatar ? (
+								<img
+									src={item.avatar}
+									alt={item.author}
+									class="w-8 h-8 object-cover"
+									loading="lazy"
+									onerror="this.style.display='none'"
+								/>
+							) : (
+								<img
+									src={`https://icon.bqb.cool/?url=${item.siteUrl ? new URL(item.siteUrl).hostname : (item.link ? new URL(item.link).hostname : "")}`}
+									alt={item.author}
+									class="w-6 h-6 rounded-full"
+									loading="lazy"
+									onerror={`this.style.display='none'; this.parentElement.innerHTML='<span class="text-xs font-bold text-[var(--primary)]">${item.author.charAt(0)}</span>'`}
+								/>
+							)}
+						</div>
+						<div class="flex-1 min-w-0">
+							<div class="flex items-center gap-2">
+								{item.siteUrl ? (
+									<a
+										href={item.siteUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-sm font-medium text-black/80 dark:text-white/80 truncate hover:text-[var(--primary)] transition-colors"
+									>
+										{item.author}
+									</a>
+								) : (
+									<span class="text-sm font-medium text-black/80 dark:text-white/80 truncate">
+										{item.author}
+									</span>
+								)}
+								<span class="text-xs text-black/40 dark:text-white/40">
+									{formatRelativeTime(item.date)}
+								</span>
+							</div>
+						</div>
+					</div>
+
 					<a
 						href={item.link}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="block group"
 					>
-						<div class="flex items-center gap-3 mb-2">
-							<div class="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--primary)]/10 flex items-center justify-center overflow-hidden">
-								{item.avatar ? (
-									<img
-										src={item.avatar}
-										alt={item.author}
-										class="w-8 h-8 object-cover"
-										loading="lazy"
-										onerror="this.style.display='none'"
-									/>
-								) : (
-									<img
-										src={`https://icon.bqb.cool/?url=${item.siteUrl ? new URL(item.siteUrl).hostname : (item.link ? new URL(item.link).hostname : "")}`}
-										alt={item.author}
-										class="w-6 h-6 rounded-full"
-										loading="lazy"
-										onerror={`this.style.display='none'; this.parentElement.innerHTML='<span class="text-xs font-bold text-[var(--primary)]">${item.author.charAt(0)}</span>'`}
-									/>
-								)}
-							</div>
-							<div class="flex-1 min-w-0">
-								<div class="flex items-center gap-2">
-									{item.siteUrl ? (
-										<a
-											href={item.siteUrl}
-											target="_blank"
-											rel="noopener noreferrer"
-											class="text-sm font-medium text-black/80 dark:text-white/80 truncate hover:text-[var(--primary)] transition-colors"
-										>
-											{item.author}
-										</a>
-									) : (
-										<span class="text-sm font-medium text-black/80 dark:text-white/80 truncate">
-											{item.author}
-										</span>
-									)}
-									<span class="text-xs text-black/40 dark:text-white/40">
-										{formatRelativeTime(item.date)}
-									</span>
-								</div>
-							</div>
-						</div>
-
 						<h3 class="text-base font-bold text-black/90 dark:text-white/90 mb-2 group-hover:text-[var(--primary)] transition-colors duration-200 line-clamp-1">
 							{item.title}
 						</h3>

@@ -21,13 +21,17 @@ copyright:
 - 限制总显示条数
 - 自动去重 HTML 标签
 - 请求延迟避免被封
+- 使用 axios 替代 fetch，支持禁用代理
+- 自动清除代理环境变量，避免代理缓存导致 304
+- CDN 缓存绕过：首次请求失败后自动加随机参数重试
+- 全部抓取失败时保留已有数据不覆盖
 
 ### 安装依赖
 
-脚本依赖 `fast-xml-parser`，确保已安装：
+脚本依赖 `fast-xml-parser` 和 `axios`，确保已安装：
 
 ```bash
-pnpm add fast-xml-parser
+pnpm add fast-xml-parser axios
 ```
 
 ### 使用方法
@@ -120,9 +124,11 @@ export const friendsData: FriendItem[] = [
 ### 错误处理
 
 - 单个友链抓取失败不会影响其他友链
-- 超时时间设置为 10 秒
+- 超时时间设置为 15 秒
 - 请求间隔 500ms 避免频繁请求
 - 详细的控制台日志输出
+- 首次请求无内容时自动加随机参数重试（绕过 CDN 缓存）
+- 全部抓取失败时保留已有数据，不会用空数据覆盖
 
 ### 支持的 Feed 格式
 
@@ -138,3 +144,12 @@ export const friendsData: FriendItem[] = [
 - 内容摘要（去除 HTML 标签）
 - 头像（使用友链头像）
 - 网站地址
+
+### 代理与缓存处理
+
+脚本内置了代理和 CDN 缓存处理机制：
+
+1. **代理环境变量清除**：脚本启动时自动清除 `http_proxy`、`https_proxy` 等环境变量，避免代理缓存导致返回 304 空内容
+2. **axios 禁用代理**：使用 `httpAgent` 和 `httpsAgent` 创建无代理的 HTTP 客户端，并设置 `proxy: false`
+3. **CDN 缓存绕过**：首次请求返回空内容时，自动添加 `?_=timestamp` 随机参数重试
+4. **数据保护**：如果本次所有 RSS 抓取均失败，保留 `friends-circle.json` 中已有数据不覆盖

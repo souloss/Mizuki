@@ -510,6 +510,25 @@ export interface PlantUMLConfig {
 	darkTheme: string;
 }
 
+/**
+ * Markmap 思维导图渲染配置
+ *
+ * 控制 markdown 文章中 ` ```markmap ` 代码块到 Markmap 交互式 SVG 的
+ * 构建时处理与客户端渲染行为。
+ */
+export interface MarkmapConfig {
+	/** 是否启用 Markmap 渲染能力；关闭时 markmap 代码块退化为普通代码高亮 */
+	enable: boolean;
+	/** 是否启用自动折叠功能 */
+	autoCollapse?: boolean;
+	/** 初始折叠级别，0 表示全部展开 */
+	initialCollapseLevel?: number;
+	/** 是否启用缩放功能 */
+	zoomable?: boolean;
+	/** 是否启用拖拽平移功能 */
+	pannable?: boolean;
+}
+
 export interface AnnouncementConfig {
 	// enable属性已移除，现在通过sidebarLayoutConfig统一控制
 	title?: string; // 公告栏标题

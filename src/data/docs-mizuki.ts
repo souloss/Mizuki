@@ -697,6 +697,15 @@ export const docsMizukiSidebar = [
 						}
 					},
 					{
+						"text": "Markmap",
+						"link": "Markmap/",
+						"icon": "ri:mind-map",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
+					},
+					{
 						"text": "相对链接",
 						"link": "Markdown/relative-links/",
 						"icon": "ri:link",

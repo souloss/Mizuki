@@ -6,9 +6,9 @@ import Markdown from "@components/misc/Markdown.astro";
 import { getEntry, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
-import { commentConfig, friendsConfig,siteConfig } from "@/config";
+import { commentConfig, friendsConfig, profileConfig, siteConfig } from "@/config";
 import { getFriendsListByConfig } from "@/data/friends";
-import { getFriendsCircleLastUpdated,getFriendsCircleList } from "@/data/friends-circle";
+import { getFriendsCircleLastUpdated, getFriendsCircleList } from "@/data/friends-circle";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
@@ -32,38 +32,51 @@ const friendsCircleLastUpdated = friendsConfig.showFriendsCircle !== false ? get
 
 // 收集所有标签
 const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
+
+// 本站信息
+const mySiteInfo = {
+  name: siteConfig.title || "Mizuki Blog",
+  url: siteConfig.siteURL || "https://mizuki.mysqil.com/",
+  avatar: (profileConfig.avatar || "/favicon.png").startsWith("/") ? (profileConfig.avatar || "/favicon.png") : `/${profileConfig.avatar || "favicon.png"}`,
+  desc: profileConfig.bio || "一个使用 Mizuki 主题的 Astro 博客",
+};
+
+// 注意事项
+const notes = [
+  { title: "互换原则", content: "请先将本站添加到您的友链页面，确认后会添加您的友链" },
+  { title: "链接维护", content: "友链网站长期无法访问或内容违规，将会被移除" },
+  { title: "内容要求", content: "内容积极向上，不含有任何违法违规内容" },
+  { title: "站点要求", content: "支持 HTTPS，以原创内容为主，能够正常访问且有持续更新" },
+  { title: "RSS 订阅", content: "提供 RSS 地址可让你的最新文章出现在朋友圈中" },
+];
+
+// 站点信息字段（可复制）
+const siteInfoFields = [
+  { label: "站点名称", value: mySiteInfo.name },
+  { label: "站点描述", value: mySiteInfo.desc },
+  { label: "站点链接", value: mySiteInfo.url },
+  { label: "头像链接", value: mySiteInfo.avatar },
+];
 ---
 
 <MainGridLayout title={title} description={description}>
+  <!-- 1. 友链卡片（全宽） -->
   <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
-    <div class="card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full">
-      <PageHeader title={title} subtitle={description} icon="material-symbols:group" />
-
-      <!-- 自定义内容 -->
-      {friendsPost && friendsConfig.showCustomContent !== false && (
-        <>
-          <div class="mt-4 border-[var(--line-divider)] border-dashed border-b-[1px] mb-6" />
-          <Markdown class="mb-6"><Content /></Markdown>
-        </>
-      )}
-    </div>
-  </div>
-
-  <!-- 友链卡片网格 -->
-  <div class="mt-4 flex w-full rounded-[var(--radius-large)] overflow-hidden relative">
     <div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
+      <PageHeader title="友情链接" subtitle="这里是我的朋友们，欢迎互相访问交流" icon="material-symbols:group" />
+
       <!-- 标签筛选 -->
       {allTags.length > 0 && (
         <div class="flex flex-wrap gap-2 mb-6">
           <button
-            class="friend-tag active px-3 py-1 rounded-full text-xs font-medium bg-[var(--primary)]/10 text-[var(--primary)] border border-[var(--primary)]/20 hover:bg-[var(--primary)]/20 transition-colors cursor-pointer"
+            class="friend-tag active px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white hover:bg-[var(--primary)] transition-colors duration-200 text-sm font-medium cursor-pointer"
             data-tag="all"
           >
             {i18n(I18nKey.tagAll) || "全部"}
           </button>
           {allTags.map((tag) => (
             <button
-              class="friend-tag px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700 hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] hover:border-[var(--primary)]/20 transition-colors cursor-pointer"
+              class="friend-tag px-3 py-1.5 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors duration-200 text-sm font-medium cursor-pointer"
               data-tag={tag}
             >
               {tag}
@@ -79,33 +92,48 @@ const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
             href={friend.siteurl}
             target="_blank"
             rel="noopener noreferrer"
-            class="friend-card group flex items-center gap-3 p-3 rounded-xl border border-[var(--line-divider)] hover:border-[var(--primary)] transition-all duration-200 hover:shadow-md"
+            class="friend-card group flex items-center gap-3 p-2.5 rounded-xl border border-[var(--line-divider)] hover:border-[var(--primary)] transition-all duration-300 hover:shadow-lg relative overflow-hidden"
             data-tags={friend.tags?.join(",") || ""}
           >
+            {/* 背景装饰 */}
+            <div class="absolute inset-0 bg-[var(--primary)] opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none" />
+
             {/* 头像 */}
-            <div class="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-neutral-100 dark:bg-neutral-800">
+            <div class="relative w-16 h-16 shrink-0 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-black/5 dark:border-white/5 group-hover:scale-105 transition-transform duration-300">
               <img
                 src={friend.imgurl}
                 alt={friend.title}
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                class="w-full h-full object-cover"
                 loading="lazy"
-                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/><text x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22central%22 text-anchor=%22middle%22 font-size=%2240%22 fill=%22%23999%22>?</text></svg>'"
               />
             </div>
 
-            {/* 信息 */}
-            <div class="flex-1 min-w-0">
-              <div class="font-semibold text-sm text-neutral-900 dark:text-neutral-100 truncate group-hover:text-[var(--primary)] transition-colors">
-                {friend.title}
+            {/* 内容 */}
+            <div class="grow min-w-0 flex flex-col justify-center gap-0.5">
+              <div class="flex items-center justify-between">
+                <div class="font-bold text-base text-neutral-900 dark:text-neutral-100 group-hover:text-[var(--primary)] transition-colors truncate pr-4">
+                  {friend.title}
+                </div>
+                <Icon
+                  name="material-symbols:arrow-outward-rounded"
+                  class="text-[var(--primary)] text-lg opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
+                />
               </div>
-              <div class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5 line-clamp-2">
+
+              <div class="text-sm text-neutral-500 dark:text-neutral-400 line-clamp-1" title={friend.desc}>
                 {friend.desc}
               </div>
-            </div>
 
-            {/* 箭头 */}
-            <div class="shrink-0 text-neutral-400 dark:text-neutral-600 group-hover:text-[var(--primary)] transition-colors">
-              <Icon name="material-symbols:arrow-outward" class="text-base" />
+              {/* 标签 */}
+              {friend.tags && friend.tags.length > 0 && (
+                <div class="flex flex-wrap gap-1 mt-1">
+                  {friend.tags.slice(0, 3).map((tag) => (
+                    <span class="text-[0.65rem] px-1.5 py-0.5 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </a>
         ))}
@@ -113,16 +141,23 @@ const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
     </div>
   </div>
 
-  <!-- 朋友圈 -->
+  <!-- 2. 朋友圈 -->
   {friendsCircleList.length > 0 && (
     <div class="mt-4 flex w-full rounded-[var(--radius-large)] overflow-hidden relative">
       <div class="card-base z-10 px-6 md:px-9 py-6 relative w-full">
-        <FriendsCircle items={friendsCircleList} lastUpdated={friendsCircleLastUpdated} />
+        <FriendsCircle items={friendsCircleList} lastUpdated={friendsCircleLastUpdated || undefined} />
       </div>
     </div>
   )}
 
-  <!-- 评论区 -->
+  <!-- 3. 自定义内容（本站信息 + 申请流程 双栏 + 注意事项） -->
+  {friendsPost && friendsConfig.showCustomContent !== false && (
+    <div class="mt-4 card-base z-10 px-6 md:px-9 py-6 relative w-full">
+      <Markdown class=""><Content /></Markdown>
+    </div>
+  )}
+
+  <!-- 4. 评论区 -->
   {isCommentEnabled && (
     <div class="mt-4">
       <Comment path="/friends/" />
@@ -138,38 +173,61 @@ const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
   }
 
   .friend-tag.active {
-    background-color: oklch(from var(--primary) l c h / 0.15);
-    color: var(--primary);
-    border-color: oklch(from var(--primary) l c h / 0.3);
+    background-color: var(--primary);
+    color: white;
   }
 </style>
 
 <script>
   // @ts-nocheck
-  // 标签筛选功能
-  const tags = document.querySelectorAll(".friend-tag");
-  const cards = document.querySelectorAll(".friend-card");
+  document.addEventListener("DOMContentLoaded", () => {
+    const tags = document.querySelectorAll(".friend-tag");
+    const cards = document.querySelectorAll(".friend-card");
 
-  tags.forEach((tag) => {
-    tag.addEventListener("click", () => {
-      // 更新激活状态
-      tags.forEach((t) => {
-        t.classList.remove("active");
-        t.classList.remove("bg-[var(--primary)]/10", "text-[var(--primary)]", "border-[var(--primary)]/20");
-        t.classList.add("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400", "border-neutral-200", "dark:border-neutral-700");
+    tags.forEach((tag) => {
+      tag.addEventListener("click", () => {
+        tags.forEach((t) => {
+          t.classList.remove("active");
+          t.classList.remove("bg-[var(--primary)]", "text-white");
+          t.classList.add("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400");
+        });
+        tag.classList.add("active");
+        tag.classList.add("bg-[var(--primary)]", "text-white");
+        tag.classList.remove("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400");
+
+        const selectedTag = tag.getAttribute("data-tag");
+
+        cards.forEach((card) => {
+          if (selectedTag === "all") {
+            card.style.display = "";
+          } else {
+            const cardTags = card.getAttribute("data-tags") || "";
+            card.style.display = cardTags.includes(selectedTag) ? "" : "none";
+          }
+        });
       });
-      tag.classList.add("active");
-      tag.classList.remove("bg-neutral-100", "dark:bg-neutral-800", "text-neutral-600", "dark:text-neutral-400", "border-neutral-200", "dark:border-neutral-700");
+    });
 
-      const selectedTag = /** @type {any} */ (tag).dataset.tag;
-
-      cards.forEach((card) => {
-        const htmlCard = /** @type {any} */ (card);
-        const cardTags = htmlCard.dataset.tags || "";
-        if (selectedTag === "all" || cardTags.split(",").includes(selectedTag)) {
-          htmlCard.style.display = "";
-        } else {
-          htmlCard.style.display = "none";
+    // 点击复制
+    const copyBtns = document.querySelectorAll(".friend-copy-btn");
+    copyBtns.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const text = btn.getAttribute("data-copy");
+        if (text) {
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<iconify-icon icon="material-symbols:check" class="text-sm text-green-500"></iconify-icon>';
+            setTimeout(() => {
+              btn.innerHTML = '<iconify-icon icon="material-symbols:content-copy-outline" class="text-sm"></iconify-icon>';
+            }, 1500);
+          } catch {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+          }
         }
       });
     });

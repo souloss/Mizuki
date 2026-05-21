@@ -2,11 +2,18 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import { XMLParser } from "fast-xml-parser";
+import axios from "axios";
+import http from "http";
+import https from "https";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FRIENDS_DATA_PATH = path.join(__dirname, "../src/data/friends.ts");
 const FRIENDS_CONFIG_PATH = path.join(__dirname, "../src/config/friendsConfig.ts");
 const OUTPUT_PATH = path.join(__dirname, "../src/data/friends-circle.json");
+
+// 强制不走代理的 httpAgent
+const httpAgent = new http.Agent();
+const httpsAgent = new https.Agent();
 
 // ========== 配置读取 ==========
 async function getCircleConfig() {
@@ -181,28 +188,65 @@ function parseFeed(xmlText, friendInfo) {
 	}
 }
 
+// ========== 全局：清除代理环境变量，避免代理缓存导致 304 ==========
+const proxyKeys = ["http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY", "no_proxy", "NO_PROXY"];
+proxyKeys.forEach((k) => {
+	if (process.env[k]) {
+		console.log(`Clearing proxy env: ${k}=${process.env[k]}`);
+		delete process.env[k];
+	}
+});
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function fetchFeed(url) {
 	try {
-		const response = await fetch(url, {
-			signal: AbortSignal.timeout(10000),
-			headers: {
-				"User-Agent": "Mizuki-Friends-Circle/1.0",
-				"Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
-			},
+		const headers = {
+			"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+			"Accept": "application/rss+xml, application/atom+xml, application/xml;q=0.9, text/xml;q=0.8, */*;q=0.7",
+			"Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+			"Cache-Control": "no-cache, no-store, must-revalidate",
+			"Pragma": "no-cache",
+		};
+
+		let data = null;
+
+		// 尝试 1：直接请求
+		const response = await axios.get(url, {
+			timeout: 15000,
+			headers,
+			httpAgent,
+			httpsAgent,
+			proxy: false,
 		});
-		if (!response.ok) {
-			console.warn(`  HTTP ${response.status}: ${url}`);
-			return null;
+
+		if (response.status === 200 && response.data && typeof response.data === "string" && response.data.trim().length > 0) {
+			data = response.data;
 		}
-		return await response.text();
+
+		// 尝试 2：加随机参数绕过 CDN 缓存
+		if (!data) {
+			console.log(`  Retrying with cache-busting param...`);
+			const retryResponse = await axios.get(`${url}?_=${Date.now()}`, {
+				timeout: 15000,
+				headers,
+				httpAgent,
+				httpsAgent,
+				proxy: false,
+			});
+			if (retryResponse.status === 200 && retryResponse.data && typeof retryResponse.data === "string" && retryResponse.data.trim().length > 0) {
+				data = retryResponse.data;
+			}
+		}
+
+		if (data) {
+			return data;
+		}
+
+		console.warn(`  No content received (HTTP ${response.status}): ${url}`);
+		return null;
 	} catch (error) {
-		if (error.name === "AbortError" || error.name === "TimeoutError") {
-			console.warn(`  Timeout: ${url}`);
-		} else {
-			console.warn(`  Failed to fetch: ${url}`, error.message);
-		}
+		console.warn(`  Failed to fetch: ${url}`, error.message);
 		return null;
 	}
 }
@@ -291,6 +335,21 @@ async function main() {
 		.slice(0, config.maxItems);
 
 	console.log(`Final items: ${finalItems.length}`);
+
+	// 如果本次抓取全部失败，保留已有数据不覆盖
+	if (finalItems.length === 0) {
+		try {
+			const existing = await fs.readFile(OUTPUT_PATH, "utf-8");
+			const existingData = JSON.parse(existing);
+			if (existingData.items && existingData.items.length > 0) {
+				console.log(`All feeds failed, keeping existing ${existingData.items.length} items`);
+				console.log("=== Done ===");
+				return;
+			}
+		} catch {
+			// 文件不存在或解析失败，继续写入空数据
+		}
+	}
 
 	// 写入输出
 	const output = {

@@ -90,6 +90,17 @@ export const friendsData: FriendItem[] = [
 		tags: ["Docs", "Reference"],
 		enabled: true,
 	},
+	{
+		id: 9,
+		title: "aiHot",
+		imgurl: "https://www.google.com/s2/favicons?domain=aihot.virxact.com&sz=64",
+		desc: "AI 热点资讯聚合",
+		siteurl: "https://aihot.virxact.com",
+		tags: ["AI", "News"],
+		weight: 15,
+		enabled: true,
+		rss: "https://aihot.virxact.com/feed/daily.xml",
+	},
 ];
 
 // 获取所有友情链接数据（包含禁用的）

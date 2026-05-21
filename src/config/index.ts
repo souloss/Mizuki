@@ -4,6 +4,7 @@ export { effectsConfig } from "./effectsConfig";
 export { fontConfig } from "./fontConfig";
 export { friendsConfig } from "./friendsConfig";
 export { plantumlConfig } from "./plantumlConfig";
+export { markmapConfig } from "./markmapConfig";
 export { sponsorConfig } from "./sponsorConfig";
 
 // 导出类型
@@ -12,6 +13,7 @@ export type {
     EffectsConfig,
     FontConfig,
     FriendsPageConfig,
+    MarkmapConfig,
     PlantUMLConfig,
     SakuraConfig,
     SponsorConfig,
