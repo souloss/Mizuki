@@ -189,7 +189,7 @@ export function initAnimeLayoutHandler(options: LayoutHandlerOptions) {
 		"layoutChange",
 		(event: CustomEvent<{ layout: string }>) => {
 			updateAnimeListLayout(event.detail.layout);
-		},
+		} as EventListener,
 	);
 }
 

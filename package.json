@@ -18,7 +18,7 @@
 		"update-bangumi": "node scripts/update-bangumi.mjs",
 		"update-bilibili": "node scripts/update-bilibili.mjs",
 		"update-feeds": "node scripts/update-feeds.mjs",
-		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && node scripts/run-with-mem.js astro build && node scripts/build-pagefind.mjs && node scripts/compress-fonts.js",
+		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && node scripts/run-with-mem.js astro build && node scripts/build-pagefind.mjs && node scripts/compress-fonts/index.js",
 		"submit": "node scripts/indexnow-submit.js",
 		"preview": "astro preview",
 		"astro": "astro",
@@ -28,7 +28,7 @@
 		"lint": "eslint ./src --fix",
 		"postinstall": "node scripts/patch-vite-timeout.js && node scripts/patch-data-store-load.js",
 		"preinstall": "npx only-allow pnpm",
-		"compress-fonts": "node scripts/compress-fonts.js"
+		"compress-fonts": "node scripts/compress-fonts/index.js"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.9",
