@@ -19,28 +19,28 @@
  * ================================================================ */
 :root {
 	/* Backgrounds */
-	--docs-bg: #ffffff;
-	--docs-bg-sidebar: #f6f6f7;
-	--docs-bg-toc: #ffffff;
-	--docs-bg-mute: #f6f6f7;
-	--docs-bg-soft: #f9fafb;
-	--docs-bg-alt: #f5f5f5;
+	--docs-bg: var(--page-bg);
+	--docs-bg-sidebar: var(--bg-muted);
+	--docs-bg-toc: var(--page-bg);
+	--docs-bg-mute: var(--btn-regular-bg);
+	--docs-bg-soft: var(--bg-muted);
+	--docs-bg-alt: var(--bg-muted);
 
 	/* Text */
-	--docs-text-100: rgba(60, 60, 67);
-	--docs-text-75: rgba(60, 60, 67, 0.78);
-	--docs-text-50: rgba(60, 60, 67, 0.55);
-	--docs-text-25: rgba(60, 60, 67, 0.28);
-	--docs-text-12: rgba(60, 60, 67, 0.12);
+	--docs-text-100: var(--text-primary);
+	--docs-text-75: var(--text-secondary);
+	--docs-text-50: var(--content-meta);
+	--docs-text-25: var(--line-divider);
+	--docs-text-12: var(--line-color);
 
-	/* Brand */
-	--docs-brand: #5b3cc4;
-	--docs-brand-dim: rgba(91, 60, 196, 0.08);
-	--docs-brand-soft: rgba(91, 60, 196, 0.14);
+	/* Brand — derived from site's hue theme system */
+	--docs-brand: var(--primary);
+	--docs-brand-dim: var(--primary-15);
+	--docs-brand-soft: var(--primary-30);
 
 	/* Borders & dividers */
-	--docs-divider: rgba(60, 60, 67, 0.12);
-	--docs-border: rgba(60, 60, 67, 0.12);
+	--docs-divider: var(--line-divider);
+	--docs-border: var(--line-divider);
 
 	/* Shadows */
 	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -58,26 +58,7 @@
 }
 
 .dark {
-	--docs-bg: #1b1b1f;
-	--docs-bg-sidebar: #1b1b1f;
-	--docs-bg-toc: #1b1b1f;
-	--docs-bg-mute: #2e2e32;
-	--docs-bg-soft: #252529;
-	--docs-bg-alt: #252529;
-
-	--docs-text-100: rgba(235, 235, 245, 0.86);
-	--docs-text-75: rgba(235, 235, 245, 0.6);
-	--docs-text-50: rgba(235, 235, 245, 0.38);
-	--docs-text-25: rgba(235, 235, 245, 0.18);
-	--docs-text-12: rgba(235, 235, 245, 0.08);
-
-	--docs-brand: #a78bfa;
-	--docs-brand-dim: rgba(167, 139, 250, 0.12);
-	--docs-brand-soft: rgba(167, 139, 250, 0.18);
-
-	--docs-divider: rgba(82, 82, 96, 0.32);
-	--docs-border: rgba(82, 82, 96, 0.32);
-
+	/* Shadows are intentionally darker in dark mode */
 	--docs-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.2);
 	--docs-shadow-2: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
 	--docs-shadow-3: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
@@ -526,33 +507,33 @@ body.docs-page #navbar-wrapper .card-base {
 }
 
 .docs-sidebar-badge-new {
-	background: rgba(34, 197, 94, 0.12);
-	color: #16a34a;
+	background: color-mix(in srgb, oklch(0.7 0.14 145) 12%, transparent);
+	color: oklch(0.7 0.14 145);
 }
 
 .dark .docs-sidebar-badge-new {
-	background: rgba(74, 222, 128, 0.12);
-	color: #4ade80;
+	background: color-mix(in srgb, oklch(0.75 0.14 145) 12%, transparent);
+	color: oklch(0.75 0.14 145);
 }
 
 .docs-sidebar-badge-beta {
-	background: rgba(234, 179, 8, 0.12);
-	color: #ca8a04;
+	background: color-mix(in srgb, oklch(0.7 0.14 85) 12%, transparent);
+	color: oklch(0.7 0.14 85);
 }
 
 .dark .docs-sidebar-badge-beta {
-	background: rgba(250, 204, 21, 0.12);
-	color: #facc15;
+	background: color-mix(in srgb, oklch(0.75 0.14 85) 12%, transparent);
+	color: oklch(0.75 0.14 85);
 }
 
 .docs-sidebar-badge-warning {
-	background: rgba(239, 68, 68, 0.12);
-	color: #dc2626;
+	background: color-mix(in srgb, oklch(0.6 0.2 25) 12%, transparent);
+	color: oklch(0.6 0.2 25);
 }
 
 .dark .docs-sidebar-badge-warning {
-	background: rgba(248, 113, 113, 0.12);
-	color: #f87171;
+	background: color-mix(in srgb, oklch(0.65 0.2 25) 12%, transparent);
+	color: oklch(0.65 0.2 25);
 }
 
 /* Nested sidebar groups */
@@ -698,8 +679,8 @@ body.docs-page #navbar-wrapper .card-base {
 .docs-fallback-notice {
 	padding: 12px 16px;
 	margin-bottom: 1rem;
-	background: rgba(234, 179, 8, 0.1);
-	border: 1px solid rgba(234, 179, 8, 0.3);
+	background: color-mix(in srgb, oklch(0.7 0.14 85) 10%, transparent);
+	border: 1px solid color-mix(in srgb, oklch(0.7 0.14 85) 30%, transparent);
 	border-radius: 8px;
 	color: var(--docs-text-100);
 	font-size: 0.875rem;
@@ -757,6 +738,27 @@ body.docs-page .custom-md {
 	color: var(--docs-text-100);
 }
 
+/* Text selection styling for docs pages — uses site theme */
+.docs-page ::selection {
+	background-color: var(--selection-bg);
+	color: var(--docs-text-100);
+}
+
+.dark .docs-page ::selection {
+	background-color: var(--selection-bg);
+	color: var(--docs-text-100);
+}
+
+.docs-page ::-moz-selection {
+	background-color: var(--selection-bg);
+	color: var(--docs-text-100);
+}
+
+.dark .docs-page ::-moz-selection {
+	background-color: var(--selection-bg);
+	color: var(--docs-text-100);
+}
+
 body.docs-page .prose a,
 body.docs-page .markdown-content a,
 body.docs-page .custom-md a {
@@ -798,26 +800,26 @@ body.docs-page .callout-note {
 
 body.docs-page .admonition-tip,
 body.docs-page .callout-tip {
-	border-left: 3px solid #16a34a;
-	background: rgba(34, 197, 94, 0.08);
+	border-left: 3px solid var(--admonitions-color-tip);
+	background: oklch(from var(--admonitions-color-tip) l c h / 0.08);
 }
 
 body.docs-page .admonition-warning,
 body.docs-page .callout-warning {
-	border-left: 3px solid #ca8a04;
-	background: rgba(234, 179, 8, 0.08);
+	border-left: 3px solid var(--admonitions-color-warning);
+	background: oklch(from var(--admonitions-color-warning) l c h / 0.08);
 }
 
 body.docs-page .admonition-caution,
 body.docs-page .callout-caution {
-	border-left: 3px solid #dc2626;
-	background: rgba(239, 68, 68, 0.08);
+	border-left: 3px solid var(--admonitions-color-caution);
+	background: oklch(from var(--admonitions-color-caution) l c h / 0.08);
 }
 
 body.docs-page .admonition-important,
 body.docs-page .callout-important {
-	border-left: 3px solid #7c3aed;
-	background: rgba(124, 58, 237, 0.08);
+	border-left: 3px solid var(--admonitions-color-important);
+	background: oklch(from var(--admonitions-color-important) l c h / 0.08);
 }
 
 /* ================================================================
@@ -891,7 +893,7 @@ body.docs-page .footer {
 
 .docs-home-action-brand {
 	background: var(--docs-brand);
-	color: #ffffff;
+	color: var(--primary-fg);
 }
 
 .docs-home-action-brand:hover {
@@ -987,7 +989,7 @@ body.docs-page .footer {
 	gap: 0.5rem;
 	padding: 0.75rem 1.5rem;
 	background: var(--docs-brand);
-	color: #ffffff;
+	color: var(--primary-fg);
 	border-radius: 8px;
 	font-weight: 500;
 	text-decoration: none;
