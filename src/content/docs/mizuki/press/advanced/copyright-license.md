@@ -1,7 +1,12 @@
 ---
 title: 版权许可系统
 createTime: 2025/05/20 00:00:00
-permalink: /press/copyright-license/
+permalink: /press/advanced/copyright-license/
+order: 2
+icon: ri:copyright-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

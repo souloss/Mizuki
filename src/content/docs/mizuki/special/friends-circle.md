@@ -1,7 +1,12 @@
 ---
 title: 朋友圈功能
 createTime: 2025/05/20 00:00:00
-permalink: /Special/friends-circle/
+permalink: /special/friends-circle/
+order: 5
+icon: ri:chat-group-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team
@@ -264,4 +269,4 @@ export const featuredPosts: FriendsCirclePost[] = [
 
 ## 相关配置
 
-- [友链配置](/Special/friends/) - 友链列表的详细配置
+- [友链配置](/docs/mizuki/special/friends/) - 友链列表的详细配置

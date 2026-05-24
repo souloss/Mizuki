@@ -1,10 +1,10 @@
 ---
 import { Icon } from "astro-icon/components";
 
-import type { docsMizukiHome } from "@/data/docs-mizuki";
+import type { DocHomeConfig } from "@/types/config";
 
 interface Props {
-	home: typeof docsMizukiHome;
+	home: DocHomeConfig;
 }
 
 const { home } = Astro.props;
@@ -15,9 +15,9 @@ const { home } = Astro.props;
 		<div class="docs-home-hero-copy">
 			<p class="docs-home-kicker">{home.tagline}</p>
 			<h1>{home.name}</h1>
-			<p class="docs-home-text">{home.text}</p>
+			<p class="docs-home-text">{home.description}</p>
 			<div class="docs-home-actions">
-				{home.actions.map((action) => (
+				{home.actions?.map((action) => (
 					<a
 						href={action.link}
 						class:list={[
@@ -32,12 +32,12 @@ const { home } = Astro.props;
 		</div>
 		<div class="docs-home-hero-art" aria-hidden="true">
 			<div class="docs-home-glow"></div>
-			<img src={home.image} alt="" loading="eager" />
+			{home.image && <img src={home.image} alt="" loading="eager" />}
 		</div>
 	</section>
 
 	<section class="docs-home-features">
-		{home.features.map((feature) => (
+		{home.features?.map((feature) => (
 			<div class="docs-home-feature">
 				<div class="docs-home-feature-icon">{feature.icon}</div>
 				<h2>{feature.title}</h2>

@@ -1,7 +1,12 @@
 ---
 title: 文档系统
 createTime: 2025/08/17 17:21:41
-permalink: /Other/docs-system/
+permalink: /other/docs-system/
+order: 7
+icon: ri:book-open-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

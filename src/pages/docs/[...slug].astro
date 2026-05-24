@@ -5,9 +5,9 @@ import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import DocsLayout from "@layouts/DocsLayout.astro";
 import {
-	docsMizukiHome,
 	getDocAvailableLangs,
 	getDocDefaultLang,
+	getDocHomeConfig,
 	getDocPageUrl,
 	getDocPrevNextLinks,
 	getDocProjectSlugs,
@@ -17,6 +17,8 @@ import type { MarkdownHeading } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
+
+import type { DocHomeConfig } from "@/types/config";
 
 function formatDocDate(value: unknown): string {
 	if (!value) {return "";}
@@ -74,9 +76,11 @@ export async function getStaticPaths() {
 	for (const docSlug of docSlugs) {
 		const defaultLang = await getDocDefaultLang(docSlug);
 		const availableLangs = await getDocAvailableLangs(docSlug);
+		const homeConfig = await getDocHomeConfig(docSlug);
 
-		if (docSlug === "mizuki") {
-			const sidebarData = await getDocSidebarData(docSlug, "", defaultLang, defaultLang);
+		// Home page path (root _index.md with isHomepage)
+		if (homeConfig) {
+			const sidebarData = await getDocSidebarData(docSlug);
 			paths.push({
 				params: { slug: docSlug },
 				props: {
@@ -86,6 +90,7 @@ export async function getStaticPaths() {
 					defaultLang,
 					availableLangs,
 					sidebarData,
+					homeConfig,
 				},
 			});
 		}
@@ -96,11 +101,16 @@ export async function getStaticPaths() {
 		});
 
 		for (const page of pages) {
+			// Skip _index.md pages — they are not rendered as standalone pages
+			if (page.id.endsWith("/_index") || page.id === docSlug + "/_index") {continue;}
+			// Skip homepage entries — handled above
+			if (page.data.isHomepage) {continue;}
+
 			const pageLang = page.data.lang || "";
 			const url = getDocPageUrl(docSlug, page.id, pageLang, defaultLang, page.data.permalink);
 			const slug = url.replace(/^\/docs\/?/, "").replace(/\/$/, "");
 			const { Content, headings, remarkPluginFrontmatter } = await render(page);
-			const sidebarData = await getDocSidebarData(docSlug, page.id, pageLang || defaultLang, defaultLang);
+			const sidebarData = await getDocSidebarData(docSlug);
 			const prevNextLinks = await getDocPrevNextLinks(docSlug, page.id, pageLang || defaultLang, defaultLang);
 
 			paths.push({
@@ -140,6 +150,7 @@ const {
 	prevNextLinks,
 	wordCount = 0,
 	readingTime = 0,
+	homeConfig,
 } = Astro.props as {
 	isHome?: boolean;
 	entry?: CollectionEntry<"docs">;
@@ -154,12 +165,13 @@ const {
 	prevNextLinks?: Awaited<ReturnType<typeof getDocPrevNextLinks>>;
 	wordCount?: number;
 	readingTime?: number;
+	homeConfig?: DocHomeConfig;
 };
 
 const docEntry = entry as CollectionEntry<"docs"> | undefined;
 const ContentComponent = Content;
-const title = isHome || !docEntry ? docsMizukiHome.name : getEntryTitle(docEntry);
-const description = isHome || !docEntry ? docsMizukiHome.text : docEntry.data.description;
+const title = isHome && homeConfig ? homeConfig.name : (docEntry ? getEntryTitle(docEntry) : docSlug);
+const description = isHome && homeConfig ? homeConfig.description : (docEntry?.data.description ?? "");
 const currentPageId = isHome || !docEntry ? "" : docEntry.id;
 const hasContentH1 = !isHome && hasTopLevelMarkdownH1(docEntry, headings);
 const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime) : "";
@@ -180,8 +192,8 @@ const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime)
 	prevNextLinks={prevNextLinks}
 	breadcrumbTitle={isHome ? undefined : title}
 >
-	{isHome ? (
-		<DocsHome home={docsMizukiHome} />
+	{isHome && homeConfig ? (
+		<DocsHome home={homeConfig} />
 	) : (
 		<article class="docs-article" data-pagefind-body data-pagefind-filter={`docSlug:${docSlug}`}>
 			{!hasContentH1 && (

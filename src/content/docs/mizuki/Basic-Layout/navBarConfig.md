@@ -1,7 +1,12 @@
 ---
 title: 导航栏配置说明
 createTime: 2025/11/20 20:35:53
-permalink: /Basic-Layout/navBarConfig/
+permalink: /basic-layout/navbarconfig/
+order: 11
+icon: ri:menu-line
+badge:
+  type: info
+  text: v2
 copyright:
   author:
     name: LyraVoid Team

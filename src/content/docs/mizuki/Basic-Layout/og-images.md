@@ -1,7 +1,12 @@
 ---
 title: OG 图片配置
 createTime: 2025/08/17 17:21:41
-permalink: /Basic-Layout/og-images/
+permalink: /basic-layout/og-images/
+order: 6
+icon: ri:image-add-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

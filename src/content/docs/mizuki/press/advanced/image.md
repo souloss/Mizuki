@@ -1,7 +1,12 @@
 ---
 title: 图片语法
 createTime: 2026/01/13 05:06:00
-permalink: /press/image/
+permalink: /press/advanced/image/
+order: 4
+icon: ri:image-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

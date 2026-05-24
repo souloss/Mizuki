@@ -1,7 +1,9 @@
 ---
 title: Live2D 看板娘配置
+order: 2
+icon: "ri:robot-line"
 createTime: 2025/08/17 17:21:41
-permalink: /Feature/pio/
+permalink: /feature/pio/
 copyright:
   author:
     name: LyraVoid Team

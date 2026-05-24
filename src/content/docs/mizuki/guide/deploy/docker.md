@@ -1,5 +1,7 @@
 ---
 title: Docker 部署
+order: 7
+icon: ri:ship-line
 createTime: 2025/11/21 19:58:08
 permalink: /guide/deploy/docker/
 copyright:

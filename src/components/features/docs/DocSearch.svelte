@@ -177,10 +177,10 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.375rem 0.75rem;
-		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border: 1px solid var(--docs-border);
 		border-radius: 8px;
-		background-color: var(--docs-bg, #ffffff);
-		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		background-color: var(--docs-bg);
+		color: var(--docs-text-50);
 		font-size: 0.8125rem;
 		cursor: text;
 		transition:
@@ -191,13 +191,13 @@
 	}
 
 	.docs-search-btn:hover {
-		border-color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
-		background-color: var(--docs-bg-soft, #f6f6f7);
+		border-color: var(--docs-text-50);
+		background-color: var(--docs-bg-soft);
 	}
 
 	.search-icon {
 		flex-shrink: 0;
-		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		color: var(--docs-text-50);
 		font-size: 1rem;
 	}
 
@@ -206,23 +206,23 @@
 		border: none;
 		outline: none;
 		background: transparent;
-		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
+		color: var(--docs-text-100);
 		font-size: 0.8125rem;
 		font-family: inherit;
 		min-width: 0;
 	}
 
 	.docs-search-input::placeholder {
-		color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
+		color: var(--docs-text-25);
 	}
 
 	.search-shortcut {
 		margin-left: auto;
 		padding: 0.125rem 0.375rem;
-		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border: 1px solid var(--docs-border);
 		border-radius: 4px;
 		font-size: 0.6875rem;
-		color: var(--docs-text-30, rgba(0, 0, 0, 0.3));
+		color: var(--docs-text-50);
 		font-family: inherit;
 		flex-shrink: 0;
 	}
@@ -236,10 +236,10 @@
 		max-height: min(360px, calc(100vh - 10rem));
 		overflow-y: auto;
 		padding: 0.5rem;
-		border: 1px solid var(--docs-border, rgba(0, 0, 0, 0.06));
+		border: 1px solid var(--docs-border);
 		border-radius: 8px;
-		background: var(--docs-bg, #ffffff);
-		box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+		background: var(--docs-bg);
+		box-shadow: var(--docs-shadow-3);
 	}
 
 	.docs-search-result-item {
@@ -251,31 +251,31 @@
 	}
 
 	.docs-search-result-item:hover {
-		background-color: var(--docs-bg-mute, #f2f2f3);
+		background-color: var(--docs-bg-mute);
 	}
 
 	.result-title {
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
+		color: var(--docs-text-100);
 	}
 
 	.result-excerpt {
 		font-size: 0.8125rem;
-		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		color: var(--docs-text-50);
 		margin-top: 0.125rem;
 	}
 
 	.result-excerpt :global(mark) {
 		border-radius: 0.2rem;
 		background: color-mix(in oklch, var(--primary) 22%, transparent);
-		color: var(--docs-text-90, rgba(0, 0, 0, 0.9));
+		color: var(--docs-text-100);
 	}
 
 	.docs-search-no-results {
 		padding: 1.5rem;
 		text-align: center;
-		color: var(--docs-text-50, rgba(0, 0, 0, 0.5));
+		color: var(--docs-text-50);
 		font-size: 0.875rem;
 	}
 </style>

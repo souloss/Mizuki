@@ -2,6 +2,11 @@
 title: 赞助页面
 createTime: 2025/05/20 00:00:00
 permalink: /special/sponsor/
+order: 7
+icon: ri:heart-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

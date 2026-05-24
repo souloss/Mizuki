@@ -2,6 +2,11 @@
 title: 常见错误
 createTime: 2025/11/21 20:33:26
 permalink: /problem/error/
+order: 4
+icon: ri:bug-line
+badge:
+  type: warning
+  text: 常见
 copyright:
   author:
     name: LyraVoid Team
@@ -271,10 +276,10 @@ copyright:
 2. **文件路径不匹配**
    ```markdown
    <!-- notes.ts 中配置 -->
-   link: '/Basic-Layout/'
+   link: '/basic-layout/'
    
    <!-- 文件中的 permalink -->
-   permalink: '/Basic-Layout/site-config/' <!-- 正确 -->
+   permalink: '/basic-layout/site-config/' <!-- 正确 -->
    ```
 
 3. **目录结构问题**

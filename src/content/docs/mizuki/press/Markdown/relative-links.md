@@ -1,7 +1,12 @@
 ---
 title: 相对链接解析
 createTime: 2025/08/17 17:21:41
-permalink: /press/Markdown/relative-links/
+permalink: /press/markdown/relative-links/
+order: 6
+icon: ri:link
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

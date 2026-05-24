@@ -1,7 +1,9 @@
 ---
 title: 页脚配置说明
 createTime: 2025/11/20 20:30:34
-permalink: /Basic-Layout/footer/
+permalink: /basic-layout/footer/
+order: 3
+icon: ri:layout-bottom-line
 copyright:
   author:
     name: LyraVoid Team

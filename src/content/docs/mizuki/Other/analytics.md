@@ -1,7 +1,12 @@
 ---
 title: 统计分析配置
 createTime: 2026/05/20 12:00:00
-permalink: /Other/analytics/
+permalink: /other/analytics/
+order: 10
+icon: ri:bar-chart-2-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 字体配置
 createTime: 2026/05/20 12:00:00
-permalink: /Basic-Layout/font-config/
+permalink: /basic-layout/font-config/
+order: 5
+icon: ri:font-size-2
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

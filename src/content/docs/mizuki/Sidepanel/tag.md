@@ -1,7 +1,9 @@
 ---
 title: 标签组件配置
 createTime: 2025/08/17 17:21:41
-permalink: /Sidepanel/tag/
+permalink: /sidepanel/tag/
+order: 5
+icon: ri:price-tag-3-line
 copyright:
   author:
     name: LyraVoid Team

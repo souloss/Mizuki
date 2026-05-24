@@ -1,7 +1,12 @@
 ---
 title: Reposts 转载
 createTime: 2026-05-20
-permalink: /press/reposts/
+permalink: /press/article-types/reposts/
+order: 2
+icon: ri:arrow-left-right-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

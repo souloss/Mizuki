@@ -1,7 +1,12 @@
 ---
 title: 配置模块化
 createTime: 2025/05/20 00:00:00
-permalink: /Basic-Layout/config-modularization/
+permalink: /basic-layout/config-modularization/
+order: 10
+icon: ri:folder-settings-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

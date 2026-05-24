@@ -1,7 +1,12 @@
 ---
 title: PlantUML 图表配置
 createTime: 2026/05/20 12:00:00
-permalink: /press/PlantUML/
+permalink: /press/markdown/plantuml/
+order: 4
+icon: ri:diagram-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

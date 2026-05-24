@@ -1,7 +1,12 @@
 ---
 title: 页面过渡动画配置
 createTime: 2026/05/20 12:00:00
-permalink: /Other/swup-transitions/
+permalink: /other/swup-transitions/
+order: 11
+icon: ri:exchange-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 樱花特效配置
+order: 4
+icon: "ri:plant-line"
 createTime: 2025/08/17 17:21:41
-permalink: /Feature/sakura/
+permalink: /feature/sakura/
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 页面自动缩放配置说明
 createTime: 2026/01/22 10:00:00
-permalink: /Basic-Layout/auto-res-algo/
+permalink: /basic-layout/auto-res-algo/
+order: 7
+icon: ri:fullscreen-exit-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 赞赏功能配置
+order: 11
+icon: "ri:heart-2-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Article-layout/reward/
+permalink: /article-layout/reward/
 copyright:
   author:
     name: LyraVoid Team

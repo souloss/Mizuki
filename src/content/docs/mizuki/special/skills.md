@@ -2,6 +2,8 @@
 title: 技能页面
 createTime: 2025/11/20 22:24:00
 permalink: /special/skills/
+order: 10
+icon: ri:lightbulb-line
 copyright:
   author:
     name: LyraVoid Team

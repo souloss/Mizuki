@@ -2,6 +2,11 @@
 title: 留言板
 createTime: 2025/05/20 00:00:00
 permalink: /special/guestbook/
+order: 6
+icon: ri:sticky-note-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 音乐播放器配置
+order: 1
+icon: "ri:music-2-line"
 createTime: 2025/08/17 17:21:41
-permalink: /Feature/MusicPlayer/
+permalink: /feature/musicplayer/
 copyright:
   author:
     name: LyraVoid Team

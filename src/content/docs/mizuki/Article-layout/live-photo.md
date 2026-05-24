@@ -1,7 +1,12 @@
 ---
 title: LivePhoto / Lazy Images
+order: 12
+icon: "ri:image-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026-05-20
-permalink: /Article-layout/live-photo/
+permalink: /article-layout/live-photo/
 copyright:
   author:
     name: LyraVoid Team

@@ -2,6 +2,8 @@
 title: 自定义页面
 createTime: 2025/08/17 17:21:41
 permalink: /special/about/
+order: 1
+icon: ri:information-line
 copyright:
   author:
     name: LyraVoid Team

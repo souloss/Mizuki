@@ -1,7 +1,12 @@
 ---
 title: 代码块配置说明
+order: 5
+icon: "ri:code-line"
+badge:
+  type: info
+  text: v3
 createTime: 2025/11/20 20:25:15
-permalink: /Article-layout/codeblock/
+permalink: /article-layout/codeblock/
 copyright:
   author:
     name: LyraVoid Team

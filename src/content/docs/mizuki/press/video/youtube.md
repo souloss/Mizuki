@@ -2,6 +2,8 @@
 title: Youtube视频嵌入
 createTime: 2025/11/21 20:49:50
 permalink: /press/video/youtube/
+order: 2
+icon: ri:youtube-line
 copyright:
   author:
     name: LyraVoid Team

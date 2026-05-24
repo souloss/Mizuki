@@ -1,7 +1,12 @@
 ---
 title: 随机封面图配置
 createTime: 2026/05/20 12:00:00
-permalink: /press/random-cover/
+permalink: /press/advanced/random-cover/
+order: 5
+icon: ri:image-add-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

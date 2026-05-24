@@ -2,6 +2,11 @@
 title: 朋友圈 RSS 聚合
 createTime: 2025/08/17 17:21:41
 permalink: /other/update-feeds/
+order: 6
+icon: ri:rss-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

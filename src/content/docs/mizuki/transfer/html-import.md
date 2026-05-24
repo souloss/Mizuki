@@ -2,6 +2,11 @@
 title: HTML 文件导入 Mizuki
 createTime: 2025/08/16 23:56:17
 permalink: /transfer/html-import/
+order: 4
+icon: ri:html5-line
+badge:
+  type: info
+  text: 简单
 copyright:
   author:
     name: LyraVoid Team

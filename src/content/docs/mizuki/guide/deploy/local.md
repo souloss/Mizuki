@@ -1,5 +1,10 @@
 ---
 title: 本地部署
+order: 8
+icon: ri:computer-line
+badge:
+  type: info
+  text: 入门
 createTime: 2025/11/21 02:12:49
 permalink: /guide/deploy/local/
 copyright:

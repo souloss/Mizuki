@@ -1,7 +1,12 @@
 ---
 title: 图片优化配置
 createTime: 2026/05/20 12:00:00
-permalink: /Basic-Layout/image-optimization/
+permalink: /basic-layout/image-optimization/
+order: 9
+icon: ri:image-edit-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -2,6 +2,8 @@
 title: Typecho相关问题
 createTime: 2025/11/21 00:00:00
 permalink: /problem/type/
+order: 3
+icon: ri:file-code-line
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 背景壁纸配置
 createTime: 2026/05/20 12:00:00
-permalink: /Basic-Layout/background-wallpaper/
+permalink: /basic-layout/background-wallpaper/
+order: 4
+icon: ri:image-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: Giscus 评论配置
+order: 7
+icon: "ri:message-3-line"
 createTime: 2025/08/17 17:21:41
-permalink: /Article-layout/Giscus/
+permalink: /article-layout/giscus/
 copyright:
   author:
     name: LyraVoid Team
@@ -108,10 +110,10 @@ export const commentConfig: CommentConfig = {
 
 ## 其他评论系统
 
-- [Twikoo 评论配置](/Article-layout/Twikoo/)
-- [Waline 评论配置](/Article-layout/Waline/)
-- [Disqus 评论配置](/Article-layout/Disqus/)
-- [Artalk 评论配置](/Article-layout/Artalk/)
+- [Twikoo 评论配置](/docs/mizuki/article-layout/twikoo/)
+- [Waline 评论配置](/docs/mizuki/article-layout/waline/)
+- [Disqus 评论配置](/docs/mizuki/article-layout/disqus/)
+- [Artalk 评论配置](/docs/mizuki/article-layout/artalk/)
 
 ## 注意事项
 

@@ -1,7 +1,9 @@
 ---
 title: 分类组件配置
 createTime: 2025/08/17 17:21:41
-permalink: /Sidepanel/categories/
+permalink: /sidepanel/categories/
+order: 4
+icon: ri:folder-open-line
 copyright:
   author:
     name: LyraVoid Team

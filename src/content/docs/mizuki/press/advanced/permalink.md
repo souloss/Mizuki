@@ -1,7 +1,12 @@
 ---
 title: 固定连接
 createTime: 2025/11/21 00:21:14
-permalink: /press/permalink/
+permalink: /press/advanced/permalink/
+order: 3
+icon: ri:link
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

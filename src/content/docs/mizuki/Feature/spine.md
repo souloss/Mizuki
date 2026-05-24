@@ -1,7 +1,12 @@
 ---
 title: Spine 看板娘配置
+order: 3
+icon: "ri:robot-2-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Feature/spine/
+permalink: /feature/spine/
 copyright:
   author:
     name: LyraVoid Team

@@ -2,6 +2,11 @@
 title: 提问的艺术
 createTime: 2025/11/20 23:52:25
 permalink: /problem/question/
+order: 1
+icon: ri:question-line
+badge:
+  type: danger
+  text: 必看
 copyright:
   author:
     name: LyraVoid Team

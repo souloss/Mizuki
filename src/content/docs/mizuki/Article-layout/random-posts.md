@@ -1,7 +1,12 @@
 ---
 title: 随机文章推荐配置
+order: 13
+icon: "ri:shuffle-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Article-layout/random-posts/
+permalink: /article-layout/random-posts/
 copyright:
   author:
     name: LyraVoid Team

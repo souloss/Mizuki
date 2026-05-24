@@ -1,5 +1,7 @@
 ---
 title: 安装/使用
+order: 2
+icon: ri:rocket-line
 createTime: 2025/08/16 23:56:17
 permalink: /guide/get-started/
 copyright:

@@ -1,7 +1,9 @@
 ---
 title: 部署到Netlify
+order: 2
+icon: ri:cloud-line
 createTime: 2025/11/21 01:55:48
-permalink: /guide/deploy/Netlify/
+permalink: /guide/deploy/netlify/
 copyright:
   author:
     name: LyraVoid Team

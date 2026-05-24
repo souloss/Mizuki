@@ -2,6 +2,11 @@
 title: 相册页面
 createTime: 2025/08/28 17:21:41
 permalink: /special/gallery/
+order: 13
+icon: ri:image-line
+badge:
+  type: info
+  text: v2
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 图表
 createTime: 2025/08/21 13:26:53
-permalink: /press/Markdown/chart/
+permalink: /press/markdown/chart/
+order: 3
+icon: ri:pie-chart-line
 copyright:
   author:
     name: LyraVoid Team

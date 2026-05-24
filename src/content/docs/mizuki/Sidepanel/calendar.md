@@ -1,7 +1,12 @@
 ---
 title: 日历组件配置
 createTime: 2025/11/20 22:18:00
-permalink: /Sidepanel/calendar/
+permalink: /sidepanel/calendar/
+order: 7
+icon: ri:calendar-event-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

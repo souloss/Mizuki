@@ -1,7 +1,12 @@
 ---
 title: 扩展
 createTime: 2025/11/21 01:38:59
-permalink: /press/Markdown/customize/
+permalink: /press/markdown/customize/
+order: 2
+icon: ri:markdown-line
+badge:
+  type: info
+  text: v2
 copyright:
   author:
     name: LyraVoid Team

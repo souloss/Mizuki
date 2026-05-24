@@ -2,6 +2,8 @@
 title: 动态/说说页面
 createTime: 2025/08/17 17:21:41
 permalink: /special/talking/
+order: 2
+icon: ri:book-line
 copyright:
   author:
     name: LyraVoid Team

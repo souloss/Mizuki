@@ -1,7 +1,12 @@
 ---
 title: Waline 评论系统配置
+order: 8
+icon: "ri:message-3-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Article-layout/Waline/
+permalink: /article-layout/waline/
 copyright:
   author:
     name: LyraVoid Team

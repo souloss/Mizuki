@@ -2,6 +2,8 @@
 title: 时间线页面
 createTime: 2025/11/20 22:22:00
 permalink: /special/timeline/
+order: 9
+icon: ri:time-line
 copyright:
   author:
     name: LyraVoid Team

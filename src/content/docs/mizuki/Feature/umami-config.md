@@ -1,7 +1,12 @@
 ---
 title: Umami访问量统计配置说明
+order: 5
+icon: "ri:bar-chart-2-line"
+badge:
+  type: info
+  text: v3
 createTime: 2025/10/20 12:36:33
-permalink: /Feature/umami-config/
+permalink: /feature/umami-config/
 copyright:
   author:
     name: LyraVoid Team

@@ -2,6 +2,11 @@
 title: 设备页面
 createTime: 2025/11/20 22:26:00
 permalink: /special/devices/
+order: 11
+icon: ri:computer-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

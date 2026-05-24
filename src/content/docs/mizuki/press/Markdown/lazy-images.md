@@ -1,7 +1,12 @@
 ---
 title: 图片懒加载
 createTime: 2025/08/17 17:21:41
-permalink: /press/Markdown/lazy-images/
+permalink: /press/markdown/lazy-images/
+order: 7
+icon: ri:lazy-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -2,6 +2,11 @@
 title: Jekyll 迁移到 Mizuki
 createTime: 2025/08/16 23:56:17
 permalink: /transfer/jekyll-to-mizuki/
+order: 6
+icon: ri:exchange-line
+badge:
+  type: warning
+  text: 中等
 copyright:
   author:
     name: LyraVoid Team

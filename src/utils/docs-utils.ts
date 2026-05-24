@@ -1,32 +1,13 @@
-import { type CollectionEntry,getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 
-import { siteConfig } from "@/config";
-import type { DocsMizukiSidebarItem } from "@/data/docs-mizuki";
-import { docsMizukiHome, docsMizukiProject, docsMizukiSidebar } from "@/data/docs-mizuki";
+import type { DocHomeAction, DocHomeConfig, DocHomeFeature, DocSidebarSection } from "@/types/config";
+
+// ── Types ───────────────────────────────────────────────────────────────
 
 export interface DocNavLink {
 	title: string;
 	url: string;
-}
-
-export interface DocSidebarItem {
-	title: string;
-	url: string;
-	order: number;
-	isHomepage: boolean;
-	isCurrent: boolean;
-	collapsed?: boolean;
-	icon?: string;
-	badge?: { type: string; text: string };
-	children?: DocSidebarItem[];
-}
-
-export interface DocSidebarSection {
-	name: string;
-	icon?: string;
-	badge?: { type: string; text: string };
-	collapsed?: boolean;
-	items: DocSidebarItem[];
 }
 
 export interface DocProjectMeta {
@@ -39,7 +20,7 @@ export interface DocProjectMeta {
 	sections: string[];
 }
 
-const DOCS_BASE = "/docs";
+// ── Icon normalization ───────────────────────────────────────────────────
 
 const ICON_FALLBACK = "material-symbols:article-outline-rounded";
 const ICON_KEYWORD_MAP: Record<string, string> = {
@@ -111,39 +92,301 @@ function normalizeIcon(icon?: string): string | undefined {
 	return ICON_FALLBACK;
 }
 
-function normalizeSlashPath(path: string): string {
-	const normalized = path.replace(/\\/g, "/").replace(/\/+/g, "/");
-	if (normalized === "/") {return "/";}
-	return `/${normalized.replace(/^\/+|\/+$/g, "")}/`;
+// ── Badge map ───────────────────────────────────────────────────────────
+
+const badgeStyleMap: Record<string, string> = {
+	info: "info",
+	warning: "warning",
+	danger: "danger",
+	tip: "tip",
+	new: "info",
+	recommended: "tip",
+	"not-recommended": "danger",
+	v2: "info",
+	v3: "info",
+	v4: "info",
+};
+
+function mapBadge(raw?: { type?: string; text: string }): { type: string; text: string } | undefined {
+	if (!raw) {return undefined;}
+	return {
+		type: badgeStyleMap[raw.type ?? "info"] ?? "info",
+		text: raw.text,
+	};
 }
 
-function joinUrl(...parts: string[]): string {
-	return normalizeSlashPath(parts.join("/"));
+// ── Auto sidebar tree building ──────────────────────────────────────────
+
+interface TreeNode {
+	title: string;
+	order: number;
+	icon?: string;
+	collapsed?: boolean;
+	badge?: { type: string; text: string };
+	permalink?: string;
+	url?: string;
+	children: TreeNode[];
+	isIndex: boolean;
 }
 
-function stripExt(path: string): string {
-	return path.replace(/\.(md|mdx)$/i, "");
+function sortTree(nodes: TreeNode[]): TreeNode[] {
+	return nodes.sort((a, b) => a.order - b.order).map((n) => ({ ...n, children: sortTree(n.children) }));
 }
+
+function treeToSidebarSections(nodes: TreeNode[]): DocSidebarSection[] {
+	return sortTree(nodes).map((node) => {
+		const items = node.children.map((child) => treeToSidebarItem(child));
+		return {
+			name: node.title,
+			icon: node.icon,
+			badge: node.badge,
+			collapsed: node.collapsed,
+			items,
+		};
+	});
+}
+
+interface DocSidebarItemCompatible {
+	title: string;
+	url: string;
+	order: number;
+	isHomepage: boolean;
+	isCurrent: boolean;
+	collapsed?: boolean;
+	icon?: string;
+	badge?: { type: string; text: string };
+	children?: DocSidebarItemCompatible[];
+}
+
+function treeToSidebarItem(node: TreeNode): DocSidebarItemCompatible {
+	const children = node.children.length > 0
+		? sortTree(node.children).map((child) => treeToSidebarItem(child))
+		: undefined;
+
+	const url = node.url ?? "";
+
+	return {
+		title: node.title,
+		url,
+		order: node.order,
+		isHomepage: node.isIndex && children === undefined,
+		isCurrent: false,
+		collapsed: node.collapsed,
+		icon: node.icon,
+		badge: node.badge,
+		children,
+	};
+}
+
+function buildAutoSidebar(
+	entries: { id: string; data: Record<string, any> }[],
+	docSlug: string,
+): DocSidebarSection[] {
+	const root: TreeNode = { title: "", order: 0, children: [], isIndex: false };
+	const nodeMap = new Map<string, TreeNode>();
+
+	for (const entry of entries) {
+		const relativePath = entry.id;
+		const parts = relativePath.split("/");
+		const fileName = parts[parts.length - 1];
+		const dirParts = parts.slice(1, -1);
+
+		const isIndex = fileName === "_index";
+
+		const fm = entry.data;
+		const title = fm.title ?? fileName.replace(/\.(md|mdx)$/, "");
+		const order = fm.order ?? 0;
+		const icon = normalizeIcon(fm.icon);
+		const badge = mapBadge(fm.badge);
+		const permalink = fm.permalink;
+		const collapsed = fm.collapsed;
+
+		let parentNode = root;
+		for (let i = 0; i < dirParts.length; i++) {
+			const dir = dirParts[i];
+			const key = [docSlug, ...dirParts.slice(0, i + 1)].join("/");
+			if (!nodeMap.has(key)) {
+				const node: TreeNode = { title: dir, order: 0, children: [], isIndex: false };
+				nodeMap.set(key, node);
+				parentNode.children.push(node);
+			}
+			parentNode = nodeMap.get(key)!;
+		}
+
+		if (isIndex) {
+			const fullUrl = permalink
+				? docUrlFromPermalink(docSlug, permalink)
+				: "";
+			parentNode.title = title;
+			parentNode.order = order;
+			parentNode.icon = icon;
+			parentNode.badge = badge;
+			parentNode.collapsed = collapsed;
+			parentNode.isIndex = true;
+			parentNode.permalink = permalink;
+			parentNode.url = fullUrl;
+		} else {
+			const fullUrl = permalink
+				? docUrlFromPermalink(docSlug, permalink)
+				: docUrlFromPermalink(docSlug, normalizeSlashPath(stripDocSlugAndLang(entry.id, docSlug)));
+			const node: TreeNode = {
+				title,
+				order,
+				icon,
+				badge,
+				collapsed,
+				permalink,
+				url: fullUrl,
+				children: [],
+				isIndex: false,
+			};
+			parentNode.children.push(node);
+		}
+	}
+
+	return treeToSidebarSections(root.children);
+}
+
+// ── Sidebar data retrieval ──────────────────────────────────────────────
+
+export async function getDocSidebarData(docSlug: string): Promise<DocSidebarSection[]> {
+	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+	return buildAutoSidebar(allDocs, docSlug);
+}
+
+// ── Mark current page in sidebar ────────────────────────────────────────
+
+export function markCurrentPage(
+	sections: DocSidebarSection[],
+	currentUrl: string,
+): DocSidebarSection[] {
+	const normalized = normalizeSlashPath(currentUrl);
+	let found = false;
+
+	function markItems(items: DocSidebarItemCompatible[]): DocSidebarItemCompatible[] {
+		return items.map((item) => {
+			if (found) {return item;}
+			const isCurrent = normalizeSlashPath(item.url) === normalized;
+			if (isCurrent) {found = true;}
+			return {
+				...item,
+				isCurrent,
+				children: item.children ? markItems(item.children) : undefined,
+			};
+		});
+	}
+
+	return sections.map((section) => ({
+		...section,
+		items: markItems(section.items as DocSidebarItemCompatible[]),
+	}));
+}
+
+// ── Home page config ───────────────────────────────────────────────────
+
+export async function getDocHomeConfig(docSlug: string): Promise<DocHomeConfig | undefined> {
+	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+
+	const rootIndex = allDocs.find((entry) => {
+		const parts = entry.id.split("/");
+		return parts.length === 2 && parts[1] === "_index";
+	});
+
+	if (!rootIndex) {return undefined;}
+
+	const fm = rootIndex.data;
+
+	return {
+		name: fm.title ?? docSlug,
+		tagline: fm.tagline ?? "",
+		description: fm.description ?? "",
+		image: fm.image,
+		actions: (fm.actions as DocHomeAction[] | undefined) ?? [],
+		features: (fm.features as DocHomeFeature[] | undefined) ?? [],
+	};
+}
+
+// ── Project slugs ───────────────────────────────────────────────────────
 
 function inferDocSlugFromId(id: string): string {
 	return id.replace(/\\/g, "/").split("/")[0] ?? "";
 }
 
-function getEntryDocSlug(entry: CollectionEntry<"docs">): string {
-	return entry.data.docSlug || inferDocSlugFromId(entry.id);
+export async function getDocProjectSlugs(): Promise<string[]> {
+	const allDocs = await getCollection("docs");
+	const slugs = new Set<string>();
+	for (const doc of allDocs) {
+		const slug = doc.data.docSlug || inferDocSlugFromId(doc.id);
+		if (slug) {slugs.add(slug);}
+	}
+	return [...slugs];
 }
 
-function getEntryLang(entry: CollectionEntry<"docs">): string {
-	return entry.data.lang || "";
+export async function getDocProjectMeta(docSlug: string): Promise<DocProjectMeta> {
+	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+	const rootIndex = allDocs.find((entry) => {
+		const parts = entry.id.split("/");
+		return parts.length === 2 && parts[1] === "_index";
+	});
+
+	const title = rootIndex?.data.title ?? docSlug.charAt(0).toUpperCase() + docSlug.slice(1);
+	const description = rootIndex?.data.description ?? "";
+	const defaultLang = await getDocDefaultLang(docSlug);
+	const availableLangs = await getDocAvailableLangs(docSlug);
+
+	const pages = allDocs.filter((entry) => {
+		const fileName = entry.id.split("/").pop() ?? "";
+		return fileName !== "_index";
+	});
+
+	const sections = new Set<string>();
+	for (const page of allDocs) {
+		const parts = page.id.split("/");
+		if (parts.length > 2) {sections.add(parts[1]);}
+	}
+
+	return {
+		slug: docSlug,
+		title,
+		description,
+		defaultLang,
+		availableLangs,
+		pageCount: pages.length,
+		sections: [...sections],
+	};
 }
 
-function getEntryTitle(entry: CollectionEntry<"docs">): string {
-	if (entry.data.title) {return entry.data.title;}
-	const basename = stripExt(entry.id).split("/").pop() || "Untitled";
-	return basename
-		.split(/[-_]/g)
-		.map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-		.join(" ");
+// ── Default lang / available langs ──────────────────────────────────────
+
+export async function getDocDefaultLang(docSlug: string): Promise<string> {
+	const pages = await getDocPages(docSlug);
+	if (pages.length === 0) {return "";}
+
+	const langCounts: Record<string, number> = {};
+	for (const page of pages) {
+		const lang = page.data.lang || "";
+		langCounts[lang] = (langCounts[lang] || 0) + 1;
+	}
+
+	return Object.entries(langCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ?? "";
+}
+
+export async function getDocAvailableLangs(docSlug: string): Promise<string[]> {
+	const pages = await getDocPages(docSlug);
+	const langs = new Set(pages.map((page) => (page.data.lang || "")).filter(Boolean));
+	return Array.from(langs);
+}
+
+// ── Path utilities ─────────────────────────────────────────────────────
+
+function normalizeSlashPath(path: string): string {
+	const normalized = path.replace(/\\/g, "/").replace(/\/+/g, "/").toLowerCase();
+	if (normalized === "/") {return "/";}
+	return `/${normalized.replace(/^\/+|\/+$/g, "")}/`;
+}
+
+function stripExt(path: string): string {
+	return path;
 }
 
 function stripDocSlugAndLang(id: string, docSlug: string, lang?: string): string {
@@ -159,10 +402,14 @@ function stripDocSlugAndLang(id: string, docSlug: string, lang?: string): string
 	return path || "index";
 }
 
+const DOCS_BASE = "/docs";
+
 function docUrlFromPermalink(docSlug: string, permalink: string, lang?: string, defaultLang?: string): string {
 	const langPart = lang && lang !== (defaultLang || "") ? `/${lang}` : "";
 	return normalizeSlashPath(`${DOCS_BASE}/${docSlug}${langPart}${permalink}`);
 }
+
+// ── Page URL ────────────────────────────────────────────────────────────
 
 export function getDocPageUrl(
 	docSlug: string,
@@ -180,191 +427,16 @@ export function getDocPageUrl(
 	return docUrlFromPermalink(docSlug, resolvedPermalink, lang, defaultLang);
 }
 
-function getDocEntryUrl(entry: CollectionEntry<"docs">, defaultLang?: string): string {
-	const docSlug = getEntryDocSlug(entry);
-	const lang = getEntryLang(entry);
-	return getDocPageUrl(docSlug, entry.id, lang, defaultLang, entry.data.permalink);
-}
+// ── Get all pages for a doc slug ────────────────────────────────────────
 
-export async function getDocPages(
-	docSlug: string,
-	lang?: string,
-): Promise<CollectionEntry<"docs">[]> {
-	const allDocs = await getCollection("docs", (entry) => getEntryDocSlug(entry) === docSlug);
-
-	if (lang !== undefined) {
-		return allDocs.filter((entry) => getEntryLang(entry) === lang);
-	}
-
-	return allDocs;
-}
-
-export async function getDocProjectSlugs(): Promise<string[]> {
-	const allDocs = await getCollection("docs");
-	const slugs = new Set(allDocs.map((entry) => getEntryDocSlug(entry)).filter(Boolean));
-	return Array.from(slugs).sort((a, b) => {
-		if (a === docsMizukiProject.slug) {return -1;}
-		if (b === docsMizukiProject.slug) {return 1;}
-		return a.localeCompare(b);
+export async function getDocPages(docSlug: string): Promise<CollectionEntry<"docs">[]> {
+	return getCollection("docs", (entry) => {
+		const entryDocSlug = entry.data.docSlug || inferDocSlugFromId(entry.id);
+		return entryDocSlug === docSlug;
 	});
 }
 
-export async function getDocDefaultLang(docSlug: string): Promise<string> {
-	if (docSlug === docsMizukiProject.slug) {return docsMizukiProject.defaultLang;}
-
-	const pages = await getDocPages(docSlug);
-	if (pages.length === 0) {return "";}
-
-	const langCounts: Record<string, number> = {};
-	for (const page of pages) {
-		const lang = getEntryLang(page);
-		langCounts[lang] = (langCounts[lang] || 0) + 1;
-	}
-
-	return Object.entries(langCounts).sort(([, a], [, b]) => b - a)[0]?.[0] ?? siteConfig.lang;
-}
-
-export async function getDocAvailableLangs(docSlug: string): Promise<string[]> {
-	const pages = await getDocPages(docSlug);
-	const langs = new Set(pages.map((page) => getEntryLang(page)).filter(Boolean));
-	return Array.from(langs);
-}
-
-export async function getDocProjectMeta(docSlug: string): Promise<DocProjectMeta> {
-	const defaultLang = await getDocDefaultLang(docSlug);
-	const availableLangs = await getDocAvailableLangs(docSlug);
-	const pages = await getDocPages(docSlug, defaultLang);
-
-	if (docSlug === docsMizukiProject.slug) {
-		return {
-			slug: docSlug,
-			title: docsMizukiProject.title,
-			description: docsMizukiProject.description,
-			defaultLang,
-			availableLangs,
-			pageCount: pages.length,
-			sections: docsMizukiSidebar.map((section) => section.text),
-		};
-	}
-
-	const homepage = pages.find((page) => page.data.isHomepage || stripDocSlugAndLang(page.id, docSlug, defaultLang) === "index");
-	return {
-		slug: docSlug,
-		title: homepage ? getEntryTitle(homepage) : docSlug.charAt(0).toUpperCase() + docSlug.slice(1),
-		description: homepage?.data.description || "",
-		defaultLang,
-		availableLangs,
-		pageCount: pages.filter((page) => !page.data.isHomepage).length,
-		sections: [...new Set(pages.map((page) => page.data.section).filter(Boolean) as string[])],
-	};
-}
-
-function resolveSidebarItemUrl(
-	docSlug: string,
-	item: DocsMizukiSidebarItem,
-	parentPrefix: string,
-): string {
-	const prefix = item.prefix ?? parentPrefix;
-	const rawLink = item.link ?? "";
-	if (!rawLink) {return "";}
-	const permalink = rawLink.startsWith("/") ? rawLink : joinUrl(prefix || "/", rawLink);
-	return docUrlFromPermalink(docSlug, permalink);
-}
-
-function buildMizukiSidebarItems(
-	docSlug: string,
-	items: readonly DocsMizukiSidebarItem[],
-	currentUrl: string,
-	parentPrefix: string,
-	orderBase: number,
-): DocSidebarItem[] {
-	return items.map((item, index) => {
-		const currentPrefix = item.prefix ?? parentPrefix;
-		const children = item.items
-			? buildMizukiSidebarItems(docSlug, item.items, currentUrl, currentPrefix, index * 100)
-			: undefined;
-		const url = resolveSidebarItemUrl(docSlug, item, parentPrefix);
-		const isCurrent = url ? normalizeSlashPath(url) === currentUrl : children?.some((child) => child.isCurrent) ?? false;
-
-		return {
-			title: item.text,
-			url,
-			order: orderBase + index,
-			isHomepage: false,
-			isCurrent,
-			collapsed: item.collapsed,
-			icon: normalizeIcon(item.icon),
-			badge: item.badge,
-			children,
-		};
-	});
-}
-
-function buildMizukiSidebar(docSlug: string, currentUrl: string): DocSidebarSection[] {
-	return (docsMizukiSidebar as readonly DocsMizukiSidebarItem[]).map((section, index) => {
-		const items = buildMizukiSidebarItems(docSlug, section.items ?? [], currentUrl, section.prefix ?? "/", index * 1000);
-		const hasCurrent = items.some((item) => item.isCurrent);
-		return {
-			name: section.text,
-			icon: normalizeIcon(section.icon),
-			badge: section.badge,
-			collapsed: section.collapsed && !hasCurrent,
-			items,
-		};
-	});
-}
-
-async function buildFallbackSidebar(
-	docSlug: string,
-	currentPageId: string,
-	lang: string,
-	defaultLang: string,
-): Promise<DocSidebarSection[]> {
-	const pages = (await getDocPages(docSlug, lang)).sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
-	const sectionMap = new Map<string, DocSidebarItem[]>();
-
-	for (const page of pages) {
-		const section = page.data.section || "";
-		const item: DocSidebarItem = {
-			title: getEntryTitle(page),
-			url: getDocEntryUrl(page, defaultLang),
-			order: page.data.order || 0,
-			isHomepage: page.data.isHomepage,
-			isCurrent: page.id === currentPageId,
-			icon: normalizeIcon(page.data.icon),
-			badge: page.data.badge,
-		};
-		if (!sectionMap.has(section)) {sectionMap.set(section, []);}
-		sectionMap.get(section)!.push(item);
-	}
-
-	return Array.from(sectionMap.entries())
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([name, items]) => ({
-			name,
-			items: items.sort((a, b) => a.order - b.order),
-		}));
-}
-
-export async function getDocSidebarData(
-	docSlug: string,
-	currentPageId: string,
-	lang?: string,
-	defaultLang?: string,
-): Promise<DocSidebarSection[]> {
-	const resolvedLang = lang || "";
-	const resolvedDefaultLang = defaultLang || "";
-	const currentEntry = (await getDocPages(docSlug)).find((entry) => entry.id === currentPageId);
-	const currentUrl = currentEntry
-		? normalizeSlashPath(getDocEntryUrl(currentEntry, resolvedDefaultLang))
-		: normalizeSlashPath(`${DOCS_BASE}/${docSlug}/`);
-
-	if (docSlug === docsMizukiProject.slug) {
-		return buildMizukiSidebar(docSlug, currentUrl);
-	}
-
-	return buildFallbackSidebar(docSlug, currentPageId, resolvedLang, resolvedDefaultLang);
-}
+// ── Prev/Next links ────────────────────────────────────────────────────
 
 export async function getDocPrevNextLinks(
 	docSlug: string,
@@ -372,29 +444,36 @@ export async function getDocPrevNextLinks(
 	lang?: string,
 	defaultLang?: string,
 ): Promise<{ prev?: DocNavLink; next?: DocNavLink }> {
-	const sections = await getDocSidebarData(docSlug, currentPageId, lang, defaultLang);
-	const items: DocSidebarItem[] = [];
+	const sections = await getDocSidebarData(docSlug);
+	const items: { title: string; url: string }[] = [];
 
-	function flatten(source: DocSidebarItem[]) {
+	function flatten(source: DocSidebarItemCompatible[]) {
 		for (const item of source) {
 			if (item.children?.length) {
 				flatten(item.children);
 			} else if (item.url) {
-				items.push(item);
+				items.push({ title: item.title, url: item.url });
 			}
 		}
 	}
 
-	for (const section of sections) {flatten(section.items);}
+	for (const section of sections) {
+		flatten(section.items as DocSidebarItemCompatible[]);
+	}
 
-	const currentIndex = items.findIndex((item) => item.isCurrent);
-	if (currentIndex === -1) {return {};}
+	const currentUrl = getDocPageUrl(docSlug, currentPageId, lang, defaultLang);
+	const normalized = normalizeSlashPath(currentUrl);
+	const idx = items.findIndex((item) => normalizeSlashPath(item.url) === normalized);
+
+	if (idx === -1) {return {};}
 
 	return {
-		prev: currentIndex > 0 ? { title: items[currentIndex - 1].title, url: items[currentIndex - 1].url } : undefined,
-		next: currentIndex < items.length - 1 ? { title: items[currentIndex + 1].title, url: items[currentIndex + 1].url } : undefined,
+		prev: idx > 0 ? { title: items[idx - 1].title, url: items[idx - 1].url } : undefined,
+		next: idx < items.length - 1 ? { title: items[idx + 1].title, url: items[idx + 1].url } : undefined,
 	};
 }
+
+// ── Page with fallback ─────────────────────────────────────────────────
 
 export async function getDocPageWithFallback(
 	docSlug: string,
@@ -402,15 +481,13 @@ export async function getDocPageWithFallback(
 	lang: string,
 	defaultLang: string,
 ): Promise<{ entry: CollectionEntry<"docs">; isFallback: boolean }> {
-	const requested = await getDocPages(docSlug, lang);
+	const requested = await getDocPages(docSlug);
 	const match = requested.find((entry) => stripDocSlugAndLang(entry.id, docSlug, lang) === pagePath);
 	if (match) {return { entry: match, isFallback: false };}
 
-	const defaults = await getDocPages(docSlug, defaultLang);
+	const defaults = await getDocPages(docSlug);
 	const fallback = defaults.find((entry) => stripDocSlugAndLang(entry.id, docSlug, defaultLang) === pagePath);
 	if (fallback) {return { entry: fallback, isFallback: true };}
 
 	throw new Error(`Doc page not found: ${docSlug}/${pagePath}`);
 }
-
-export { docsMizukiHome };

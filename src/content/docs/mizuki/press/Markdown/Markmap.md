@@ -1,7 +1,12 @@
 ---
 title: Markmap 思维导图
 createTime: 2026/05/20 12:00:00
-permalink: /press/Markmap/
+permalink: /press/markdown/markmap/
+order: 5
+icon: ri:mind-map
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

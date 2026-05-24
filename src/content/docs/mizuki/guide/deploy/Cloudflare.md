@@ -1,7 +1,9 @@
 ---
 title: Cloudflare Pages 部署
+order: 4
+icon: ri:cloud-line
 createTime: 2025/11/21 12:00:00
-permalink: /guide/deploy/Cloudflare/
+permalink: /guide/deploy/cloudflare/
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,11 @@
 ---
 title: Picflow API文档
 createTime: 2025/11/21 21:30:58
-permalink: /API/picflow/
+permalink: /api/picflow/
+icon: ri:image-2-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

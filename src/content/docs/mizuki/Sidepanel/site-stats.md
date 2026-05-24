@@ -1,7 +1,12 @@
 ---
 title: 站点统计组件配置
 createTime: 2025/11/20 22:16:00
-permalink: /Sidepanel/site-stats/
+permalink: /sidepanel/site-stats/
+order: 6
+icon: ri:bar-chart-box-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -77,6 +77,7 @@ const docsCollection = defineCollection({
 	loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/docs" }),
 	schema: z.object({
 		title: z.string().optional(),
+		tagline: z.string().optional(),
 		createTime: z.union([z.string(), z.date()]).optional(),
 		permalink: z.string().optional(),
 		copyright: z.unknown().optional(),
@@ -87,6 +88,26 @@ const docsCollection = defineCollection({
 		description: z.string().optional().default(""),
 		isHomepage: z.boolean().optional().default(false),
 		icon: z.string().optional(),
+		collapsed: z.boolean().optional().default(true),
+		image: z.string().optional(),
+		actions: z
+			.array(
+				z.object({
+					theme: z.string().optional(),
+					text: z.string(),
+					link: z.string(),
+				}),
+			)
+			.optional(),
+		features: z
+			.array(
+				z.object({
+					title: z.string(),
+					icon: z.string().optional(),
+					details: z.string().optional(),
+				}),
+			)
+			.optional(),
 		badge: z
 			.object({
 				type: z

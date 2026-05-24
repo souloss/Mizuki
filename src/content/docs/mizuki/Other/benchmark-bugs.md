@@ -1,7 +1,12 @@
 ---
 title: Bug Benchmark 脚本
 createTime: 2025/08/17 17:21:41
-permalink: /Other/benchmark-bugs/
+permalink: /other/benchmark-bugs/
+order: 8
+icon: ri:bug-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

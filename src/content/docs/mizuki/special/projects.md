@@ -2,6 +2,8 @@
 title: 项目页面
 createTime: 2025/11/20 22:20:00
 permalink: /special/projects/
+order: 8
+icon: ri:code-s-slash-line
 copyright:
   author:
     name: LyraVoid Team

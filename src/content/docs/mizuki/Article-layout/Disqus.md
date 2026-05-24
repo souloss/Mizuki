@@ -1,7 +1,12 @@
 ---
 title: Disqus 评论系统配置
+order: 10
+icon: "ri:message-3-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Article-layout/Disqus/
+permalink: /article-layout/disqus/
 copyright:
   author:
     name: LyraVoid Team

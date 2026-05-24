@@ -2,6 +2,8 @@
 title: WordPress相关问题
 createTime: 2025/11/21 00:00:00
 permalink: /problem/wordpress/
+order: 2
+icon: ri:wordpress-line
 copyright:
   author:
     name: LyraVoid Team

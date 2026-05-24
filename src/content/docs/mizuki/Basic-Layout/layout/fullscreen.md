@@ -1,7 +1,12 @@
 ---
 title: 全屏壁纸配置
 createTime: 2025/11/20 14:57:49
-permalink: /Basic-Layout/layout/fullscreen/
+permalink: /basic-layout/layout/fullscreen/
+order: 2
+icon: ri:fullscreen-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

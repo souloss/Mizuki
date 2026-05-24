@@ -1,5 +1,10 @@
 ---
 title: 服务器部署
+order: 6
+icon: ri:server-line
+badge:
+  type: info
+  text: 入门
 createTime: 2025/11/21 02:02:00
 permalink: /guide/deploy/server/
 copyright:

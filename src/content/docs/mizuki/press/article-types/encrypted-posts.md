@@ -1,7 +1,12 @@
 ---
 title: Encrypted Posts 加密文章
 createTime: 2026-05-20
-permalink: /press/encrypted-posts/
+permalink: /press/article-types/encrypted-posts/
+order: 3
+icon: ri:key-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 构建脚本配置
 createTime: 2026/05/20 12:00:00
-permalink: /Other/build-scripts/
+permalink: /other/build-scripts/
+order: 12
+icon: ri:terminal-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

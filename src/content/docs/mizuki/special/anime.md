@@ -2,6 +2,11 @@
 title: 番剧页面
 createTime: 2025/11/20 22:28:00
 permalink: /special/anime/
+order: 12
+icon: ri:tv-line
+badge:
+  type: info
+  text: v4
 copyright:
   author:
     name: LyraVoid Team

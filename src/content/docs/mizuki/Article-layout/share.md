@@ -1,7 +1,12 @@
 ---
 title: 分享组件配置说明
+order: 2
+icon: "ri:share-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/01/14 10:00:00
-permalink: /Article-layout/share/
+permalink: /article-layout/share/
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 版权信息配置说明
+order: 4
+icon: "ri:copyright-line"
 createTime: 2025/11/20 20:22:10
-permalink: /Article-layout/copyright/
+permalink: /article-layout/copyright/
 copyright:
   author:
     name: LyraVoid Team

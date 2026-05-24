@@ -1,7 +1,12 @@
 ---
 title: 文件夹方案
 createTime: 2025/09/01 20:28:41
-permalink: /press/folder/
+permalink: /press/organization/folder/
+order: 2
+icon: ri:folder-line
+badge:
+  type: danger
+  text: 推荐
 copyright:
   author:
     name: LyraVoid Team

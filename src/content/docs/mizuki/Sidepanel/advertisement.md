@@ -1,7 +1,12 @@
 ---
 title: 广告组件配置
 createTime: 2026/05/20 12:00:00
-permalink: /Sidepanel/advertisement/
+permalink: /sidepanel/advertisement/
+order: 8
+icon: ri:advertisement-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

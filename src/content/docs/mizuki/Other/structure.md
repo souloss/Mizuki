@@ -1,7 +1,9 @@
 ---
 title: 结构说明
 createTime: 2025/11/20 23:12:40
-permalink: /Other/structure/
+permalink: /other/structure/
+order: 2
+icon: ri:folder-chart-line
 copyright:
   author:
     name: LyraVoid Team

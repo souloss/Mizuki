@@ -1,5 +1,7 @@
 ---
 title: 主题介绍
+order: 1
+icon: ri:information-line
 createTime: 2025/08/17 15:19:06
 permalink: /guide/intro/
 copyright:

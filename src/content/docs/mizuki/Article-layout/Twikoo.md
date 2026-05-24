@@ -1,7 +1,9 @@
 ---
 title: Twikoo 评论配置
+order: 6
+icon: "ri:message-3-line"
 createTime: 2025/08/17 17:21:41
-permalink: /Article-layout/Twikoo/
+permalink: /article-layout/twikoo/
 copyright:
   author:
     name: LyraVoid Team
@@ -105,10 +107,10 @@ export const commentConfig: CommentConfig = {
 
 如需使用其他评论系统，请参考对应文档：
 
-- [Waline 评论配置](/Article-layout/Waline/)
-- [Giscus 评论配置](/Article-layout/Giscus/)
-- [Disqus 评论配置](/Article-layout/Disqus/)
-- [Artalk 评论配置](/Article-layout/Artalk/)
+- [Waline 评论配置](/docs/mizuki/article-layout/waline/)
+- [Giscus 评论配置](/docs/mizuki/article-layout/giscus/)
+- [Disqus 评论配置](/docs/mizuki/article-layout/disqus/)
+- [Artalk 评论配置](/docs/mizuki/article-layout/artalk/)
 
 ## 注意事项
 

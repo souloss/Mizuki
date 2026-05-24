@@ -1,7 +1,9 @@
 ---
 title: 公告栏配置
 createTime: 2025/08/17 17:21:41
-permalink: /Sidepanel/announcement/
+permalink: /sidepanel/announcement/
+order: 3
+icon: ri:notification-3-line
 copyright:
   author:
     name: LyraVoid Team

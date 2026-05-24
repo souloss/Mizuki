@@ -1,7 +1,12 @@
 ---
 title: 搜索功能配置
+order: 9
+icon: "ri:search-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Feature/search/
+permalink: /feature/search/
 copyright:
   author:
     name: LyraVoid Team

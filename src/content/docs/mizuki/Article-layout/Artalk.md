@@ -1,7 +1,12 @@
 ---
 title: Artalk 评论系统配置
+order: 9
+icon: "ri:message-3-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Article-layout/Artalk/
+permalink: /article-layout/artalk/
 copyright:
   author:
     name: LyraVoid Team

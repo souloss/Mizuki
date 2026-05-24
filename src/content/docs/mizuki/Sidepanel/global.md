@@ -1,7 +1,12 @@
 ---
 title: 侧边栏布局配置
 createTime: 2025/08/17 17:21:41
-permalink: /Sidepanel/global/
+permalink: /sidepanel/global/
+order: 1
+icon: ri:layout-grid-line
+badge:
+  type: info
+  text: v2
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 上次编辑卡片配置
+order: 3
+icon: "ri:history-line"
 createTime: 2025/11/20 20:01:32
-permalink: /Article-layout/Edit-History/
+permalink: /article-layout/edit-history/
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 相关文章与随机文章
+order: 14
+icon: "ri:links-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2025-05-20
-permalink: /Article-layout/related-posts/
+permalink: /article-layout/related-posts/
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,9 @@
 ---
 title: 迁移说明
 createTime: 2025/11/20 23:14:37
-permalink: /Other/migration/
+permalink: /other/migration/
+order: 4
+icon: ri:arrow-left-right-line
 copyright:
   author:
     name: LyraVoid Team

@@ -1,7 +1,12 @@
 ---
 title: 分享卡片与赞助按钮
+order: 8
+icon: "ri:share-box-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2025/05/20 00:00:00
-permalink: /Features/share-card/
+permalink: /feature/share-card/
 copyright:
   author:
     name: LyraVoid Team
@@ -195,4 +200,4 @@ export const siteConfig = {
 
 ## 相关文档
 
-- [赞助页面](/Special/sponsor/) - 赞助页面的详细配置
+- [赞助页面](/docs/mizuki/special/sponsor/) - 赞助页面的详细配置

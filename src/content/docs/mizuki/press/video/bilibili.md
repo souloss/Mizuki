@@ -2,6 +2,8 @@
 title: B站视频嵌入
 createTime: 2025/11/21 20:49:42
 permalink: /press/video/bilibili/
+order: 1
+icon: ri:bilibili-line
 copyright:
   author:
     name: LyraVoid Team

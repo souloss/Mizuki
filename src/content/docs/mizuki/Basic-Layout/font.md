@@ -1,7 +1,12 @@
 ---
 title: 自定义字体
 createTime: 2025/11/21 00:42:07
-permalink: /Basic-Layout/font/
+permalink: /basic-layout/font/
+order: 12
+icon: ri:font-size-2
+badge:
+  type: info
+  text: v3
 copyright:
   author:
     name: LyraVoid Team

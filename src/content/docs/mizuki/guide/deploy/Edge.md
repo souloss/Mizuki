@@ -1,7 +1,12 @@
 ---
 title: EdgeOne Pages 部署
+order: 5
+icon: ri:cloud-line
+badge:
+  type: warning
+  text: 推荐
 createTime: 2025/11/21 02:01:00
-permalink: /guide/deploy/Edge/
+permalink: /guide/deploy/edge/
 copyright:
   author:
     name: LyraVoid Team

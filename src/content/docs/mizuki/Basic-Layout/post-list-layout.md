@@ -1,7 +1,12 @@
 ---
 title: 文章列表布局配置
 createTime: 2026/05/20 12:00:00
-permalink: /Basic-Layout/post-list-layout/
+permalink: /basic-layout/post-list-layout/
+order: 8
+icon: ri:list-unordered
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

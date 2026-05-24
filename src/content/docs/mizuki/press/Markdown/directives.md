@@ -1,7 +1,12 @@
 ---
 title: Markdown 指令
 createTime: 2025/5/21
-permalink: /press/Markdown/directives/
+permalink: /press/markdown/directives/
+order: 8
+icon: ri:command-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

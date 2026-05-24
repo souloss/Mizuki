@@ -2,6 +2,11 @@
 title: 友链页面
 createTime: 2025/08/17 17:21:41
 permalink: /special/friends/
+order: 4
+icon: ri:links-line
+badge:
+  type: info
+  text: v3
 copyright:
   author:
     name: LyraVoid Team
@@ -277,7 +282,7 @@ export function getShuffledFriendsList(): FriendItem[] {
 *   在 `src/data/friends-circle.ts` 中配置朋友圈功能
 *   朋友圈区域会自动显示在友链列表下方
 
-详细配置请参考 [朋友圈功能文档](/Special/friends-circle/)。
+详细配置请参考 [朋友圈功能文档](/docs/mizuki/special/friends-circle/)。
 
 ---
 

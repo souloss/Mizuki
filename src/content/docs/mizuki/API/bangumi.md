@@ -1,7 +1,8 @@
 ---
 title: Bangumi API文档
 createTime: 2025/11/21 20:15:35
-permalink: /API/bangumi/
+permalink: /api/bangumi/
+icon: ri:film-line
 copyright:
   author:
     name: LyraVoid Team

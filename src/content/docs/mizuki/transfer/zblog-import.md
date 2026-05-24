@@ -2,6 +2,11 @@
 title: Z-Blog 迁移到 Mizuki
 createTime: 2025/08/16 23:56:17
 permalink: /transfer/zblog-import/
+order: 10
+icon: ri:download-cloud-line
+badge:
+  type: danger
+  text: 困难
 copyright:
   author:
     name: LyraVoid Team

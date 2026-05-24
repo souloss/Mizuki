@@ -1,7 +1,9 @@
 ---
 title: 文章客户端加密
 createTime: 2025/09/01 20:29:52
-permalink: /press/key/
+permalink: /press/advanced/key/
+order: 1
+icon: ri:key-line
 copyright:
   author:
     name: LyraVoid Team

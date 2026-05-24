@@ -1206,3 +1206,53 @@ export interface EffectsConfig {
 		config?: Omit<SakuraConfig, "enable">; // 樱花特效详细配置（不含 enable，enable 在上层）
 	};
 }
+
+// ── Docs sidebar types ──────────────────────────────────────────────────
+
+export type DocSidebarBadgeType = "info" | "warning" | "danger" | "tip";
+
+export interface DocSidebarBadge {
+	type: DocSidebarBadgeType;
+	text: string;
+}
+
+export interface DocSidebarItem {
+	title: string;
+	url: string;
+	order: number;
+	isHomepage: boolean;
+	isCurrent: boolean;
+	collapsed?: boolean;
+	icon?: string;
+	badge?: { type: string; text: string };
+	children?: DocSidebarItem[];
+}
+
+export interface DocSidebarSection {
+	name: string;
+	icon?: string;
+	badge?: { type: string; text: string };
+	collapsed?: boolean;
+	items: DocSidebarItem[];
+}
+
+export interface DocHomeAction {
+	theme?: string;
+	text: string;
+	link: string;
+}
+
+export interface DocHomeFeature {
+	title: string;
+	icon?: string;
+	details?: string;
+}
+
+export interface DocHomeConfig {
+	name: string;
+	tagline: string;
+	description: string;
+	image?: string;
+	actions?: DocHomeAction[];
+	features?: DocHomeFeature[];
+}

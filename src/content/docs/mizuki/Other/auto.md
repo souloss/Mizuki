@@ -1,7 +1,9 @@
 ---
 title: 自动构建
 createTime: 2025/11/20 23:13:50
-permalink: /Other/auto/
+permalink: /other/auto/
+order: 3
+icon: ri:git-merge-line
 copyright:
   author:
     name: LyraVoid Team

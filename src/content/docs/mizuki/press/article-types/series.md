@@ -1,7 +1,12 @@
 ---
 title: Series 系列/专栏
 createTime: 2026-05-20
-permalink: /press/series/
+permalink: /press/article-types/series/
+order: 1
+icon: ri:list-indefinite
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

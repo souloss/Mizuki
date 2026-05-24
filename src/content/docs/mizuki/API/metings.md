@@ -1,7 +1,8 @@
 ---
 title: Metings API文档
 createTime: 2025/11/21 20:15:35
-permalink: /API/metings/
+permalink: /api/metings/
+icon: ri:music-2-line
 copyright:
   author:
     name: LyraVoid Team

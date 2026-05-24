@@ -1,7 +1,12 @@
 ---
 title: 浮动控件与进度条配置
+order: 10
+icon: "ri:arrow-up-circle-line"
+badge:
+  type: warning
+  text: 新
 createTime: 2026/05/20 12:00:00
-permalink: /Feature/floating-controls/
+permalink: /feature/floating-controls/
 copyright:
   author:
     name: LyraVoid Team

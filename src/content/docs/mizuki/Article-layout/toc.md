@@ -1,7 +1,12 @@
 ---
 title: 目录配置
+order: 1
+icon: "ri:list-check-2"
+badge:
+  type: warning
+  text: 新
 createTime: 2025/08/17 17:21:41
-permalink: /Article-layout/toc/
+permalink: /article-layout/toc/
 copyright:
   author:
     name: LyraVoid Team

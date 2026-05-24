@@ -1,7 +1,12 @@
 ---
 title: 纯色背景配置
 createTime: 2025/11/20 19:38:55
-permalink: /Basic-Layout/layout/hide/
+permalink: /basic-layout/layout/hide/
+order: 3
+icon: ri:paint-brush-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

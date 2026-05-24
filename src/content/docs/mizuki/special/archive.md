@@ -2,6 +2,11 @@
 title: 归档页面配置
 createTime: 2026/05/20 12:00:00
 permalink: /special/archive/
+order: 3
+icon: ri:archive-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

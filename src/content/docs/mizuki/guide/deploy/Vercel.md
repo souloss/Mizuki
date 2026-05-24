@@ -1,7 +1,12 @@
 ---
 title: 部署到Vercel
+order: 1
+icon: ri:vercel-line
+badge:
+  type: warning
+  text: 推荐
 createTime: 2025/11/21 01:54:40
-permalink: /guide/deploy/Vercel/
+permalink: /guide/deploy/vercel/
 copyright:
   author:
     name: LyraVoid Team

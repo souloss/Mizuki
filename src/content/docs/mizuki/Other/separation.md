@@ -1,7 +1,9 @@
 ---
 title: 内容分离
 createTime: 2025/11/20 23:07:41
-permalink: /Other/separation/
+permalink: /other/separation/
+order: 1
+icon: ri:divide-line
 copyright:
   author:
     name: LyraVoid Team

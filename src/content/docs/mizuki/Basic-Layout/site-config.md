@@ -1,7 +1,9 @@
 ---
 title: 基础配置
 createTime: 2025/08/17 17:21:41
-permalink: /Basic-Layout/site-config/
+permalink: /basic-layout/site-config/
+order: 1
+icon: ri:settings-3-line
 copyright:
   author:
     name: LyraVoid Team

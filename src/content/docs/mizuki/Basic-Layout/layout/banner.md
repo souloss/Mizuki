@@ -1,7 +1,12 @@
 ---
 title: Banner配置
 createTime: 2025/11/20 14:46:50
-permalink: /Basic-Layout/layout/banner/
+permalink: /basic-layout/layout/banner/
+order: 1
+icon: ri:layout-top-line
+badge:
+  type: warning
+  text: 新
 copyright:
   author:
     name: LyraVoid Team

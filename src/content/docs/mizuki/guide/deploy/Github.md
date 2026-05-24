@@ -1,7 +1,12 @@
 ---
 title: 部署到Github Pages
+order: 3
+icon: ri:github-line
+badge:
+  type: danger
+  text: 不推荐
 createTime: 2025/11/21 01:56:44
-permalink: /guide/deploy/Github/
+permalink: /guide/deploy/github/
 copyright:
   author:
     name: LyraVoid Team

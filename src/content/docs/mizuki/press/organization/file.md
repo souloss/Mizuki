@@ -1,7 +1,9 @@
 ---
 title: 单文件方案
 createTime: 2025/09/01 20:29:52
-permalink: /press/file/
+permalink: /press/organization/file/
+order: 1
+icon: ri:file-text-line
 copyright:
   author:
     name: LyraVoid Team

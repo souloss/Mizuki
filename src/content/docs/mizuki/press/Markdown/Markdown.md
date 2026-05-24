@@ -1,7 +1,9 @@
 ---
 title: 基础
 createTime: 2025/11/21 01:32:59
-permalink: /press/Markdown/Markdown/
+permalink: /press/markdown/markdown/
+order: 1
+icon: ri:markdown-line
 copyright:
   author:
     name: LyraVoid Team
