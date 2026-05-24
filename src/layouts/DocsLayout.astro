@@ -1,10 +1,12 @@
 ---
+import "../styles/variables.styl";
 import "../styles/main.css";
 import "../styles/mobile-navbar.css";
 import "../styles/expressive-code.css";
 import "../styles/markdown.css";
 import "../styles/markdown-extend.styl";
 import "../styles/docs-layout.css";
+import "../styles/directives.css";
 
 import BackToHome from "@components/control/BackToHome.astro";
 import BackToTop from "@components/control/BackToTop.astro";
@@ -386,6 +388,10 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 
 <script>
 	import "../scripts/docs-enhancements";
+</script>
+
+<script>
+	import "../scripts/directive-interactions.js";
 </script>
 
 <script>

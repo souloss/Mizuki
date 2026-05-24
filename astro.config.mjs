@@ -30,6 +30,7 @@ import { rehypePlantuml } from "./src/plugins/rehype-plantuml.mjs";
 import { rehypeWrapTable } from "./src/plugins/rehype-wrap-table.mjs";
 import { remarkCodeLangAliases } from "./src/plugins/remark-code-lang-aliases.js";
 import { remarkContent } from "./src/plugins/remark-content.mjs";
+import remarkContentDirectives from "./src/plugins/remark-content-directives.mjs";
 import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
 import { remarkFixGithubAdmonitions } from "./src/plugins/remark-fix-github-admonitions.js";
 import { remarkMark } from "./src/plugins/remark-mark.js";
@@ -140,6 +141,7 @@ export default defineConfig({
 			remarkPlumeCompat,
 			remarkCodeLangAliases,
 			remarkDirective,
+			remarkContentDirectives,
 			remarkSectionize,
 			parseDirectiveNode,
 			remarkMermaid,

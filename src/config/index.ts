@@ -3,8 +3,8 @@ export { backgroundWallpaperConfig } from "./backgroundWallpaper";
 export { effectsConfig } from "./effectsConfig";
 export { fontConfig } from "./fontConfig";
 export { friendsConfig } from "./friendsConfig";
-export { plantumlConfig } from "./plantumlConfig";
 export { markmapConfig } from "./markmapConfig";
+export { plantumlConfig } from "./plantumlConfig";
 export { sponsorConfig } from "./sponsorConfig";
 
 // 导出类型

@@ -3,10 +3,9 @@ import { backgroundWallpaperConfig } from "./config/backgroundWallpaper";
 import { effectsConfig } from "./config/effectsConfig";
 import { fontConfig } from "./config/fontConfig";
 import { friendsConfig } from "./config/friendsConfig";
-import { sponsorConfig } from "./config/sponsorConfig";
-import { plantumlConfig } from "./config/plantumlConfig";
 import { markmapConfig } from "./config/markmapConfig";
-
+import { plantumlConfig } from "./config/plantumlConfig";
+import { sponsorConfig } from "./config/sponsorConfig";
 import type {
 	AnnouncementConfig,
 	CommentConfig,
@@ -779,6 +778,6 @@ export const widgetConfigs = {
 	friends: friendsConfig,
 } as const;
 
-export { plantumlConfig } from "./config/plantumlConfig";
 export { markmapConfig } from "./config/markmapConfig";
+export { plantumlConfig } from "./config/plantumlConfig";
 // umamiConfig相关配置已移动至astro.config.mjs中,统计脚本请自行在Layout.astro文件的<head>中插入

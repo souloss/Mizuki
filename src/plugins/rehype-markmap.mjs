@@ -7,8 +7,8 @@ import markmapRenderScript from "./markmap-render-script.js?raw";
  * 递归提取 HAST 节点树中的所有文本内容
  */
 function extractText(node) {
-	if (node.type === "text") return node.value || "";
-	if (node.children) return node.children.map(extractText).join("");
+	if (node.type === "text") {return node.value || "";}
+	if (node.children) {return node.children.map(extractText).join("");}
 	return "";
 }
 

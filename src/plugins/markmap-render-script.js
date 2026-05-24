@@ -110,7 +110,7 @@
 	}
 
 	function applyThemeToMarkmap(svgElement, isDark) {
-		if (!svgElement) return;
+		if (!svgElement) {return;}
 		if (isDark) {
 			svgElement.style.filter = "brightness(0.9) contrast(1.1)";
 		} else {
@@ -128,7 +128,7 @@
 			const container = document.getElementById(containerId);
 			if (container) {
 				const controls = container.querySelector(".markmap-controls");
-				if (controls) controls.remove();
+				if (controls) {controls.remove();}
 				container.removeAttribute("data-markmap-init");
 			}
 		});
@@ -144,13 +144,13 @@
 			}
 
 			const wrapper = container.querySelector(".markmap-wrapper");
-			if (!wrapper) return;
+			if (!wrapper) {return;}
 
 			const wrapperId = wrapper.id;
-			if (!wrapperId) return;
+			if (!wrapperId) {return;}
 
 			const mmInstance = markmapInstances.get(wrapperId);
-			if (!mmInstance) return;
+			if (!mmInstance) {return;}
 
 			container.setAttribute("data-markmap-init", "true");
 
@@ -199,7 +199,7 @@
 
 	function openFullscreen(container) {
 		const svgElement = container.querySelector(".markmap svg");
-		if (!svgElement) return;
+		if (!svgElement) {return;}
 
 		const isDark = document.documentElement.classList.contains("dark");
 
@@ -354,23 +354,23 @@
 
 			for (const container of containers) {
 				const wrapper = container.querySelector(".markmap-wrapper");
-				if (!wrapper) continue;
+				if (!wrapper) {continue;}
 
 				const markmapDiv = wrapper.querySelector(".markmap");
-				if (!markmapDiv) continue;
+				if (!markmapDiv) {continue;}
 
 				let code = markmapDiv.getAttribute("data-markmap-code") || "";
 				if (!code) {
 					code = markmapDiv.textContent?.trim() || "";
 				}
-				if (!code) continue;
+				if (!code) {continue;}
 
 				markmapDiv.innerHTML = '<div class="markmap-loading">Rendering mindmap...</div>';
 
 				try {
 					const { root } = transformer.transform(code);
 
-					let svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 					svgElement.style.width = "100%";
 					svgElement.style.height = "400px";
 					markmapDiv.innerHTML = "";

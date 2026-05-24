@@ -1,5 +1,6 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
+
 import plantumlRenderScript from "./plantuml-render-script.js?raw";
 
 /**
@@ -9,8 +10,8 @@ import plantumlRenderScript from "./plantuml-render-script.js?raw";
  * @returns {string} 拼接后的文本
  */
 function extractText(node) {
-	if (node.type === "text") return node.value || "";
-	if (node.children) return node.children.map(extractText).join("");
+	if (node.type === "text") {return node.value || "";}
+	if (node.children) {return node.children.map(extractText).join("");}
 	return "";
 }
 

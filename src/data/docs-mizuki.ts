@@ -722,6 +722,15 @@ export const docsMizukiSidebar = [
 							"type": "warning",
 							"text": "新"
 						}
+					},
+					{
+						"text": "指令",
+						"link": "Markdown/directives/",
+						"icon": "ri:command-line",
+						"badge": {
+							"type": "warning",
+							"text": "新"
+						}
 					}
 				]
 			},
