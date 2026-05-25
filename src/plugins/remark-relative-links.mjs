@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { visit } from "unist-util-visit";
 
+const isDev = () => !process.env.ASTRO_BUILDING;
+
 /**
  * remark-relative-links: resolve relative markdown file links (e.g. ./1-file.md)
  * to slug-based URLs (e.g. /posts/internet-architecture/slug/)
@@ -78,6 +80,7 @@ function resolveLinkTarget(targetPath) {
 
 export function remarkRelativeLinks() {
 	return (tree, file) => {
+		if (isDev()) { return; }
 		const currentFilePath = file.path || (file.history && file.history[0]) || "";
 		if (!currentFilePath) {return;}
 

@@ -3,6 +3,9 @@ import { visit } from "unist-util-visit";
 
 import mermaidRenderScript from "./mermaid-render-script.js?raw";
 
+/** Dev 模式下跳过重量级渲染，仅输出占位符 */
+const isDev = () => !process.env.ASTRO_BUILDING;
+
 /**
  * 递归提取 HAST 节点树中的所有文本内容
  */
@@ -26,35 +29,32 @@ export function rehypeMermaid() {
 				if (!mermaidCode) {
 					mermaidCode = extractText(node).trim();
 				}
+
+				// Dev: 跳过 16KB 渲染脚本注入，仅输出带虚线边框的代码占位符
+				if (isDev()) {
+					node.tagName = "div";
+					node.properties = {
+						class: "mermaid-dev-placeholder",
+						style: "border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;",
+					};
+					node.children = [
+						h("strong", "[Mermaid diagram — rendered in production]"),
+						h("pre", { style: "margin:0.5em 0 0;font-size:0.85em;" }, mermaidCode),
+					];
+					return;
+				}
+
 				const mermaidId = `mermaid-${Math.random().toString(36).slice(-6)}`;
 
 				// 创建 Mermaid 容器
 				const mermaidContainer = h(
 					"div",
-					{
-						class: "mermaid-wrapper",
-						id: mermaidId,
-					},
-					[
-						h(
-							"div",
-							{
-								class: "mermaid",
-								"data-mermaid-code": mermaidCode,
-							},
-							mermaidCode,
-						),
-					],
+					{ class: "mermaid-wrapper", id: mermaidId },
+					[h("div", { class: "mermaid", "data-mermaid-code": mermaidCode }, mermaidCode)],
 				);
 
 				// 创建客户端渲染脚本
-				const renderScript = h(
-					"script",
-					{
-						type: "text/javascript",
-					},
-					mermaidRenderScript,
-				);
+				const renderScript = h("script", { type: "text/javascript" }, mermaidRenderScript);
 
 				// 替换原始节点
 				node.tagName = "div";

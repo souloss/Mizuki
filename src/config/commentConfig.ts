@@ -6,7 +6,6 @@ export const commentConfig: CommentConfig = {
 	system: "twikoo",
 	twikoo: {
 		envId: "https://twikoo.vercel.app",
-		lang: SITE_LANG,
 	},
 	giscus: {
 		repo: "your-github-username/your-repo-name",
