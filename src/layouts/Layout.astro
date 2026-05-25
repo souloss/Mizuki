@@ -194,15 +194,6 @@ if (defaultFontItem) {
 			}}
 		></style>
 
-		<!-- Pio 看板娘样式 - 非渲染阻塞加载 -->
-		{
-			pioConfig.enable && (
-				<Fragment
-					set:html={`<link rel="stylesheet" href="/pio/static/pio.css" media="print" onload="this.media='all'" />`}
-				/>
-			)
-		}
-
 		<link
 			rel="alternate"
 			type="application/rss+xml"
@@ -213,7 +204,7 @@ if (defaultFontItem) {
 	<body
 		class="min-h-screen"
 		class:list={[
-			{ "lg:is-home": isHomePage, "enable-banner": enableBanner },
+			{ "lg:is-home": isHomePage, "enable-banner": enableBanner, "enable-card-border": siteConfig.card?.border },
 		]}
 		style={bodyFontFamily ? `font-family: ${bodyFontFamily};` : ""}
 		data-overlayscrollbars-initialize

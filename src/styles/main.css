@@ -258,17 +258,31 @@ html {
     @apply rounded-(--radius-large) overflow-hidden bg-(--card-bg-transparent) backdrop-blur-sm transition-colors duration-150;
   }
 
+  /* 卡片边框和微阴影效果 */
+  .enable-card-border .card-base {
+    @apply transition-all duration-300 border border-(--line-divider) shadow-xs;
+  }
+  .enable-card-border .card-base-transparent {
+    @apply transition-all duration-300 border border-(--line-divider) shadow-xs;
+  }
+  .enable-card-border #navbar > div:not(.absolute) {
+    @apply transition-all duration-300 border shadow-xs;
+    border-color: var(--line-divider) !important;
+  }
+
   /* 全屏壁纸模式下的半透明效果 - 使用!important确保优先级 */
   .wallpaper-transparent .card-base {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   body.wallpaper-transparent .card-base {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   /* 确保嵌套的卡片元素在全屏壁纸模式下也应用半透明效果 */
@@ -277,6 +291,7 @@ html {
     background: var(--card-bg-transparent) !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
+    isolation: isolate;
   }
 
   .wallpaper-transparent .float-panel {

@@ -7,86 +7,108 @@
 
 	export let config: Partial<PioProps["config"]> = {};
 
-	const pioOptions = {
+	const merged = {
 		mode: config?.mode ?? pioConfig.mode,
 		hidden: config?.hiddenOnMobile ?? pioConfig.hiddenOnMobile,
-		content: config?.dialog ?? pioConfig.dialog ?? {},
-		model: config?.models ??
-			pioConfig.models ?? ["/pio/models/pio/model.json"],
+		dialog: config?.dialog ?? pioConfig.dialog ?? {},
+		models:
+			config?.models ??
+			pioConfig.models ?? ["/pio/models/NOIR/noir.model3.json"],
+		tips: config?.tips ?? pioConfig.tips,
+		menus: config?.menus ?? pioConfig.menus,
+		position: config?.position ?? pioConfig.position,
+		hideAboutMenu: config?.hideAboutMenu ?? pioConfig.hideAboutMenu ?? true,
 	};
 
-	let pioInstance: any = null;
-	let pioInitialized = false;
-	let pioContainer: HTMLDivElement | null = null;
-	let pioCanvas: HTMLCanvasElement | null = null;
+	let widgetInstance: { destroy: () => Promise<void>; sleep: () => void } | null =
+		null;
 
-	function initPio() {
-		if (
-			typeof window !== "undefined" &&
-			typeof (window as any).Paul_Pio !== "undefined"
-		) {
-			try {
-				if (pioContainer && pioCanvas && !pioInitialized) {
-					pioInstance = new (window as any).Paul_Pio(pioOptions);
-					pioInitialized = true;
-					console.log("Pio initialized successfully (Svelte)");
-				} else if (!pioContainer || !pioCanvas) {
-					console.warn("Pio DOM elements not found, retrying...");
-					setTimeout(initPio, 100);
-				}
-			} catch (e) {
-				console.error("Pio initialization error:", e);
+	async function initWidget() {
+		if (typeof window === "undefined") return;
+
+		try {
+			const { createWidget } = await import("l2d-widget");
+			type WidgetOptions = Parameters<typeof createWidget>[0];
+
+			const modelPaths = merged.models;
+			const modelConfig =
+				modelPaths.length === 1
+					? { path: modelPaths[0] }
+					: modelPaths.map((p: string) => ({ path: p }));
+
+			// Build tips on model config before passing to createWidget
+			const tipsData: Record<string, unknown> = {};
+			const tipsConfig = merged.tips;
+			if (tipsConfig) {
+				if (tipsConfig.welcomeMessage)
+					tipsData.welcomeMessage = tipsConfig.welcomeMessage;
+				if (tipsConfig.messages) tipsData.messages = tipsConfig.messages;
+				if (tipsConfig.duration) tipsData.duration = tipsConfig.duration;
+				if (tipsConfig.interval) tipsData.interval = tipsConfig.interval;
+			} else if (merged.dialog?.welcome || merged.dialog?.touch) {
+				const welcome = merged.dialog.welcome;
+				const touch = merged.dialog.touch;
+				if (welcome)
+					tipsData.welcomeMessage = Array.isArray(welcome) ? welcome : [welcome];
+				if (touch) tipsData.messages = Array.isArray(touch) ? touch : [touch];
 			}
-		} else {
-			setTimeout(initPio, 100);
-		}
-	}
+			if (Object.keys(tipsData).length > 0) {
+				(modelConfig as Record<string, unknown>).tips = tipsData;
+			}
 
-	function loadPioAssets() {
-		if (typeof window === "undefined") {
-			return;
-		}
+			const position =
+				merged.position === "right"
+					? ("bottom-right" as const)
+					: ("bottom-left" as const);
 
-		const loadScript = (src: string, id: string): Promise<void> => {
-			return new Promise((resolve, reject) => {
-				if (document.querySelector(`#${id}`)) {
-					resolve();
-					return;
-				}
-				const script = document.createElement("script");
-				script.id = id;
-				script.src = src;
-				script.async = true;
-				script.onload = () => resolve();
-				script.onerror = reject;
-				document.head.appendChild(script);
-			});
-		};
+			const options: WidgetOptions = {
+				model: modelConfig as WidgetOptions["model"],
+				position,
+				size: pioConfig.width ?? 280,
+				transitionDuration: 1500,
+				transitionType: "slide",
+			};
 
-		const loadWithIdle = () => {
-			loadScript("/pio/static/l2d.js", "pio-l2d-script")
-				.then(() => loadScript("/pio/static/pio.js", "pio-main-script"))
-				.then(() => {
-					setTimeout(initPio, 100);
-				})
-				.catch((error) => {
-					console.error("Failed to load Pio scripts:", error);
-				});
-		};
+			// Map menus config
+			const menusConfig = merged.menus;
+			if (menusConfig?.items && menusConfig.items.length > 0) {
+				const menuActions: Record<
+					string,
+					(widget: { sleep: () => void }) => void
+				> = {
+					home: () => (window.location.href = "/"),
+					scrollToTop: () =>
+						window.scrollTo({ top: 0, behavior: "smooth" }),
+					sleep: (w) => w.sleep(),
+				};
 
-		if ("requestIdleCallback" in window) {
-			(window as any).requestIdleCallback(loadWithIdle, {
-				timeout: 5000,
-			});
-		} else {
-			setTimeout(loadWithIdle, 2000);
+				options.menus = {
+					items: menusConfig.items.map((item) => ({
+						icon: item.icon,
+						label: item.label,
+						onClick: menuActions[item.action] ?? (() => {}),
+					})),
+					...(menusConfig.align && { align: menusConfig.align }),
+				};
+			}
+
+			widgetInstance = createWidget(options);
+
+			// Hide built-in About menu button if configured
+			if (merged.hideAboutMenu) {
+				const style = document.createElement("style");
+				style.id = "l2d-hide-about";
+				style.textContent =
+					'div[style*="z-index: 9999"] button[title="About"] { display: none !important; }';
+				document.head.appendChild(style);
+			}
+		} catch (e) {
+			console.error("Failed to initialize Live2D widget:", e);
 		}
 	}
 
 	onMount(() => {
-		if (!pioConfig.enable) {
-			return;
-		}
+		if (!pioConfig.enable) return;
 
 		if (
 			pioConfig.hiddenOnMobile &&
@@ -95,29 +117,38 @@
 			return;
 		}
 
-		loadPioAssets();
+		// Lazy load via requestIdleCallback
+		if ("requestIdleCallback" in window) {
+			(
+				window as unknown as { requestIdleCallback: typeof requestIdleCallback }
+			).requestIdleCallback(() => initWidget(), { timeout: 5000 });
+		} else {
+			setTimeout(initWidget, 2000);
+		}
 	});
 
-	onDestroy(() => {
-		console.log("Pio Svelte component destroyed (keeping instance alive)");
+	onDestroy(async () => {
+		if (widgetInstance) {
+			try {
+				await widgetInstance.destroy();
+			} catch {
+				// Widget may already be destroyed
+			}
+			widgetInstance = null;
+		}
+		if (typeof document !== "undefined") {
+			document.getElementById("l2d-hide-about")?.remove();
+		}
 	});
 </script>
 
 {#if pioConfig.enable}
-	<div
-		class={`pio-container ${pioConfig.position || "right"}`}
-		bind:this={pioContainer}
-	>
-		<div class="pio-action"></div>
-		<canvas
-			id="pio"
-			bind:this={pioCanvas}
-			width={pioConfig.width || 280}
-			height={pioConfig.height || 250}
-		></canvas>
-	</div>
+	<div id="pio-container"></div>
 {/if}
 
 <style>
-	/* Pio 相关样式将通过外部CSS文件加载 */
+	#pio-container {
+		position: fixed;
+		z-index: 999;
+	}
 </style>

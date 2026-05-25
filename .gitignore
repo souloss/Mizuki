@@ -58,3 +58,12 @@ src/data/friends-circle.json
 .lighthouseci/
 
 .omc
+
+# Live2D editor source files
+*.psd
+*.psd~
+*.cmo3
+*.vtube.json
+
+# MCP
+.mcp.json

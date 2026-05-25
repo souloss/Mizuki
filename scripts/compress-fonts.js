@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 
 // 读取配置文件获取语言设置和字体配置
 async function getConfig() {
-	const configPath = path.join(__dirname, "../src/config.ts");
+	const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 	const configContent = fs.readFileSync(configPath, "utf-8");
 
 	// 提取语言设置
@@ -213,7 +213,7 @@ function getAsciiCharset() {
 async function fetchMetingPlaylistText() {
 	try {
 		// 读取配置文件获取音乐播放器配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查音乐播放器是否启用
@@ -369,7 +369,7 @@ async function fetchMetingPlaylistText() {
 async function fetchBilibiliAnimeText() {
 	try {
 		// 读取配置文件获取番剧配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查番剧页面是否启用
@@ -496,7 +496,7 @@ async function fetchBilibiliAnimeText() {
 async function fetchBangumiAnimeText() {
 	try {
 		// 读取配置文件获取番剧配置
-		const configPath = path.join(__dirname, "../src/config.ts");
+		const configPath = path.join(__dirname, "../src/config/siteConfig.ts");
 		const configContent = fs.readFileSync(configPath, "utf-8");
 
 		// 检查番剧页面是否启用
@@ -835,7 +835,7 @@ async function collectText() {
 	}
 
 	// 3. 读取 src/config.ts 文件
-	const configFile = path.join(__dirname, "../src/config.ts");
+	const configFile = path.join(__dirname, "../src/config/siteConfig.ts");
 	if (fs.existsSync(configFile)) {
 		const content = fs.readFileSync(configFile, "utf-8");
 

@@ -101,6 +101,8 @@ async function processAlbumFolder(
 		location: info.location || "",
 		tags: info.tags || [],
 		photos,
+		password: info.password || undefined,
+		passwordHint: info.passwordHint || undefined,
 	};
 }
 

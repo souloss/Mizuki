@@ -1,5 +1,7 @@
 ---
 import { PhotoCard } from "@components/features/albums";
+import Encryptor from "@components/features/auth/Encryptor.astro";
+import PasswordProtection from "@components/features/auth/PasswordProtection.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { Icon } from "astro-icon/components";
 
@@ -8,6 +10,7 @@ import I18nKey from "../../../i18n/i18nKey";
 import { i18n } from "../../../i18n/translation";
 import type { AlbumGroup, Photo } from "../../../types/album";
 import { scanAlbums } from "../../../utils/album-scanner";
+import { encryptContent } from "../../../utils/crypto-utils";
 
 if (!siteConfig.featurePages.albums) {
 	return Astro.redirect("/404/");
@@ -29,6 +32,16 @@ const { album } = Astro.props;
 
 if (!album) {
 	return Astro.redirect("/404/");
+}
+
+const isEncrypted = !!(album.password);
+let encryptedPhotoData = "";
+if (isEncrypted) {
+	const photoHtml = album.photos.map((photo: Photo) =>
+		`<div class="gallery-masonry-item"><a data-fancybox="album-${album.id}" href="${photo.src}" data-caption="${photo.alt || photo.title || ''}"><img src="${photo.src}" alt="${photo.alt || photo.title || ''}" loading="lazy" decoding="async" class="w-full rounded-lg" /></a></div>`
+	).join("");
+	const wrappedHtml = `<div class="gallery-masonry">${photoHtml}</div>`;
+	encryptedPhotoData = encryptContent(wrappedHtml, String(album.password), `album:${album.id}`);
 }
 ---
 
@@ -164,7 +177,12 @@ if (!album) {
 	<div class="w-full rounded-(--radius-large) overflow-hidden relative mt-4">
 		<div class="card-base z-10 px-6 py-6 relative w-full">
 			{
-				album.photos.length > 0 ? (
+				isEncrypted ? (
+					<PasswordProtection
+						encryptedContent={encryptedPhotoData}
+						hint={album.passwordHint || ""}
+					/>
+				) : album.photos.length > 0 ? (
 					<div class="gallery-masonry">
 						{album.photos.map((photo: Photo) => (
 							<PhotoCard

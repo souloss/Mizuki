@@ -150,8 +150,6 @@ html.is-animating .transition-swup-fade {
 .onload-animation,
 .transition-slide-in,
 .card-animation {
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
   transform: translateZ(0);
   will-change: transform;
 }
@@ -160,7 +158,6 @@ html.is-animating .transition-swup-fade {
 .gpu-accelerated {
   transform: translateZ(0);
   will-change: transform;
-  backface-visibility: hidden;
   isolation: isolate;
 }
 
@@ -204,10 +201,6 @@ html.going-dark::view-transition-new(root) {
   .card-animation {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    perspective: 1000;
   }
 }
 

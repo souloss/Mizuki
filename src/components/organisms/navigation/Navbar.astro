@@ -21,14 +21,52 @@ const navbarTransparentMode =
 // 检查是否为首页
 const isHomePage = Astro.url.pathname === "/" || Astro.url.pathname === "";
 
-const links: NavBarLink[] = navBarConfig.links.map(
-	(item: NavBarLink | LinkPreset): NavBarLink => {
-		if (typeof item === "number") {
-			return LinkPresets[item];
-		}
-		return item;
-	},
-);
+// featurePage URL -> config key mapping
+const featurePageUrlMap: Record<string, string> = {
+	"/anime/": "anime",
+	"/diary/": "diary",
+	"/friends/": "friends",
+	"/projects/": "projects",
+	"/skills/": "skills",
+	"/timeline/": "timeline",
+	"/albums/": "albums",
+	"/devices/": "devices",
+};
+
+function isFeaturePageDisabled(url: string): boolean {
+	const key = featurePageUrlMap[url];
+	if (key && !siteConfig.featurePages[key as keyof typeof siteConfig.featurePages]) {
+		return true;
+	}
+	return false;
+}
+
+function filterLinksByFeaturePages(items: (NavBarLink | LinkPreset)[]): NavBarLink[] {
+	return items
+		.map((item: NavBarLink | LinkPreset): NavBarLink | null => {
+			if (typeof item === "number") {
+				const resolved = LinkPresets[item];
+				if (isFeaturePageDisabled(resolved.url)) {
+					return null;
+				}
+				return resolved;
+			}
+			if (isFeaturePageDisabled(item.url)) {
+				return null;
+			}
+			if (item.children) {
+				const filteredChildren = filterLinksByFeaturePages(item.children);
+				if (filteredChildren.length === 0) {
+					return null;
+				}
+				return { ...item, children: filteredChildren };
+			}
+			return item;
+		})
+		.filter((item): item is NavBarLink => item !== null);
+}
+
+const links: NavBarLink[] = filterLinksByFeaturePages(navBarConfig.links);
 
 const rawLogo = siteConfig.navbarTitle?.logo;
 const logoSrc = rawLogo?.match(/^(http|https|\/\/)/) ? rawLogo : rawLogo ? url(rawLogo) : "";

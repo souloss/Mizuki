@@ -1,5 +1,5 @@
 import { WALLPAPER_BANNER } from "../constants/constants";
-import type { BackgroundWallpaperConfig } from "../types/config";
+import type { BackgroundWallpaperConfig, FullscreenWallpaperConfig } from "../types/config";
 
 // 背景壁纸配置
 export const backgroundWallpaperConfig: BackgroundWallpaperConfig = {
@@ -80,7 +80,7 @@ export const backgroundWallpaperConfig: BackgroundWallpaperConfig = {
         // PicFlow API支持
         imageApi: {
             enable: false,
-            url: "http://domain.com/api_v2.php?format=text&count=4",
+            url: "http://domain.com/api2_v2.php?format=text&count=4",
         },
     },
     // 全屏壁纸模式配置
@@ -136,4 +136,29 @@ export const backgroundWallpaperConfig: BackgroundWallpaperConfig = {
             cardOpacity: true,
         },
     },
+};
+
+export const fullscreenWallpaperConfig: FullscreenWallpaperConfig = {
+	src: {
+		desktop: [
+			"/assets/desktop-banner/1.webp",
+			"/assets/desktop-banner/2.webp",
+			"/assets/desktop-banner/3.webp",
+			"/assets/desktop-banner/4.webp",
+		], // 桌面横幅图片
+		mobile: [
+			"/assets/mobile-banner/1.webp",
+			"/assets/mobile-banner/2.webp",
+			"/assets/mobile-banner/3.webp",
+			"/assets/mobile-banner/4.webp",
+		], // 移动横幅图片
+	}, // 使用本地横幅图片
+	position: "center", // 壁纸位置，等同于 object-position
+	carousel: {
+		enable: true, // 启用轮播
+		interval: 5, // 轮播间隔时间（秒）
+	},
+	zIndex: -1, // 层级，确保壁纸在背景层
+	opacity: 0.8, // 壁纸透明度
+	blur: 1, // 背景模糊程度
 };

@@ -380,6 +380,7 @@ const jsonLd = {
 				isEncrypted ? (
 					<Encryptor
 						password={entry.data.password}
+						slug={entry.id}
 						hint={entry.data.passwordHint}
 					>
 						<Markdown class="mb-6 markdown-content onload-animation">

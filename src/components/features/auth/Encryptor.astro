@@ -4,24 +4,21 @@ import "@/styles/expressive-code.css";
 import "@/styles/encrypted-content.css";
 import "@/styles/markdown-extend.styl";
 
-import CryptoJS from "crypto-js";
+import { encryptContent } from "@utils/crypto-utils";
 
 import PasswordProtection from "./PasswordProtection.astro";
 
 export interface Props {
 	password: string | number;
+	slug: string;
 	hint?: string;
 }
 
-const { password, hint = "" } = Astro.props;
+const { password, slug, hint = "" } = Astro.props;
 
 const htmlContent = await Astro.slots.render("default");
 
-const contentToEncrypt = "MIZUKI-VERIFY:" + htmlContent;
-const encryptedContent = CryptoJS.AES.encrypt(
-	contentToEncrypt,
-	String(password),
-).toString();
+const encryptedContent = encryptContent(htmlContent, String(password), slug);
 ---
 
 <PasswordProtection encryptedContent={encryptedContent} hint={hint} />

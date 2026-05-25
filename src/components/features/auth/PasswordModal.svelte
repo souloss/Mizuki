@@ -61,7 +61,7 @@
 </script>
 
 <div class="password-protection">
-	<div class="password-container card-base">
+	<div class="password-container">
 		<div class="lock-icon">
 			<svg
 				width="48"
@@ -186,15 +186,13 @@
 		border-radius: 0.5rem;
 		font-size: 0.875rem;
 		background: rgba(0, 0, 0, 0.05);
-		border: 1px solid rgba(0, 0, 0, 0.08);
+		border: none;
 		color: rgba(0, 0, 0, 0.8);
 		outline: none;
-		transition: border-color 0.2s;
 	}
 
 	:global(.dark) .password-input {
 		background: rgba(255, 255, 255, 0.1);
-		border-color: rgba(255, 255, 255, 0.08);
 		color: rgba(255, 255, 255, 0.8);
 	}
 
@@ -207,7 +205,11 @@
 	}
 
 	.password-input:focus {
-		border-color: var(--primary);
+		background: rgba(0, 0, 0, 0.08);
+	}
+
+	:global(.dark) .password-input:focus {
+		background: rgba(255, 255, 255, 0.15);
 	}
 
 	.unlock-button {

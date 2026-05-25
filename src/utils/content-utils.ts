@@ -146,26 +146,23 @@ export async function getCategoryList(): Promise<Category[]> {
 }
 
 /**
- * 对标题进行分词，支持中英文混合
+ * 对文本进行分词，支持中英文混合
  *
  * - 优先使用 Intl.Segmenter（在支持的运行时中效果更好）
  * - 在不支持 Segmenter 的环境（如部分 Node 运行时）下
  *   回退到基于正则的简单分词，以避免构建报错
  * - 过滤标点和空白，英文统一小写
  */
-function tokenizeTitle(title: string): Set<string> {
+function tokenize(text: string): Set<string> {
 	const tokens = new Set<string>();
 
-	// 运行时可能不支持 Intl.Segmenter（例如部分 Node 环境）
-	// 为了避免 SSR/构建时报错，这里做兼容处理
 	const hasSegmenter =
 		typeof Intl !== "undefined" &&
 		"Segmenter" in Intl &&
 		typeof (Intl as any).Segmenter === "function";
 
 	if (!hasSegmenter) {
-		// 简单回退方案：按照空白和标点拆分
-		const basicTokens = title
+		const basicTokens = text
 			.toLowerCase()
 			.split(/[\s\p{P}]+/gu)
 			.filter(Boolean);
@@ -175,11 +172,10 @@ function tokenizeTitle(title: string): Set<string> {
 		return tokens;
 	}
 
-	// 使用 Intl.Segmenter 进行更精细的中英文混合分词
 	const segmenter = new (Intl as any).Segmenter("zh", {
 		granularity: "word",
 	});
-	for (const { segment, isWordLike } of segmenter.segment(title)) {
+	for (const { segment, isWordLike } of segmenter.segment(text)) {
 		if (!isWordLike) {
 			continue;
 		}
@@ -206,17 +202,85 @@ function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
 }
 
 /**
- * 获取相关文章推荐
- * 评分公式: totalScore = tagMatchScore + titleSimilarityScore + timeFreshnessScore + categoryBonus
- * - tagMatchScore (0-100): 标签 Jaccard 相似度 × 100
- * - titleSimilarityScore (0-100): 标题分词 Jaccard 相似度 × 100
- * - timeFreshnessScore (0-30): 6 个月半衰期指数衰减
- * - categoryBonus (0 or 10): 同分类加 10 分
+ * 计算标签的 IDF（逆文档频率）权重
+ * 稀有标签（出现频率低）获得更高权重，常见标签权重更低
+ * IDF(tag) = log(N / (1 + df(tag)))，N = 总文章数，df = 包含该标签的文章数
+ */
+function computeTagIDF(allPosts: { data: { tags?: string[] } }[]): Map<string, number> {
+	const tagDF = new Map<string, number>();
+	const N = allPosts.length;
+
+	for (const post of allPosts) {
+		const tags = post.data.tags || [];
+		for (const tag of tags) {
+			tagDF.set(tag, (tagDF.get(tag) || 0) + 1);
+		}
+	}
+
+	const tagIDF = new Map<string, number>();
+	for (const [tag, df] of tagDF) {
+		tagIDF.set(tag, Math.log(N / (1 + df)));
+	}
+	return tagIDF;
+}
+
+/**
+ * 计算 IDF 加权标签相似度
+ * 对共有标签的 IDF 值求和，归一化到 [0, 1]
+ */
+function idfWeightedTagSimilarity(
+	currentTags: string[],
+	candidateTags: string[],
+	tagIDF: Map<string, number>,
+): number {
+	if (currentTags.length === 0 || candidateTags.length === 0) {
+		return 0;
+	}
+
+	const candidateSet = new Set(candidateTags);
+	let intersectionWeight = 0;
+	let currentTotalWeight = 0;
+
+	for (const tag of currentTags) {
+		const idf = tagIDF.get(tag) ?? 0;
+		currentTotalWeight += idf;
+		if (candidateSet.has(tag)) {
+			intersectionWeight += idf;
+		}
+	}
+
+	return currentTotalWeight === 0 ? 0 : intersectionWeight / currentTotalWeight;
+}
+
+/**
+ * 获取相关文章推荐 — 多算法加权评分
+ *
+ * 评分维度（权重可通过 relatedPostsConfig.weights 配置）：
+ * - tagSimilarity: 标签相似度（Jaccard 或 IDF 加权）
+ * - titleSimilarity: 标题分词 Jaccard 相似度
+ * - descriptionSimilarity: 描述文本分词相似度
+ * - categoryMatch: 同分类加分
+ * - freshness: 时间新鲜度（指数衰减）
+ *
+ * 总分 = Σ(维度分数 × 权重) / Σ权重
  */
 export async function getRelatedPosts(
 	currentPost: CollectionEntry<"posts">,
 	maxCount = 5,
 ): Promise<PostForList[]> {
+	const { relatedPostsConfig } = await import("@/config");
+	const weights = relatedPostsConfig.weights ?? {};
+	const halfLife = relatedPostsConfig.freshnessHalfLife ?? 180;
+
+	const w = {
+		tagSimilarity: weights.tagSimilarity ?? 1.0,
+		titleSimilarity: weights.titleSimilarity ?? 0.6,
+		descriptionSimilarity: weights.descriptionSimilarity ?? 0.4,
+		categoryMatch: weights.categoryMatch ?? 0.3,
+		freshness: weights.freshness ?? 0.2,
+		useIDF: weights.tagIDF ?? true,
+	};
+
 	const allPosts = await getCollection<"posts">("posts", ({ data }) => {
 		return import.meta.env.PROD ? data.draft !== true : true;
 	});
@@ -226,81 +290,81 @@ export async function getRelatedPosts(
 		(p) => p.id !== currentPost.id && !p.data.password,
 	);
 
-	const currentTags = new Set(currentPost.data.tags || []);
-	const currentTokens = tokenizeTitle(currentPost.data.title);
+	if (candidates.length === 0) return [];
+
+	const currentTags = currentPost.data.tags || [];
+	const currentTokens = tokenize(currentPost.data.title);
+	const currentDesc = tokenize(currentPost.data.description || "");
 	const currentCategory = currentPost.data.category || "";
 	const now = Date.now();
 
+	// 预计算标签 IDF
+	const tagIDF = w.useIDF ? computeTagIDF(allPosts) : new Map<string, number>();
+
+	// 权重总和（用于归一化）
+	const totalWeight =
+		w.tagSimilarity + w.titleSimilarity + w.descriptionSimilarity + w.categoryMatch + w.freshness;
+
 	const scored = candidates.map((post) => {
-		const postTags = new Set(post.data.tags || []);
+		const postTags = post.data.tags || [];
 
-		// tagMatchScore (0-100)
-		const tagMatchScore = jaccardSimilarity(currentTags, postTags) * 100;
+		// 标签相似度
+		let tagScore: number;
+		if (w.useIDF && currentTags.length > 0 && postTags.length > 0) {
+			tagScore = idfWeightedTagSimilarity(currentTags, postTags, tagIDF);
+		} else {
+			tagScore = jaccardSimilarity(new Set(currentTags), new Set(postTags));
+		}
 
-		// titleSimilarityScore (0-100)
-		const postTokens = tokenizeTitle(post.data.title);
-		const titleSimilarityScore =
-			jaccardSimilarity(currentTokens, postTokens) * 100;
+		// 标题相似度
+		const postTokens = tokenize(post.data.title);
+		const titleScore = jaccardSimilarity(currentTokens, postTokens);
 
-		// timeFreshnessScore (0-30): 6 个月半衰期
-		const daysSincePublished =
-			(now - new Date(post.data.published).getTime()) /
-			(1000 * 60 * 60 * 24);
-		const timeFreshnessScore =
-			30 * Math.exp((-Math.LN2 * daysSincePublished) / 180);
+		// 描述相似度
+		const postDesc = tokenize(post.data.description || "");
+		const descScore = jaccardSimilarity(currentDesc, postDesc);
 
-		// categoryBonus (0 or 10)
+		// 分类匹配
 		const postCategory = post.data.category || "";
-		const categoryBonus =
-			currentCategory && postCategory && currentCategory === postCategory
-				? 10
-				: 0;
+		const catScore =
+			currentCategory && postCategory && currentCategory === postCategory ? 1 : 0;
 
+		// 时间新鲜度（指数衰减，半衰期可配）
+		const daysSincePublished =
+			(now - new Date(post.data.published).getTime()) / (1000 * 60 * 60 * 24);
+		const freshnessScore = Math.exp((-Math.LN2 * daysSincePublished) / halfLife);
+
+		// 加权总分（归一化到 [0, 1]）
 		const totalScore =
-			tagMatchScore +
-			titleSimilarityScore +
-			timeFreshnessScore +
-			categoryBonus;
+			totalWeight === 0
+				? 0
+				: (tagScore * w.tagSimilarity +
+					titleScore * w.titleSimilarity +
+					descScore * w.descriptionSimilarity +
+					catScore * w.categoryMatch +
+					freshnessScore * w.freshness) /
+				totalWeight;
 
-		return {
-			post,
-			totalScore,
-			tagMatchScore,
-			timeFreshnessScore,
-			categoryBonus,
-		};
+		return { post, totalScore, tagScore };
 	});
 
 	// 按总分降序排列
 	scored.sort((a, b) => b.totalScore - a.totalScore);
 
-	// 优先取有标签匹配的
-	const withTagMatch = scored.filter((s) => s.tagMatchScore > 0);
-	const withoutTagMatch = scored.filter((s) => s.tagMatchScore === 0);
+	// 优先取有标签匹配的，不足时从剩余候选中补充
+	const withTagMatch = scored.filter((s) => s.tagScore > 0);
+	const withoutTagMatch = scored.filter((s) => s.tagScore === 0);
 
 	const result: PostForList[] = [];
 
 	for (const s of withTagMatch) {
-		if (result.length >= maxCount) {
-			break;
-		}
+		if (result.length >= maxCount) break;
 		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 
-	// 不足时从剩余候选中按 timeFreshnessScore + categoryBonus 降序补充
-	if (result.length < maxCount) {
-		withoutTagMatch.sort(
-			(a, b) =>
-				b.timeFreshnessScore +
-				b.categoryBonus -
-				(a.timeFreshnessScore + a.categoryBonus),
-		);
-		for (const s of withoutTagMatch) {
-			if (result.length >= maxCount) {
-				break;
-			}
-			result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
-		}
+	for (const s of withoutTagMatch) {
+		if (result.length >= maxCount) break;
+		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 
 	return result;

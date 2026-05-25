@@ -70,7 +70,7 @@ function collectFiles(dir, predicate, results = []) {
  * excluding external links (GitHub, Bilibili, etc.) and profile names.
  */
 function checkMissingI18n() {
-  const configPath = join(SRC, "config.ts");
+  const configPath = join(SRC, "config", "navBarConfig.ts");
   const configContent = readFile(configPath);
 
   // Extract only navBarConfig section
@@ -133,7 +133,7 @@ function checkMissingI18n() {
  * they're just dropdown containers, not actual pages.
  */
 function checkBrokenNavRefs() {
-  const configPath = join(SRC, "config.ts");
+  const configPath = join(SRC, "config", "navBarConfig.ts");
   const configContent = readFile(configPath);
 
   // Extract the navBarConfig section
@@ -247,7 +247,7 @@ function checkBrokenNavRefs() {
  * are registered in the SidebarColumn.astro componentMap.
  */
 function checkMissingWidgetReg() {
-  const configPath = join(SRC, "config.ts");
+  const configPath = join(SRC, "config", "sidebarConfig.ts");
   const configContent = readFile(configPath);
 
   // Extract the components section from sidebarLayoutConfig
