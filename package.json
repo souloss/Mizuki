@@ -25,7 +25,8 @@
 		"new-post": "node scripts/new-post.js",
 		"format": "prettier --write ./src",
 		"lint": "eslint ./src --fix",
-		"preinstall": "npx only-allow pnpm",
+		"postinstall": "node scripts/patch-vite-timeout.js",
+			"preinstall": "npx only-allow pnpm",
 		"compress-fonts": "node scripts/compress-fonts.js"
 	},
 	"dependencies": {
