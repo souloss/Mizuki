@@ -1,5 +1,53 @@
 @import "tailwindcss";
 
+/* grid-layout-utils.ts dynamically constructs Tailwind arbitrary-value
+   classes that the content scanner cannot detect. Define them as real CSS
+   so the layout always works in production builds. */
+@layer utilities {
+  .grid-cols-\[17\.5rem_1fr\] {
+    grid-template-columns: 17.5rem 1fr;
+  }
+  .grid-cols-\[17\.5rem_1fr_17\.5rem\] {
+    grid-template-columns: 17.5rem 1fr 17.5rem;
+  }
+  .grid-cols-\[1fr_17\.5rem\] {
+    grid-template-columns: 1fr 17.5rem;
+  }
+  .grid-rows-\[auto\] {
+    grid-template-rows: auto;
+  }
+  .max-w-\[17\.5rem\] {
+    max-width: 17.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-\[17\.5rem_1fr\] {
+    grid-template-columns: 17.5rem 1fr;
+  }
+  .md\:grid-rows-\[auto\] {
+    grid-template-rows: auto;
+  }
+  .md\:max-w-\[17\.5rem\] {
+    max-width: 17.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .lg\:grid-cols-\[17\.5rem_1fr\] {
+    grid-template-columns: 17.5rem 1fr;
+  }
+  .lg\:grid-cols-\[17\.5rem_1fr_17\.5rem\] {
+    grid-template-columns: 17.5rem 1fr 17.5rem;
+  }
+  .lg\:grid-cols-\[1fr_17\.5rem\] {
+    grid-template-columns: 1fr 17.5rem;
+  }
+  .lg\:max-w-\[17\.5rem\] {
+    max-width: 17.5rem;
+  }
+}
+
 /* 导入相册样式 */
 @import "./albums.css";
 /* 导入追番页面样式 */
