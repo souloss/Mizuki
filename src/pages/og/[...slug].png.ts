@@ -10,6 +10,7 @@ import { getPostPublicDescription } from "@/utils/post-card-content";
 import { removeFileExtension } from "@/utils/url-utils";
 
 import { profileConfig, siteConfig } from "../../config";
+import { getLocaleFromLang } from "../../utils/date-utils";
 
 type Weight = 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
 type FontStyle = "normal" | "italic";
@@ -131,7 +132,7 @@ export async function GET({
 	const subtleTextColor = `hsl(${hue}, 10%, 75%)`;
 	const backgroundColor = `hsl(${hue}, 15%, 12%)`;
 
-	const pubDate = post.data.published.toLocaleDateString("en-US", {
+	const pubDate = post.data.published.toLocaleDateString(getLocaleFromLang(), {
 		year: "numeric",
 		month: "short",
 		day: "numeric",

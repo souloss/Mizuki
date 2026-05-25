@@ -24,7 +24,7 @@
 		null;
 
 	async function initWidget() {
-		if (typeof window === "undefined") return;
+		if (typeof window === "undefined") {return;}
 
 		try {
 			const { createWidget } = await import("l2d-widget");
@@ -41,16 +41,16 @@
 			const tipsConfig = merged.tips;
 			if (tipsConfig) {
 				if (tipsConfig.welcomeMessage)
-					tipsData.welcomeMessage = tipsConfig.welcomeMessage;
-				if (tipsConfig.messages) tipsData.messages = tipsConfig.messages;
-				if (tipsConfig.duration) tipsData.duration = tipsConfig.duration;
-				if (tipsConfig.interval) tipsData.interval = tipsConfig.interval;
+					{tipsData.welcomeMessage = tipsConfig.welcomeMessage;}
+				if (tipsConfig.messages) {tipsData.messages = tipsConfig.messages;}
+				if (tipsConfig.duration) {tipsData.duration = tipsConfig.duration;}
+				if (tipsConfig.interval) {tipsData.interval = tipsConfig.interval;}
 			} else if (merged.dialog?.welcome || merged.dialog?.touch) {
 				const welcome = merged.dialog.welcome;
 				const touch = merged.dialog.touch;
 				if (welcome)
-					tipsData.welcomeMessage = Array.isArray(welcome) ? welcome : [welcome];
-				if (touch) tipsData.messages = Array.isArray(touch) ? touch : [touch];
+					{tipsData.welcomeMessage = Array.isArray(welcome) ? welcome : [welcome];}
+				if (touch) {tipsData.messages = Array.isArray(touch) ? touch : [touch];}
 			}
 			if (Object.keys(tipsData).length > 0) {
 				(modelConfig as Record<string, unknown>).tips = tipsData;
@@ -108,7 +108,7 @@
 	}
 
 	onMount(() => {
-		if (!pioConfig.enable) return;
+		if (!pioConfig.enable) {return;}
 
 		if (
 			pioConfig.hiddenOnMobile &&

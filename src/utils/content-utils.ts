@@ -290,7 +290,7 @@ export async function getRelatedPosts(
 		(p) => p.id !== currentPost.id && !p.data.password,
 	);
 
-	if (candidates.length === 0) return [];
+	if (candidates.length === 0) {return [];}
 
 	const currentTags = currentPost.data.tags || [];
 	const currentTokens = tokenize(currentPost.data.title);
@@ -358,12 +358,12 @@ export async function getRelatedPosts(
 	const result: PostForList[] = [];
 
 	for (const s of withTagMatch) {
-		if (result.length >= maxCount) break;
+		if (result.length >= maxCount) {break;}
 		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 
 	for (const s of withoutTagMatch) {
-		if (result.length >= maxCount) break;
+		if (result.length >= maxCount) {break;}
 		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 

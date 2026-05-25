@@ -1,5 +1,7 @@
 ---
-import { commentConfig } from "@/config";
+import { commentConfig, siteConfig } from "@/config";
+// Derive locale from site language (single source of truth)
+const giscusLang = siteConfig.lang.replace("_", "-");
 
 interface Props {
 	path: string;
@@ -13,7 +15,7 @@ const config = {
 
 <div id="giscus-container" class="giscus-container"></div>
 
-<script is:inline define:vars={{ config }}>
+<script is:inline define:vars={{ config: { ...config, lang: giscusLang } }}>
 	(function () {
 		const GISCUS_CONTAINER_ID = "giscus-container";
 		const ROOT_MARGIN = "200px";

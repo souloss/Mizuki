@@ -23,18 +23,18 @@ export { licenseConfig } from "./licenseConfig";
 export { permalinkConfig } from "./permalinkConfig";
 
 // ─── 外观与壁纸 ─────────────────────────────────────────────
-export { fullscreenWallpaperConfig, backgroundWallpaperConfig } from "./backgroundWallpaper";
-export { sakuraConfig, effectsConfig } from "./effectsConfig";
+export { backgroundWallpaperConfig, fullscreenWallpaperConfig } from "./backgroundWallpaper";
+export { effectsConfig, sakuraConfig } from "./effectsConfig";
 export { fontConfig } from "./fontConfig";
 
 // ─── 代码块 ─────────────────────────────────────────────────
 export { expressiveCodeConfig } from "./expressiveCodeConfig";
 
 // ─── 互动功能 ───────────────────────────────────────────────
-export { commentConfig } from "./commentConfig";
-export { shareConfig } from "./shareConfig";
-export { rewardConfig } from "./rewardConfig";
 export { announcementConfig } from "./announcementConfig";
+export { commentConfig } from "./commentConfig";
+export { rewardConfig } from "./rewardConfig";
+export { shareConfig } from "./shareConfig";
 
 // ─── 多媒体 ─────────────────────────────────────────────────
 export { musicPlayerConfig } from "./musicConfig";
@@ -49,8 +49,8 @@ export { sidebarLayoutConfig } from "./sidebarConfig";
 export { footerConfig } from "./footerConfig";
 
 // ─── 文章推荐 ───────────────────────────────────────────────
-export { relatedPostsConfig } from "./relatedPostsConfig";
 export { randomPostsConfig } from "./randomPostsConfig";
+export { relatedPostsConfig } from "./relatedPostsConfig";
 
 // ─── 友链 ───────────────────────────────────────────────────
 export { friendsConfig } from "./friendsConfig";

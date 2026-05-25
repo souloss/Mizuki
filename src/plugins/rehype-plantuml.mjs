@@ -3,9 +3,11 @@ import { visit } from "unist-util-visit";
 
 import plantumlRenderScript from "./plantuml-render-script.js?raw";
 
+/** Dev 模式下跳过重量级渲染，仅输出占位符 */
+const isDev = () => !process.env.ASTRO_BUILDING;
+
 /**
  * 从 HAST 节点递归提取所有文本内容，作为 `<img>` 的 alt 回退文案。
- *
  * @param {import('hast').Node} node 节点
  * @returns {string} 拼接后的文本
  */
@@ -17,7 +19,6 @@ function extractText(node) {
 
 /**
  * 生成当前 HAST 节点的随机 id，避免同一页多个图表冲突。
- *
  * @returns {string}
  */
 function generateId() {
@@ -33,6 +34,7 @@ const scriptInjectedTrees = new WeakSet();
  * 可交互的 `.plantuml-diagram-container`，并在每棵 tree 末尾注入一次客户端
  * 渲染脚本，负责主题切换、加载失败降级与缩放/全屏控制。
  *
+ * Dev 模式下跳过脚本注入，仅输出带虚线边框的静态占位符（可选附带 light 图片预览）。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
  */
 export function rehypePlantuml() {
@@ -50,6 +52,41 @@ export function rehypePlantuml() {
 					? classProp.split(/\s+/).includes("plantuml-container")
 					: false;
 			if (!hasMarker) {
+				return;
+			}
+
+			// Dev: 跳过客户端脚本注入，仅输出带虚线边框的静态占位符
+			if (isDev()) {
+				let altText =
+					node.properties["data-plantuml-alt"] ||
+					node.properties.dataPlantumlAlt ||
+					"";
+				if (!altText) {
+					altText = extractText(node).trim().slice(0, 200);
+				}
+
+				const lightSrc =
+					node.properties["data-plantuml-light"] ||
+					node.properties.dataPlantumlLight ||
+					"";
+
+				node.tagName = "div";
+				node.properties = {
+					class: "plantuml-dev-placeholder",
+					style: "border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;text-align:center;",
+				};
+				node.children = [
+					h("strong", "[PlantUML diagram — interactive in production]"),
+					lightSrc
+						? h("img", {
+							src: lightSrc,
+							alt: altText || "PlantUML diagram (dev preview)",
+							style: "max-width:100%;margin-top:0.5em;",
+							loading: "lazy",
+						})
+						: h("p", { style: "color:#888;margin-top:0.5em;" }, "(Image not available in dev preview)"),
+				];
+				foundAny = true;
 				return;
 			}
 

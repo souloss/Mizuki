@@ -395,12 +395,10 @@ export interface CommentConfig {
 	twikoo?: {
 		envId: string;
 		region?: string;
-		lang?: string;
 		visitorCount?: boolean;
 	};
 	waline?: {
 		serverURL: string;
-		lang?: string;
 		emoji: string[];
 		login?: "enable" | "force" | "disable";
 		visitorCount?: boolean; // 是否统计访问量，true 启用访问量，false 关闭
@@ -416,7 +414,6 @@ export interface CommentConfig {
 		 * - "ja" (日本語)
 		 * - "ko" (한국어)
 		 * - "fr" (Français)
-		 * - "ru" (Русский)
 		 */
 		locale: string | "auto";
 		// 是否统计访问量，true 启用访问量，false 关闭
