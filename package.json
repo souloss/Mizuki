@@ -17,7 +17,7 @@
 		"update-bangumi": "node scripts/update-bangumi.mjs",
 		"update-bilibili": "node scripts/update-bilibili.mjs",
 		"update-feeds": "node scripts/update-feeds.mjs",
-		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && astro build && pagefind --site dist && node scripts/compress-fonts.js",
+		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && NODE_OPTIONS='--max-old-space-size=8192' astro build && pagefind --site dist && node scripts/compress-fonts.js",
 		"submit": "node scripts/indexnow-submit.js",
 		"preview": "astro preview",
 		"astro": "astro",
