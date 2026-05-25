@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { visit } from "unist-util-visit";
 
-const isDev = () => !process.env.ASTRO_BUILDING;
+const isDev = () => process.env.NODE_ENV !== "production";
 
 /**
  * remark-relative-links: resolve relative markdown file links (e.g. ./1-file.md)

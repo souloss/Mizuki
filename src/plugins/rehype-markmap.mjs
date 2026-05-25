@@ -4,7 +4,7 @@ import { visit } from "unist-util-visit";
 import markmapRenderScript from "./markmap-render-script.js?raw";
 
 /** Dev 模式下跳过重量级渲染，仅输出占位符 */
-const isDev = () => !process.env.ASTRO_BUILDING;
+const isDev = () => process.env.NODE_ENV !== "production";
 
 /**
  * 递归提取 HAST 节点树中的所有文本内容
