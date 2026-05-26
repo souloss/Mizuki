@@ -168,6 +168,13 @@ if (defaultFontItem) {
 	<head>
 		<meta charset="UTF-8" />
 
+		<!-- Establish CSS layer order before any stylesheets load.
+		     Without this, per-component CSS files (e.g. MainGridLayout)
+		     that declare @layer components/utilities first would establish
+		     an incorrect order where theme and base layers end up with
+		     higher priority than utilities, breaking Tailwind's cascade. -->
+		<style is:inline>@layer properties, theme, base, components, utilities;</style>
+
 		<!-- 第三方分析脚本 -->
 		<AnalyticsScripts
 			thirdPartyAnalytics={siteConfig.thirdPartyAnalytics}
