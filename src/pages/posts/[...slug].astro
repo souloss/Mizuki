@@ -8,7 +8,6 @@ import {
 	PostNavigation,
 	RandomPosts,
 	RelatedPosts,
-	Reward,
 } from "@components/features/posts";
 import { ReadingTime, WordCount } from "@components/features/posts/atoms";
 import RepostNotice from "@components/features/posts/RepostNotice.astro";
@@ -480,8 +479,6 @@ const jsonLd = {
 		</div>
 	</div>
 
-	<!-- 赞赏 -->
-	<Reward />
 
 	<!-- 评论 -->
 	<Comment post={entry} />

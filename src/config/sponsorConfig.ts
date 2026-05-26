@@ -13,13 +13,13 @@ export const sponsorConfig: SponsorConfig = {
         {
             name: "支付宝",
             icon: "fa7-brands:alipay",
-            qrCode: "/sponsor/alipay.webp",
+            qrCode: "/sponsor/alipay.png",
             enabled: true,
         },
         {
             name: "微信支付",
             icon: "fa7-brands:weixin",
-            qrCode: "/sponsor/wechat.webp",
+            qrCode: "/sponsor/wx.png",
             enabled: true,
         },
     ],
