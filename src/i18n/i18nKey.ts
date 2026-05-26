@@ -398,12 +398,6 @@ enum I18nKey {
 	copyrightLink = "copyrightLink",
 	copyOgImage = "copyOgImage",
 
-	// 赞赏/打赏
-	reward = "reward",
-	rewardMessage = "rewardMessage",
-	rewardAliPay = "rewardAliPay",
-	rewardWeChat = "rewardWeChat",
-
 	// 留言板
 	messageBoard = "messageBoard",
 	messageBoardDesc = "messageBoardDesc",

@@ -388,11 +388,6 @@ export const zh_TW: Translation = {
 	[Key.copyrightLink]: "連結",
 	[Key.copyOgImage]: "複製分享圖",
 
-	// 贊賞
-	[Key.reward]: "贊賞",
-	[Key.rewardMessage]: "感謝您的支持，寫作不易，您的鼓勵是我最大的動力",
-	[Key.rewardAliPay]: "支付寶",
-	[Key.rewardWeChat]: "微信",
 
 	// 留言板
 	[Key.messageBoard]: "留言板",

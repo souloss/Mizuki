@@ -1145,16 +1145,6 @@ export interface ShareConfig {
 }
 
 /**
- * 赞赏/打赏组件配置 (旧版，保留 Mizuki)
- */
-export interface RewardConfig {
-	enable: boolean; // 是否启用赞赏功能
-	message?: string; // 赞赏提示文字，留空使用i18n默认文字
-	AliPay?: string; // 支付宝收款二维码图片URL
-	WeChat?: string; // 微信收款二维码图片URL
-}
-
-/**
  * 相关文章组件配置
  */
 export interface RelatedPostsConfig {

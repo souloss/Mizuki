@@ -402,11 +402,6 @@ export const ja: Translation = {
 	[Key.copyrightLink]: "リンク",
 	[Key.copyOgImage]: "OG画像をコピー",
 
-	// 投げ銭
-	[Key.reward]: "投げ銭",
-	[Key.rewardMessage]: "この記事が役に立ったら、コーヒーをご馳走してください！",
-	[Key.rewardAliPay]: "Alipay",
-	[Key.rewardWeChat]: "WeChat",
 
 	// メッセージボード
 	[Key.messageBoard]: "メッセージボード",

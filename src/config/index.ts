@@ -33,7 +33,6 @@ export { expressiveCodeConfig } from "./expressiveCodeConfig";
 // ─── 互动功能 ───────────────────────────────────────────────
 export { announcementConfig } from "./announcementConfig";
 export { commentConfig } from "./commentConfig";
-export { rewardConfig } from "./rewardConfig";
 export { shareConfig } from "./shareConfig";
 
 // ─── 多媒体 ─────────────────────────────────────────────────

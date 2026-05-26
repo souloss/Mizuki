@@ -399,11 +399,6 @@ export const en: Translation = {
 	[Key.copyrightLink]: "Link",
 	[Key.copyOgImage]: "Copy share image",
 
-	// Reward
-	[Key.reward]: "Reward",
-	[Key.rewardMessage]: "If you enjoyed this article, consider buying me a coffee!",
-	[Key.rewardAliPay]: "Alipay",
-	[Key.rewardWeChat]: "WeChat",
 
 	// Message Board
 	[Key.messageBoard]: "Message Board",
