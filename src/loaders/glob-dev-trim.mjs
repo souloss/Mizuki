@@ -1,8 +1,8 @@
 /**
  * Dev-mode content loader that wraps Astro's glob() loader.
  *
- * In production (NODE_ENV !== "development"), delegates directly to glob().
- * In dev (NODE_ENV=development), trims the data-store to reduce memory usage:
+ * In production (ASTRO_BUILDING="true" or NODE_ENV="production"), delegates directly to glob().
+ * In dev, trims the data-store to reduce memory usage:
  *   - Keeps frontmatter for ALL entries (listing/archive pages work)
  *   - Keeps full rendered HTML only for the N most recent posts
  *   - Strips rendered HTML, rendered metadata, and body for older entries
@@ -11,7 +11,14 @@
 
 import { glob } from "astro/loaders";
 
-const isDev = () => process.env.NODE_ENV === "development";
+const isDev = () => {
+  // Only trim content when explicitly in dev mode.
+  // Both ASTRO_BUILDING="true" and NODE_ENV="production" signal production — don't trim.
+  // Undefined env vars default to safe (no trimming).
+  const building = process.env.ASTRO_BUILDING === "true";
+  const prodEnv = process.env.NODE_ENV === "production";
+  return !building && !prodEnv;
+};
 const DEV_MAX_RENDERED = parseInt(process.env.DEV_MAX_RENDERED_POSTS || "20", 10);
 const DEV_PLACEHOLDER_HTML = "<p>Content preview not available in dev mode</p>";
 
