@@ -21,7 +21,7 @@
   }
 }
 
-@container (min-width: 48rem) {
+@media (min-width: 768px) {
   .md\:grid-cols-\[17\.5rem_1fr\] {
     grid-template-columns: 17.5rem 1fr;
   }
@@ -33,7 +33,7 @@
   }
 }
 
-@container (min-width: 64rem) {
+@media (min-width: 1280px) {
   .lg\:grid-cols-\[17\.5rem_1fr\] {
     grid-template-columns: 17.5rem 1fr;
   }
