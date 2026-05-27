@@ -27,6 +27,24 @@ function generateId() {
 const scriptInjectedTrees = new WeakSet();
 
 /**
+ * 检测是否为开发环境：
+ * - 优先检查通过参数传入的 isDev
+ * - 否则检查 process.env.npm_lifecycle_event
+ * - 最后检查 process.env.NODE_ENV
+ */
+function isDevMode(options) {
+	if (typeof options?.isDev === "boolean") {
+		return options.isDev;
+	}
+	// 通过 npm script 判断
+	if (process.env.npm_lifecycle_event) {
+		return process.env.npm_lifecycle_event.startsWith("dev");
+	}
+	// 回退到 NODE_ENV
+	return process.env.NODE_ENV !== "production";
+}
+
+/**
  * rehype 插件：把 `div.markmap-container`（由 remark-markmap 标记）改写为
  * 可交互的 `.markmap-diagram-container`，并在每棵 tree 末尾注入一次客户端
  * 渲染脚本，负责主题切换、缩放/全屏控制等。
@@ -34,7 +52,7 @@ const scriptInjectedTrees = new WeakSet();
  * Dev 模式下跳过脚本注入，仅输出带虚线边框的代码占位符。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
  */
-export function rehypeMarkmap({ isDev = false } = {}) {
+export function rehypeMarkmap(options = {}) {
 	return (tree) => {
 		let foundAny = false;
 
@@ -61,7 +79,7 @@ export function rehypeMarkmap({ isDev = false } = {}) {
 			}
 
 			// Dev: 跳过客户端脚本注入，仅输出带虚线边框的代码占位符
-			if (isDev) {
+			if (isDevMode(options)) {
 				node.tagName = "div";
 				node.properties = {
 					class: "markmap-dev-placeholder",

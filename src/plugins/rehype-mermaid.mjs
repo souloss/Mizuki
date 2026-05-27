@@ -12,7 +12,25 @@ function extractText(node) {
 	return "";
 }
 
-export function rehypeMermaid({ isDev = false } = {}) {
+/**
+ * 检测是否为开发环境：
+ * - 优先检查通过参数传入的 isDev
+ * - 否则检查 process.env.npm_lifecycle_event
+ * - 最后检查 process.env.NODE_ENV
+ */
+function isDevMode(options) {
+	if (typeof options?.isDev === "boolean") {
+		return options.isDev;
+	}
+	// 通过 npm script 判断
+	if (process.env.npm_lifecycle_event) {
+		return process.env.npm_lifecycle_event.startsWith("dev");
+	}
+	// 回退到 NODE_ENV
+	return process.env.NODE_ENV !== "production";
+}
+
+export function rehypeMermaid(options = {}) {
 	return (tree) => {
 		visit(tree, "element", (node) => {
 			if (
@@ -28,7 +46,7 @@ export function rehypeMermaid({ isDev = false } = {}) {
 				}
 
 				// Dev: 跳过 16KB 渲染脚本注入，仅输出带虚线边框的代码占位符
-				if (isDev) {
+				if (isDevMode(options)) {
 					node.tagName = "div";
 					node.properties = {
 						class: "mermaid-dev-placeholder",

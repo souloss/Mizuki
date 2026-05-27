@@ -18,7 +18,7 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-import { markmapConfig,plantumlConfig, siteConfig } from "./src/config/index.ts";
+import { markmapConfig, plantumlConfig, siteConfig } from "./src/config/index.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
@@ -42,234 +42,234 @@ import { remarkPlumeCompat } from "./src/plugins/remark-plume-compat.js";
 import { remarkRelativeLinks } from "./src/plugins/remark-relative-links.mjs";
 
 // https://astro.build/config
-export default defineConfig(({ command }) => {
-	const isDev = command === "dev";
+export default defineConfig({
+	site: siteConfig.siteURL,
+	base: "/",
+	trailingSlash: "always",
 
-	return {
-		site: siteConfig.siteURL,
-		base: "/",
-		trailingSlash: "always",
+	output: "static",
 
-		output: "static",
-
-		experimental: {
-			queuedRendering: {
-				enabled: true,
-				poolSize: 100,
-			},
+	experimental: {
+		queuedRendering: {
+			enabled: true,
+			poolSize: 100,
 		},
+	},
 
-		integrations: [
-			oddmisc({
-				umami: {
-					shareUrl: false,
+	integrations: [
+		oddmisc({
+			umami: {
+				shareUrl: false,
+			},
+		}),
+		swup({
+			theme: false,
+			animationClass: "transition-swup-",
+			containers: ["main"],
+			smoothScrolling: false,
+			cache: true,
+			preload: false,
+			accessibility: true,
+			updateHead: process.env.NODE_ENV === "production",
+			updateBodyClass: false,
+			globalInstance: true,
+			resolveUrl: (url) => url,
+			animateHistoryBrowsing: false,
+			skipPopStateHandling: (event) => {
+				return (
+					event.state &&
+					event.state.url &&
+					event.state.url.includes("#")
+				);
+			},
+		}),
+		icon(),
+		expressiveCode({
+			themes: ["github-light", "github-dark"],
+			plugins: [
+				pluginCollapsibleSections(),
+				pluginLineNumbers(),
+				pluginLanguageBadge(),
+				pluginCustomCopyButton(),
+			],
+			defaultProps: {
+				wrap: true,
+				overridesByLang: {
+					shellsession: { showLineNumbers: false },
+					bash: { frame: "code" },
+					shell: { frame: "code" },
+					sh: { frame: "code" },
+					zsh: { frame: "code" },
 				},
-			}),
-			swup({
-				theme: false,
-				animationClass: "transition-swup-",
-				containers: ["main"],
-				smoothScrolling: false,
-				cache: true,
-				preload: false,
-				accessibility: true,
-				updateHead: !isDev,
-				updateBodyClass: false,
-				globalInstance: true,
-				resolveUrl: (url) => url,
-				animateHistoryBrowsing: false,
-				skipPopStateHandling: (event) => {
-					return (
-						event.state &&
-						event.state.url &&
-						event.state.url.includes("#")
-					);
-				},
-			}),
-			icon(),
-			expressiveCode({
-				themes: ["github-light", "github-dark"],
-				plugins: [
-					pluginCollapsibleSections(),
-					pluginLineNumbers(),
-					pluginLanguageBadge(),
-					pluginCustomCopyButton(),
-				],
-				defaultProps: {
-					wrap: true,
-					overridesByLang: {
-						shellsession: { showLineNumbers: false },
-						bash: { frame: "code" },
-						shell: { frame: "code" },
-						sh: { frame: "code" },
-						zsh: { frame: "code" },
-					},
-				},
-				styleOverrides: {
-					codeBackground: "var(--codeblock-bg)",
-					borderRadius: "0.75rem",
-					borderColor: "none",
-					codeFontSize: "0.875rem",
-					codeFontFamily:
-						"'JetBrains Mono Variable', SFMono-Regular, Menlo, Monaco, Consolas, 'Liber Mono', 'Courier New', 'Microsoft JhengHei', '微軟正黑體', 'Microsoft YaHei', '微软雅黑', 'Noto Sans HK', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', ui-monospace, monospace",
-					codeLineHeight: "1.5rem",
-					frames: {
-						editorBackground: "var(--codeblock-bg)",
-						terminalBackground: "var(--codeblock-bg)",
-						terminalTitlebarBackground: "var(--codeblock-bg)",
-						editorTabBarBackground: "var(--codeblock-bg)",
-						editorActiveTabBackground: "none",
-						editorActiveTabIndicatorBottomColor: "var(--primary)",
-						editorActiveTabIndicatorTopColor: "none",
-						editorTabBarBorderBottomColor: "var(--codeblock-bg)",
-						terminalTitlebarBorderBottomColor: "none",
-					},
-					textMarkers: {
-						delHue: 0,
-						insHue: 180,
-						markHue: 250,
-					},
-				},
+			},
+			styleOverrides: {
+				codeBackground: "var(--codeblock-bg)",
+				borderRadius: "0.75rem",
+				borderColor: "none",
+				codeFontSize: "0.875rem",
+				codeFontFamily:
+					"'JetBrains Mono Variable', SFMono-Regular, Menlo, Monaco, Consolas, 'Liber Mono', 'Courier New', 'Microsoft JhengHei', '微軟正黑體', 'Microsoft YaHei', '微软雅黑', 'Noto Sans HK', 'Noto Sans TC', 'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', ui-monospace, monospace",
+				codeLineHeight: "1.5rem",
 				frames: {
-					showCopyToClipboardButton: false,
+					editorBackground: "var(--codeblock-bg)",
+					terminalBackground: "var(--codeblock-bg)",
+					terminalTitlebarBackground: "var(--codeblock-bg)",
+					editorTabBarBackground: "var(--codeblock-bg)",
+					editorActiveTabBackground: "none",
+					editorActiveTabIndicatorBottomColor: "var(--primary)",
+					editorActiveTabIndicatorTopColor: "none",
+					editorTabBarBorderBottomColor: "var(--codeblock-bg)",
+					terminalTitlebarBorderBottomColor: "none",
 				},
-			}),
-			svelte({
-				preprocess: vitePreprocess(),
-			}),
-			sitemap(),
-			mdx(),
+				textMarkers: {
+					delHue: 0,
+					insHue: 180,
+					markHue: 250,
+				},
+			},
+			frames: {
+				showCopyToClipboardButton: false,
+			},
+		}),
+		svelte({
+			preprocess: vitePreprocess(),
+		}),
+		sitemap(),
+		mdx(),
+	],
+	markdown: {
+		remarkPlugins: [
+			remarkMath,
+			remarkContent,
+			remarkFixGithubAdmonitions,
+			remarkMark,
+			remarkPlumeCompat,
+			remarkCodeLangAliases,
+			remarkDirective,
+			remarkContentDirectives,
+			remarkSectionize,
+			parseDirectiveNode,
+			remarkMermaid,
+			[remarkPlantuml, plantumlConfig],
+			[remarkMarkmap, markmapConfig],
+			remarkRelativeLinks,
 		],
-		markdown: {
-			remarkPlugins: [
-				remarkMath,
-				remarkContent,
-				remarkFixGithubAdmonitions,
-				remarkMark,
-				remarkPlumeCompat,
-				remarkCodeLangAliases,
-				remarkDirective,
-				remarkContentDirectives,
-				remarkSectionize,
-				parseDirectiveNode,
-				remarkMermaid,
-				[remarkPlantuml, plantumlConfig],
-				[remarkMarkmap, markmapConfig],
-				remarkRelativeLinks,
+		rehypePlugins: [
+			rehypeKatex,
+			[
+				rehypeExternalLinks,
+				{
+					target: "_blank",
+					rel: ["nofollow", "noopener", "noreferrer"],
+				},
 			],
-			rehypePlugins: [
-				rehypeKatex,
-				[
-					rehypeExternalLinks,
-					{
-						target: "_blank",
-						rel: ["nofollow", "noopener", "noreferrer"],
+			rehypeSlug,
+			rehypeWrapTable,
+			rehypeMermaid,
+			rehypePlantuml,
+			rehypeMarkmap,
+			[
+				rehypeComponents,
+				{
+					components: {
+						github: GithubCardComponent,
+						note: (x, y) => AdmonitionComponent(x, y, "note"),
+						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
+						important: (x, y) =>
+							AdmonitionComponent(x, y, "important"),
+						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
+						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
 					},
-				],
-				rehypeSlug,
-				rehypeWrapTable,
-				[rehypeMermaid, { isDev }],
-				rehypePlantuml,
-				[rehypeMarkmap, { isDev }],
-				[
-					rehypeComponents,
-					{
-						components: {
-							github: GithubCardComponent,
-							note: (x, y) => AdmonitionComponent(x, y, "note"),
-							tip: (x, y) => AdmonitionComponent(x, y, "tip"),
-							important: (x, y) => AdmonitionComponent(x, y, "important"),
-							caution: (x, y) => AdmonitionComponent(x, y, "caution"),
-							warning: (x, y) => AdmonitionComponent(x, y, "warning"),
-						},
+				},
+			],
+			[
+				rehypeAutolinkHeadings,
+				{
+					behavior: "append",
+					properties: {
+						className: ["anchor"],
 					},
-				],
-				[
-					rehypeAutolinkHeadings,
-					{
-						behavior: "append",
+					content: {
+						type: "element",
+						tagName: "span",
 						properties: {
-							className: ["anchor"],
+							className: ["anchor-icon"],
+							"data-pagefind-ignore": true,
 						},
-						content: {
-							type: "element",
-							tagName: "span",
-							properties: {
-								className: ["anchor-icon"],
-								"data-pagefind-ignore": true,
-							},
-							children: [{ type: "text", value: "#" }],
-						},
+						children: [{ type: "text", value: "#" }],
 					},
-				],
-				rehypeImageWidth,
-				rehypeLazyImage,
+				},
+			],
+			rehypeImageWidth,
+			rehypeLazyImage,
+		],
+	},
+	vite: {
+		plugins: [tailwindcss()],
+		optimizeDeps: {
+			include: [
+				"@iconify/svelte",
+				"overlayscrollbars",
+				"@fancyapps/ui",
+				"marked",
+				"sanitize-html",
+				"qrcode",
+				"katex",
+				"hastscript",
+				"unist-util-visit",
+				"reading-time",
 			],
 		},
-		vite: {
-			plugins: [tailwindcss()],
-			optimizeDeps: {
-				include: [
-					"@iconify/svelte",
-					"overlayscrollbars",
-					"@fancyapps/ui",
-					"marked",
-					"sanitize-html",
-					"qrcode",
-					"katex",
-					"hastscript",
-					"unist-util-visit",
-					"reading-time",
+		server: {
+			warmup: {
+				clientFiles: [
+					"src/layouts/Layout.astro",
+					"src/pages/index.astro",
+					"src/components/widgets/music-player/MusicPlayer.svelte",
+					"src/components/organisms/navigation/Search.svelte",
+					"src/components/control/ThemeSwitch.svelte",
+					"src/components/features/settings/DisplaySettings.svelte",
+					"src/scripts/swup-manager.ts",
 				],
 			},
-			server: {
-				warmup: {
-					clientFiles: [
-						"src/layouts/Layout.astro",
-						"src/pages/index.astro",
-						"src/components/widgets/music-player/MusicPlayer.svelte",
-						"src/components/organisms/navigation/Search.svelte",
-						"src/components/control/ThemeSwitch.svelte",
-						"src/components/features/settings/DisplaySettings.svelte",
-						"src/scripts/swup-manager.ts",
-					],
-				},
-				hmr: { timeout: 120000 },
-				watch: {
-					ignored: [
-						"**/node_modules/**",
-						"**/.git/**",
-						"**/content/**",
-						"**/public/**",
-						"**/*.md",
-					],
-				},
-			},
-			build: {
-				assetsInlineLimit: 4096,
-				cssCodeSplit: true,
-				cssMinify: "esbuild",
-				inlineStylesheets: "auto",
-				minify: "esbuild",
-				rollupOptions: {
-					onwarn(warning, warn) {
-						if (
-							warning.message.includes(
-								"is dynamically imported by",
-							) &&
-							warning.message.includes(
-								"but also statically imported by",
-							)
-						) {
-							return;
-						}
-						warn(warning);
-					},
-				},
-			},
-			esbuildOptions: {
-				drop: !isDev ? ["console", "debugger"] : [],
+			hmr: { timeout: 120000 },
+			watch: {
+				ignored: [
+					"**/node_modules/**",
+					"**/.git/**",
+					"**/content/**",
+					"**/public/**",
+					"**/*.md",
+				],
 			},
 		},
-	};
+		build: {
+			assetsInlineLimit: 4096,
+			cssCodeSplit: true,
+			cssMinify: "esbuild",
+			inlineStylesheets: "auto",
+			minify: "esbuild",
+			rollupOptions: {
+				onwarn(warning, warn) {
+					if (
+						warning.message.includes(
+							"is dynamically imported by"
+						) &&
+						warning.message.includes(
+							"but also statically imported by"
+						)
+					) {
+						return;
+					}
+					warn(warning);
+				},
+			},
+		},
+		esbuildOptions: {
+			drop:
+				process.env.NODE_ENV === "production"
+					? ["console", "debugger"]
+					: [],
+		},
+	},
 });
