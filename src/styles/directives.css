@@ -1516,19 +1516,19 @@ img[data-zoomable="1"] {
     opacity: 1;
 }
 
-.md-panel-segment > pre {
-    margin: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    padding: 6px 16px 14px !important;
+.md-panel-segment.md-panel-segment > pre {
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    background: transparent;
+    padding: 6px 16px 14px;
 }
 
-.md-panel-segment > pre code {
-    background: transparent !important;
-    color: var(--content-meta) !important;
-    font-size: 0.85rem !important;
-    line-height: 1.7 !important;
+.md-panel-segment.md-panel-segment > pre code {
+    background: transparent;
+    color: var(--content-meta);
+    font-size: 0.85rem;
+    line-height: 1.7;
 }
 
 .md-panel-segment > p,
@@ -1993,8 +1993,8 @@ img[data-zoomable="1"] {
 
 /* Ensure panel code text is readable in dark mode.
    --content-meta resolves to rgba(255,255,255,0.6) in dark theme. */
-:is(.dark, [data-theme="dark"]) .md-panel-segment > pre code {
-  color: var(--content-meta) !important;
+:is(.dark, [data-theme="dark"]) .md-panel-segment.md-panel-segment > pre code {
+  color: var(--content-meta);
 }
 
 :is(.dark, [data-theme="dark"]) .md-panel-segment > p,
