@@ -9,8 +9,8 @@ createTime: 2026-05-20
 permalink: /article-layout/live-photo/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## LivePhoto / Lazy Images

@@ -9,8 +9,8 @@ badge:
   text: v3
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 自定义字体配置

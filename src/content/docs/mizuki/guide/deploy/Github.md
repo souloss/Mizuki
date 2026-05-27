@@ -9,8 +9,8 @@ createTime: 2025/11/21 01:56:44
 permalink: /guide/deploy/github/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 部署到 GitHub Pages(不在推荐)
@@ -47,7 +47,7 @@ export default defineConfig({
 你需要在`src/config.ts`中配置`site`为你的自定义域名。
 
 ```ts title="src/config.ts"
-siteURL: "https://mizuki.mysqil.com/", 
+siteURL: "https://blog.souloss.cn/", 
 ```
 
 **Site**

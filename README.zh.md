@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)](https://www.typescriptlang.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
 
-[**🖥️ 在线演示**](https://mizuki.mysqil.com/) | [**📝 用户文档**](https://docs.mizuki.mysqil.com/)
+[**🖥️ 在线演示**](https://blog.souloss.cn/) | [**📝 用户文档**](https://docs.mizuki.mysqil.com/)
 
 🌏 **README 语言:**
 [**English**](./README.md) / [**中文**](./README.zh.md) / [**日本語**](./README.ja.md) / [**繁體中文**](./README.tw.md) /
@@ -110,7 +110,7 @@
 
 1. **克隆仓库：**
    ```bash
-   git clone https://github.com/LyraVoid/Mizuki.git
+   git clone https://github.com/souloss/Mizuki.git
    cd Mizuki
    ```
 
@@ -341,7 +341,7 @@ pnpm run sync-content
 
 ## 🙏 致谢
 
-- 基于原始 [Fuwari](https://github.com/saicaca/fuwari) 模板
+- 基于 [Mizuki](https://github.com/LyraVoid/Mizuki) by LyraVoid，该项目扩展自原始 [Fuwari](https://github.com/saicaca/fuwari) 模板
 - 灵感来源于 [Yukina](https://github.com/WhitePaper233/yukina) - 一个美丽优雅的博客模板
 - 部分设计灵感来源于 [Firefly](https://github.com/CuteLeaf/Firefly) 和 [Twilight](https://github.com/spr-aachen/Twilight) 模板
 - 使用 [Pio](https://github.com/Dreamer-Paul/Pio) 实现可爱的 Live2D 看板娘插件
@@ -356,15 +356,15 @@ pnpm run sync-content
 
 ## 🍀 贡献者
 
-感谢以下贡献者对本项目做出的贡献，如有问题或建议，请提交 [Issue](https://github.com/LyraVoid/Mizuki/issues) 或 [Pull Request](https://github.com/LyraVoid/Mizuki/pulls)。
+感谢以下贡献者对本项目做出的贡献，如有问题或建议，请提交 [Issue](https://github.com/souloss/Mizuki/issues) 或 [Pull Request](https://github.com/souloss/Mizuki/pulls)。
 
-<a href="https://github.com/LyraVoid/Mizuki/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LyraVoid/Mizuki" />
+<a href="https://github.com/souloss/Mizuki/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=souloss/Mizuki" />
 </a>
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LyraVoid/Mizuki&type=Date)](https://star-history.com/#LyraVoid/Mizuki&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=souloss/Mizuki&type=Date)](https://star-history.com/#souloss/Mizuki&Date)
 ---
 
 ⭐ 如果您觉得这个项目有帮助，请考虑给它一个星标!

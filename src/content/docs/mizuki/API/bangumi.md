@@ -5,8 +5,8 @@ permalink: /api/bangumi/
 icon: ri:film-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # Bangumi API 文档
 

@@ -9,8 +9,8 @@ badge:
   text: 必看
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 一、提问前必做准备（核心前提）

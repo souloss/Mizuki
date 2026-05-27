@@ -6,8 +6,8 @@ order: 1
 icon: ri:settings-3-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 **站点配置说明**
@@ -21,13 +21,13 @@ copyright:
 ```typescript title="src/config.ts"
 const SITE_LANG = "zh_CN"; // 语言代码
 export const siteConfig: SiteConfig = {
-	title: "Mizuki",
-	subtitle: "One demo website",
-	siteURL: "https://mizuki.mysqil.com/", // 站点URL，以斜杠结尾
-	siteStartDate: "2025-01-01", // 站点开始运行日期，用于站点统计组件计算运行天数
+	title: "Souloss",
+	subtitle: "写代码，读源码，跟 AI 较劲",
+	siteURL: "https://blog.souloss.cn/", // 站点URL，以斜杠结尾
+	siteStartDate: "2020-01-01", // 站点开始运行日期，用于站点统计组件计算运行天数
 	lang: SITE_LANG,
 	themeColor: {
-		hue: 240, // 主题色色相，范围 0-360
+		hue: 360, // 主题色色相，范围 0-360
 		fixed: false, // 是否对访问者隐藏主题色选择器
 	},
 };

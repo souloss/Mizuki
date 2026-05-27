@@ -9,8 +9,8 @@ createTime: 2026/05/20 12:00:00
 permalink: /feature/floating-controls/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 浮动控件与进度条配置

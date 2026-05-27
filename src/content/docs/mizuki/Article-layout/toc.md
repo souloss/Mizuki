@@ -9,8 +9,8 @@ createTime: 2025/08/17 17:21:41
 permalink: /article-layout/toc/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 目录配置

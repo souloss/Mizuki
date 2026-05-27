@@ -9,8 +9,8 @@ createTime: 2025/05/20 00:00:00
 permalink: /feature/effects-config/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 特效配置

@@ -9,8 +9,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 页面自动缩放配置位于 `src/config.ts` 文件中的 `pageScaling` 对象，控制页面的自动缩放行为。

@@ -9,8 +9,8 @@ createTime: 2025-05-20
 permalink: /article-layout/related-posts/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 相关文章功能

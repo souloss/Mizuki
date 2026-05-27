@@ -6,8 +6,8 @@ order: 1
 icon: ri:divide-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Mizuki 内容分离完整指南

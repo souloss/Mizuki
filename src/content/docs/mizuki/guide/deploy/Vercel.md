@@ -9,8 +9,8 @@ createTime: 2025/11/21 01:54:40
 permalink: /guide/deploy/vercel/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 如何部署到 Vercel

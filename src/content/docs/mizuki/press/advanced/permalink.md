@@ -9,8 +9,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 这是在Mizuki7.2以上加入的新特性,支持你为文章配置固定链接,优化SEO!

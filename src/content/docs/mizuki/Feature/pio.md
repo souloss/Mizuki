@@ -6,8 +6,8 @@ createTime: 2025/08/17 17:21:41
 permalink: /feature/pio/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Live2D 看板娘配置
@@ -31,7 +31,7 @@ export const pioConfig: PioConfig = {
     home: "Click here to go back to homepage!",
     skin: ["Want to see my new outfit?", "The new outfit looks great~"],
     close: "QWQ See you next time~",
-    link: "https://github.com/LyraVoid/Mizuki",
+    link: "https://github.com/souloss/Mizuki",
   },
 };
 ```

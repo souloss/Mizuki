@@ -9,8 +9,8 @@ badge:
   text: v2
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # 相册系统完整使用教程
 

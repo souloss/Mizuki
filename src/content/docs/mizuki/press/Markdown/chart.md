@@ -6,8 +6,8 @@ order: 3
 icon: ri:pie-chart-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Mermaid 图表指南

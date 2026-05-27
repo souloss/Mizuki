@@ -9,8 +9,8 @@ createTime: 2025/11/21 02:12:49
 permalink: /guide/deploy/local/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 

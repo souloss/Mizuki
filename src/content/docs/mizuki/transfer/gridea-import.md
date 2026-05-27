@@ -9,8 +9,8 @@ badge:
   text: 简单
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Gridea 迁移到 Mizuki 指南

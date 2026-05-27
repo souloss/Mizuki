@@ -9,7 +9,7 @@ A modern, feature-rich static blog template built with [Astro](https://astro.bui
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)](https://www.typescriptlang.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?logo=apache)](https://opensource.org/licenses/Apache-2.0)
 
-[**🖥️ Live Demo**](https://mizuki.mysqil.com/) | [**📝 Documentation**](https://docs.mizuki.mysqil.com/)
+[**🖥️ Live Demo**](https://blog.souloss.cn/) | [**📝 Documentation**](https://docs.mizuki.mysqil.com/)
 
 🌏 **README Languages:**
 [**English**](./README.md) / [**中文**](./README.zh.md) / [**日本語**](./README.ja.md) / [**繁體中文**](./README.tw.md) /
@@ -109,7 +109,7 @@ Get started quickly with our comprehensive documentation. Whether you're customi
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/LyraVoid/Mizuki.git
+   git clone https://github.com/souloss/Mizuki.git
    cd Mizuki
    ```
 
@@ -339,7 +339,7 @@ This project is based on [Fuwari](https://github.com/saicaca/fuwari), which is l
 
 ## 🙏 Acknowledgements
 
-- Based on the original [Fuwari](https://github.com/saicaca/fuwari) template
+- Based on [Mizuki](https://github.com/LyraVoid/Mizuki) by LyraVoid, which extends the original [Fuwari](https://github.com/saicaca/fuwari) template
 - Inspired by [Yukina](https://github.com/WhitePaper233/yukina) - a beautiful and elegant blog template
 - Some designs are inspired by [Firefly](https://github.com/CuteLeaf/Firefly) & [Twilight](https://github.com/spr-aachen/Twilight) templates
 - Uses [Pio](https://github.com/Dreamer-Paul/Pio) to implement the adorable Live2D mascot plugin
@@ -355,15 +355,15 @@ This project is based on [Fuwari](https://github.com/saicaca/fuwari), which is l
 
 ## 🍀 Contributors
 
-Thanks to all contributors for their contributions to this project. If you have any questions or suggestions, please submit an [Issue](https://github.com/LyraVoid/Mizuki/issues) or [Pull Request](https://github.com/LyraVoid/Mizuki/pulls).
+Thanks to all contributors for their contributions to this project. If you have any questions or suggestions, please submit an [Issue](https://github.com/souloss/Mizuki/issues) or [Pull Request](https://github.com/souloss/Mizuki/pulls).
 
-<a href="https://github.com/LyraVoid/Mizuki/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LyraVoid/Mizuki" />
+<a href="https://github.com/souloss/Mizuki/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=souloss/Mizuki" />
 </a>
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=LyraVoid/Mizuki&type=Date)](https://star-history.com/#LyraVoid/Mizuki&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=souloss/Mizuki&type=Date)](https://star-history.com/#souloss/Mizuki&Date)
 ---
 
 ⭐ If you find this project helpful, please consider giving it a star!

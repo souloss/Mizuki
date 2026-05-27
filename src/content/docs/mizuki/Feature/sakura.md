@@ -6,8 +6,8 @@ createTime: 2025/08/17 17:21:41
 permalink: /feature/sakura/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 樱花特效配置

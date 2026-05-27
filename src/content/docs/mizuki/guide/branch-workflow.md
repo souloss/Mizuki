@@ -6,8 +6,8 @@ createTime: 2025/05/27 15:00:00
 permalink: /guide/branch-workflow/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 分支角色说明

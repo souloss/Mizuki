@@ -6,8 +6,8 @@ order: 3
 icon: ri:layout-bottom-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # 页脚配置说明
 页脚配置位于 `src/config.ts` 文件中的 `footerConfig` 对象，控制博客底部页脚的显示设置。

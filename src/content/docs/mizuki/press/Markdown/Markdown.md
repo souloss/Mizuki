@@ -6,8 +6,8 @@ order: 1
 icon: ri:markdown-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Markdown 完全使用指南

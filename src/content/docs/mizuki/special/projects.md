@@ -6,8 +6,8 @@ order: 8
 icon: ri:code-s-slash-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ### 项目页面配置教程

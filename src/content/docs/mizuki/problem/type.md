@@ -6,8 +6,8 @@ order: 3
 icon: ri:file-code-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Typecho相关问题

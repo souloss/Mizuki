@@ -6,8 +6,8 @@ order: 4
 icon: ri:folder-open-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 分类组件配置

@@ -9,8 +9,8 @@ createTime: 2026/05/20 12:00:00
 permalink: /article-layout/artalk/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Artalk 评论系统配置

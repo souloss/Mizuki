@@ -9,8 +9,8 @@ createTime: 2026/01/14 10:00:00
 permalink: /article-layout/share/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 分享组件配置位于 `src/config.ts` 文件中的 `share` 对象，控制博客文章内的分享组件显示设置。

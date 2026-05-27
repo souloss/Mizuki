@@ -6,8 +6,8 @@ order: 2
 icon: ri:wordpress-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # WordPress相关问题

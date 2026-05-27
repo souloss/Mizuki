@@ -5,8 +5,8 @@ permalink: /api/metings/
 icon: ri:music-2-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # Meting API 文档
 

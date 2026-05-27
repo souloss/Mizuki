@@ -9,8 +9,8 @@ badge:
   text: 中等
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Jekyll 迁移到 Mizuki

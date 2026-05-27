@@ -6,8 +6,8 @@ createTime: 2025/11/21 01:55:48
 permalink: /guide/deploy/netlify/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ## 如何部署到 Netlify

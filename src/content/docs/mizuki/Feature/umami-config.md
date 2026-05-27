@@ -9,8 +9,8 @@ createTime: 2025/10/20 12:36:33
 permalink: /feature/umami-config/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Umami 统计配置教程(V3版本)

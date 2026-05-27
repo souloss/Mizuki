@@ -6,8 +6,8 @@ createTime: 2025/08/16 23:56:17
 permalink: /guide/get-started/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 Mizuki 项目入门指南
@@ -70,7 +70,7 @@ git --version
 首先，克隆 Mizuki 项目到本地：
 
 ```bash
-git clone https://github.com/LyraVoid/Mizuki.git
+git clone https://github.com/souloss/Mizuki.git
 cd Mizuki
 ```
 

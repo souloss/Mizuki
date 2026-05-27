@@ -6,8 +6,8 @@ createTime: 2025/08/17 17:21:41
 permalink: /article-layout/giscus/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Giscus 评论配置

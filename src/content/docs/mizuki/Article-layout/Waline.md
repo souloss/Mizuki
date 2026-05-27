@@ -9,8 +9,8 @@ createTime: 2026/05/20 12:00:00
 permalink: /article-layout/waline/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Waline 评论系统配置

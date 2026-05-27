@@ -6,8 +6,8 @@ order: 4
 icon: ri:arrow-left-right-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Mizuki 内容迁移指南

@@ -6,8 +6,8 @@ createTime: 2025/11/20 20:22:10
 permalink: /article-layout/copyright/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 版权信息配置说明

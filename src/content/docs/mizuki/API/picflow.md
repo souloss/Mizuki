@@ -8,8 +8,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # PicFlow API v2.0 文档

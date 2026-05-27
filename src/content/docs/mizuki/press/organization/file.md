@@ -6,8 +6,8 @@ order: 1
 icon: ri:file-text-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # 直接在posts目录创建文章
 

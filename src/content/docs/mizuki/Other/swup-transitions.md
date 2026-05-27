@@ -9,8 +9,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 页面过渡动画配置

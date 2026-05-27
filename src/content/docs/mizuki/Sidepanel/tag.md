@@ -6,8 +6,8 @@ order: 5
 icon: ri:price-tag-3-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 标签组件配置

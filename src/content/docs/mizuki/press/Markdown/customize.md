@@ -9,8 +9,8 @@ badge:
   text: v2
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Mizuki Markdown 语法说明

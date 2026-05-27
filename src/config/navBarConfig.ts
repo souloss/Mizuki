@@ -120,7 +120,7 @@ export const navBarConfig: NavBarConfig = {
 			children: [
 				{
 					name: "GitHub",
-					url: "https://github.com/LyraVoid/Mizuki",
+					url: "https://github.com/souloss/Mizuki",
 					external: true,
 					icon: "fa7-brands:github",
 				},
@@ -132,7 +132,7 @@ export const navBarConfig: NavBarConfig = {
 				},
 				{
 					name: "Gitee",
-					url: "https://gitee.com/matsuzakayuki/Mizuki",
+					url: "https://gitee.com/souloss/Mizuki",
 					external: true,
 					icon: "mdi:git",
 				},

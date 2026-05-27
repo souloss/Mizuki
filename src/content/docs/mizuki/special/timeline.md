@@ -6,8 +6,8 @@ order: 9
 icon: ri:time-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ### 时间线页面配置教程

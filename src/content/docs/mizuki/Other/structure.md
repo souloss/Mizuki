@@ -6,8 +6,8 @@ order: 2
 icon: ri:folder-chart-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # Mizuki 内容仓库结构说明
 

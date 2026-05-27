@@ -6,8 +6,8 @@ order: 1
 icon: ri:information-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 **关于页面修改教程**

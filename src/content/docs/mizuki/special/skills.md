@@ -6,8 +6,8 @@ order: 10
 icon: ri:lightbulb-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 ### 技能页面配置教程

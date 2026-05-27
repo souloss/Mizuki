@@ -6,8 +6,8 @@ order: 2
 icon: ri:user-smile-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 个人信息配置
@@ -28,7 +28,7 @@ export const profileConfig: ProfileConfig = {
   links: [
     {
       name: "GitHub",
-      url: "https://github.com/LyraVoid",
+      url: "https://github.com/souloss",
       icon: "fa7-brands:github",
       showName: true,                    // 是否显示链接名称
     },

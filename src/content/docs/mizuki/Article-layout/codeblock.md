@@ -9,8 +9,8 @@ createTime: 2025/11/20 20:25:15
 permalink: /article-layout/codeblock/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 # 代码块配置说明
 

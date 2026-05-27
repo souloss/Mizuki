@@ -6,8 +6,8 @@ createTime: 2025/11/21 12:00:00
 permalink: /guide/deploy/cloudflare/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # Cloudflare Pages 部署指南

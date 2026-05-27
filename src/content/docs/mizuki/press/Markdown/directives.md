@@ -9,8 +9,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 在普通 `.md` 文章里直接使用 `:::` 和 `:` 语法，无需 import，无需 MDX。下面每个指令都分成了**演示效果**与**示例代码**两个选项卡，方便你边预览边复制。

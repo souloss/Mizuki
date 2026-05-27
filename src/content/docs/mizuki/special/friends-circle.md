@@ -9,8 +9,8 @@ badge:
   text: 新
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 **朋友圈功能说明**
@@ -247,8 +247,8 @@ export const featuredPosts: FriendsCirclePost[] = [
         title: 'Mizuki 主题发布',
         link: 'https://example.com/post/mizuki-release',
         pubDate: new Date('2025-01-01'),
-        author: 'LyraVoid',
-        blogName: 'LyraVoid Blog',
+        author: 'souloss',
+        blogName: 'souloss Blog',
         blogUrl: 'https://example.com',
         description: 'Mizuki 是一个精美的 Astro 博客主题...',
     },

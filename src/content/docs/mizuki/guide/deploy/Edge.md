@@ -9,8 +9,8 @@ createTime: 2025/11/21 02:01:00
 permalink: /guide/deploy/edge/
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 部署到 EdgeOne Pages

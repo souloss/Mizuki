@@ -6,8 +6,8 @@ order: 3
 icon: ri:git-merge-line
 copyright:
   author:
-    name: LyraVoid Team
-    url: https://github.com/LyraVoid
+    name: souloss
+    url: https://github.com/souloss
 ---
 
 # 内容仓库更新自动触发构建 - 快速参考
