@@ -18,6 +18,9 @@
 	let isSearching = $state(false);
 	let hasSearched = $state(false);
 	let searchUnavailable = $state(false);
+	let searchBtnEl: HTMLElement | undefined = $state();
+	let resultsStyle = $state<Record<string, string>>({});
+	let blurTimer: ReturnType<typeof setTimeout>;
 
 	function updatePagefindState() {
 		pagefindLoaded =
@@ -51,6 +54,36 @@
 		return pagefindLoaded;
 	}
 
+	function updateResultsPosition() {
+		if (!searchBtnEl) return;
+		const rect = searchBtnEl.getBoundingClientRect();
+		resultsStyle = {
+			position: "fixed",
+			top: `${rect.bottom + 4}px`,
+			left: `${rect.left}px`,
+			width: `${rect.width}px`,
+			zIndex: "100",
+		};
+	}
+
+	function handleFocus() {
+		isExpanded = true;
+		void ensurePagefind();
+		updateResultsPosition();
+	}
+
+	function handleBlur() {
+		blurTimer = setTimeout(() => {
+			if (!keyword) isExpanded = false;
+		}, 200);
+	}
+
+	function handleResultClick() {
+		isExpanded = false;
+		keyword = "";
+		result = [];
+	}
+
 	onMount(() => {
 		const handlePagefindReady = () => {
 			initialized = true;
@@ -74,9 +107,32 @@
 			}, 2000);
 		}
 
+		// Ctrl+K shortcut
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+				e.preventDefault();
+				isExpanded = true;
+				void ensurePagefind();
+				updateResultsPosition();
+				const input = searchBtnEl?.querySelector<HTMLInputElement>("input");
+				input?.focus();
+			}
+			if (e.key === "Escape" && isExpanded) {
+				isExpanded = false;
+				if (!keyword) result = [];
+			}
+		};
+		document.addEventListener("keydown", handleKeyDown);
+
+		// Update position on scroll/resize
+		const handleResize = () => { if (isExpanded) updateResultsPosition(); };
+		window.addEventListener("resize", handleResize);
+
 		return () => {
 			document.removeEventListener("pagefindmizukiready", handlePagefindReady);
 			document.removeEventListener("pagefindmizukiloaderror", handlePagefindError);
+			document.removeEventListener("keydown", handleKeyDown);
+			window.removeEventListener("resize", handleResize);
 		};
 	});
 
@@ -129,29 +185,25 @@
 
 	onDestroy(() => {
 		clearTimeout(debounceTimer);
+		clearTimeout(blurTimer);
 	});
 </script>
 
-<div class="docs-search-btn" role="search">
+<div class="docs-search-btn" role="search" bind:this={searchBtnEl}>
 	<Icon icon="material-symbols:search" class="search-icon" />
 	<input
 		type="text"
 		class="docs-search-input"
 		placeholder={placeholder}
 		bind:value={keyword}
-		onfocus={() => {
-			isExpanded = true;
-			void ensurePagefind();
-		}}
-		onblur={() => {
-			if (!keyword) {isExpanded = false;}
-		}}
+		onfocus={handleFocus}
+		onblur={handleBlur}
 	/>
 	<span class="search-shortcut">Ctrl K</span>
 </div>
 
 {#if isExpanded && keyword && (result.length > 0 || isSearching || searchUnavailable || hasSearched)}
-	<div class="docs-search-results">
+	<div class="docs-search-results" style="{Object.entries(resultsStyle).map(([k, v]) => `${k}: ${v}`).join(';')}">
 		{#if isSearching}
 			<div class="docs-search-no-results">Searching...</div>
 		{:else if searchUnavailable}
@@ -160,7 +212,7 @@
 			<div class="docs-search-no-results">No results found.</div>
 		{:else}
 			{#each result as item}
-				<a href={item.url} class="docs-search-result-item">
+				<a href={item.url} class="docs-search-result-item" onclick={handleResultClick}>
 					<div class="result-title">{item.meta.title}</div>
 					<div class="result-excerpt">{@html item.excerpt}</div>
 				</a>
@@ -226,11 +278,6 @@
 	}
 
 	.docs-search-results {
-		position: absolute;
-		top: calc(100% + 4px);
-		left: 0;
-		right: 0;
-		z-index: 50;
 		max-height: min(360px, calc(100vh - 10rem));
 		overflow-y: auto;
 		padding: 0.5rem;

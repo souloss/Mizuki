@@ -19,7 +19,7 @@ copyright:
 - **内容**：包含所有通用功能，配置文件使用空默认值
 - **推送目标**：`origin/master`
 
-### newblog 分支（用户自定义博客）
+### blog 分支（用户自定义博客）
 - **角色**：用户个人博客分支，基于 master 进行定制
 - **内容**：包含用户的文章、配置、静态资源等
 - **推送目标**：`private/main` 或用户自己的远程仓库
@@ -43,7 +43,7 @@ public/** merge=ours
 ```
 
 ### merge=ours 策略说明
-当从 master 合并到 newblog 时，上述路径的文件会**自动保留 newblog 的版本**，不会被 master 覆盖。
+当从 master 合并到 blog 时，上述路径的文件会**自动保留 blog 的版本**，不会被 master 覆盖。
 
 ---
 
@@ -68,11 +68,11 @@ git commit -m "feat: 添加某某功能"
 git push origin master
 ```
 
-### 场景 2：将 master 的更新同步到 newblog
+### 场景 2：将 master 的更新同步到 blog
 
 ```bash
-# 1. 切换到 newblog
-git checkout newblog
+# 1. 切换到 blog
+git checkout blog
 
 # 2. 合并 master 的更新
 git merge master -m "merge: sync updates from master"
@@ -84,7 +84,7 @@ git add src/config/siteConfig.ts
 git commit -m "merge: sync updates from master, preserve user config"
 
 # 4. 推送到你的远程仓库
-git push private newblog
+git push private blog
 ```
 
 ---
@@ -97,7 +97,7 @@ git push private newblog
 - 使用空默认值或示例值
 - 保持结构完整，新增配置项时及时补充类型定义
 
-### 用户（newblog）的配置文件
+### 用户（blog）的配置文件
 - 填写真实的配置值
 - 合并时仔细查看新增的配置项
 - 保留自己的自定义值，同时补充新配置项
@@ -126,7 +126,7 @@ git push private newblog
 如果你只需要 master 上的某个特定修复，可以使用 cherry-pick：
 
 ```bash
-git checkout newblog
+git checkout blog
 git cherry-pick <commit-hash>
 ```
 
@@ -139,7 +139,7 @@ git cherry-pick <commit-hash>
 git status
 
 # 查看两个分支的差异
-git diff master...newblog
+git diff master...blog
 
 # 查看提交历史
 git log --oneline --graph --all -20
@@ -150,6 +150,6 @@ git log --oneline --graph --all -20
 ## 最佳实践建议
 
 1. **master 只放通用代码**：不要在 master 上提交个人配置
-2. **newblog 只改配置和内容**：尽量不要在 newblog 上修改上游代码
+2. **blog 只改配置和内容**：尽量不要在 blog 上修改上游代码
 3. **经常同步**：定期从 master 合并更新，避免差距过大
 4. **写清晰的 commit message**：便于以后查看和回溯

@@ -182,6 +182,15 @@
 			}, 2000); // Adjust timeout as needed
 		}
 
+		// Ctrl+K shortcut
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+				e.preventDefault();
+				toggleDesktopSearch();
+			}
+		};
+		document.addEventListener("keydown", handleKeyDown);
+
 		// 监听窗口焦点事件，防止切换窗口时自动展开搜索框
 		const handleFocus = () => {
 			windowJustFocused = true;
@@ -194,6 +203,7 @@
 		window.addEventListener("focus", handleFocus);
 
 		return () => {
+			document.removeEventListener("keydown", handleKeyDown);
 			window.removeEventListener("focus", handleFocus);
 		};
 	});

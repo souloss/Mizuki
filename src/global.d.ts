@@ -68,6 +68,7 @@ declare global {
 				options: (opts?: Record<string, unknown>) => Promise<void>;
 			};
 			loadPagefindMizuki?: () => Promise<void>;
+			_walineModule?: any;
 		toggleFloatingTOC?: () => void;
 		mobileTOCInit?: () => void;
 		initSemifullScrollDetection?: () => void;
