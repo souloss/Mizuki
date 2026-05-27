@@ -1,7 +1,7 @@
 /**
  * Dev-mode content loader that wraps Astro's glob() loader.
  *
- * In production (ASTRO_BUILDING="true"), delegates directly to glob().
+ * In production (NODE_ENV="production"), delegates directly to glob().
  * In dev, trims the data-store to reduce memory usage:
  *   - Keeps frontmatter for ALL entries (listing/archive pages work)
  *   - Keeps full rendered HTML only for the N most recent posts
@@ -12,11 +12,15 @@
 import { glob } from "astro/loaders";
 
 const isDev = () => {
-  // Astro sets ASTRO_BUILDING="true" during `astro build` (official env var).
-  // Only trim content when this var is absent, meaning we're in dev mode.
-  // Single-variable check suffices — no need to also check NODE_ENV.
-  // https://docs.astro.build/en/guides/environment-variables/#astro-building
-  return process.env.ASTRO_BUILDING !== "true";
+  // Use dual env check for reliable dev-mode detection in Astro 6 content loaders.
+  // ASTRO_BUILDING is not available during content loader execution in Astro 6
+  // (it's undefined even during `astro build`). NODE_ENV is reliably set:
+  // - "production" during `astro build` (set by Astro CLI)
+  // - undefined or "development" during `astro dev`
+  // Check both to be safe — if either indicates production, treat as production.
+  const astroBuilding = process.env.ASTRO_BUILDING === "true";
+  const nodeEnvProd = process.env.NODE_ENV === "production";
+  return !astroBuilding && !nodeEnvProd;
 };
 const DEV_MAX_RENDERED = parseInt(process.env.DEV_MAX_RENDERED_POSTS || "20", 10);
 const DEV_PLACEHOLDER_HTML = "<p>Content preview not available in dev mode</p>";
