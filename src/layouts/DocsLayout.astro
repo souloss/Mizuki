@@ -304,6 +304,36 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
 	</body>
 </html>
+{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: '/pagefind/mizuki/pagefind.js'}}>
+	window.loadPagefindMizuki = async function() {
+		if (window.pagefindMizuki) {return;}
+		try {
+			const response = await fetch(scriptUrl, { method: 'HEAD' });
+			if (!response.ok) {
+				throw new Error(`Mizuki Pagefind script not found: ${response.status}`);
+			}
+
+			const pagefind = await import(scriptUrl);
+
+			await pagefind.options({
+				excerptLength: 20
+			});
+
+			window.pagefindMizuki = pagefind;
+
+			document.dispatchEvent(new CustomEvent('pagefindmizukiready'));
+			console.log('Mizuki Pagefind loaded and initialized successfully.');
+		} catch (error) {
+			console.error('Failed to load Mizuki Pagefind:', error);
+			window.pagefindMizuki = {
+				search: () => Promise.resolve({ results: [] }),
+				options: () => Promise.resolve(),
+			};
+			document.dispatchEvent(new CustomEvent('pagefindmizukiloaderror'));
+		}
+	};
+	window.loadPagefindMizuki();
+	</script>}
 
 <script>
 	import { initSwupManager } from "../scripts/swup-manager";

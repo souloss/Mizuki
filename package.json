@@ -18,7 +18,7 @@
 		"update-bangumi": "node scripts/update-bangumi.mjs",
 		"update-bilibili": "node scripts/update-bilibili.mjs",
 		"update-feeds": "node scripts/update-feeds.mjs",
-		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && node scripts/run-with-mem.js astro build && pagefind --site dist && node scripts/compress-fonts.js",
+		"build": "node scripts/update-feeds.mjs && node scripts/update-anime.mjs && node scripts/run-with-mem.js astro build && node scripts/build-pagefind.mjs && node scripts/compress-fonts.js",
 		"submit": "node scripts/indexnow-submit.js",
 		"preview": "astro preview",
 		"astro": "astro",

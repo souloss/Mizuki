@@ -59,6 +59,15 @@ declare global {
 		};
 
 		loadPagefind?: () => Promise<void>;
+			pagefindMizuki?: {
+				search: (query: string) => Promise<{
+					results: {
+						data: () => Promise<SearchResult>;
+					}[];
+				}>;
+				options: (opts?: Record<string, unknown>) => Promise<void>;
+			};
+			loadPagefindMizuki?: () => Promise<void>;
 		toggleFloatingTOC?: () => void;
 		mobileTOCInit?: () => void;
 		initSemifullScrollDetection?: () => void;

@@ -22,8 +22,8 @@
 	function updatePagefindState() {
 		pagefindLoaded =
 			typeof window !== "undefined" &&
-			!!window.pagefind &&
-			typeof window.pagefind.search === "function";
+			!!window.pagefindMizuki &&
+			typeof window.pagefindMizuki.search === "function";
 		searchUnavailable = initialized && !pagefindLoaded && import.meta.env.PROD;
 		return pagefindLoaded;
 	}
@@ -40,8 +40,8 @@
 		}
 
 		try {
-			if (typeof window.loadPagefind === "function") {
-				await window.loadPagefind();
+			if (typeof window.loadPagefindMizuki === "function") {
+				await window.loadPagefindMizuki();
 			}
 		} finally {
 			initialized = true;
@@ -64,8 +64,8 @@
 		if (import.meta.env.DEV) {
 			initialized = true;
 		} else {
-			document.addEventListener("pagefindready", handlePagefindReady);
-			document.addEventListener("pagefindloaderror", handlePagefindError);
+			document.addEventListener("pagefindmizukiready", handlePagefindReady);
+			document.addEventListener("pagefindmizukiloaderror", handlePagefindError);
 			void ensurePagefind();
 			setTimeout(() => {
 				if (!initialized) {
@@ -75,8 +75,8 @@
 		}
 
 		return () => {
-			document.removeEventListener("pagefindready", handlePagefindReady);
-			document.removeEventListener("pagefindloaderror", handlePagefindError);
+			document.removeEventListener("pagefindmizukiready", handlePagefindReady);
+			document.removeEventListener("pagefindmizukiloaderror", handlePagefindError);
 		};
 	});
 
@@ -94,10 +94,8 @@
 		try {
 			isSearching = true;
 			hasSearched = true;
-			if (import.meta.env.PROD && pagefindLoaded && window.pagefind) {
-				const response = await window.pagefind.search(term, {
-					filters: { docSlug: docSlug },
-				});
+			if (import.meta.env.PROD && pagefindLoaded && window.pagefindMizuki) {
+				const response = await window.pagefindMizuki.search(term);
 				result = await Promise.all(response.results.map((item) => item.data()));
 			} else if (import.meta.env.DEV) {
 				result = [
