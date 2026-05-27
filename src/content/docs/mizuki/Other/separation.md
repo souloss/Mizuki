@@ -24,7 +24,7 @@ copyright:
 
 ```bash
 # 克隆项目
-git clone https://github.com/matsuzaka-yuki/Mizuki.git
+git clone https://github.com/souloss/Mizuki.git
 cd Mizuki
 
 # 安装依赖
@@ -512,7 +512,7 @@ git clone https://github.com/your-username/Mizuki-Content.git content
 
 ## 🤝 需要帮助?
 
-- 查看 [GitHub Issues](https://github.com/matsuzaka-yuki/Mizuki/issues)
+- 查看 [GitHub Issues](https://github.com/souloss/Mizuki/issues)
 - 运行 `pnpm run check-env` 检查配置
 
 祝你使用愉快! 🎉

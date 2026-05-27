@@ -558,5 +558,4 @@ export const en: Translation = {
 	[Key.navSponsor]: "Sponsor",
 	[Key.navGitHub]: "GitHub",
 	[Key.navBilibili]: "Bilibili",
-	[Key.navGitee]: "Gitee",
 };

@@ -21,7 +21,7 @@ copyright:
 
 <CardGrid>
   <RepoCard repo="souloss/Mizuki" />
-  <RepoCard repo="matsuzaka-yuki/Mizuki-Content" />
+  <RepoCard repo="souloss/Mizuki-Content" />
 </CardGrid>
 
 

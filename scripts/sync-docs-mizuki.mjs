@@ -5,7 +5,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import vm from "node:vm";
 
-const repo = process.env.DOCS_MIZUKI_REPO || "https://github.com/matsuzaka-yuki/Docs-Mizuki.git";
+const repo = process.env.DOCS_MIZUKI_REPO || "https://github.com/souloss/Docs-Mizuki.git";
 const ref = process.env.DOCS_MIZUKI_REF || "master";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const work = mkdtempSync(join(tmpdir(), "docs-mizuki-"));
@@ -87,7 +87,7 @@ export const docsMizukiHome = {
 \timage: "/favicon.png",
 \tactions: [
 \t\t{ theme: "brand", text: "快速开始 →", link: "/docs/mizuki/guide/intro/" },
-\t\t{ theme: "alt", text: "在Github上查看 →", link: "https://github.com/matsuzaka-yuki/Mizuki" },
+\t\t{ theme: "alt", text: "在Github上查看 →", link: "https://github.com/souloss/Mizuki" },
 \t],
 \tfeatures: [
 \t\t{ title: "响应式布局", icon: "💻", details: "适配移动设备，PC，平板" },

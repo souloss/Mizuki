@@ -10,7 +10,7 @@ actions:
     link: /docs/mizuki/guide/intro/
   - theme: alt
     text: 在Github上查看 →
-    link: https://github.com/matsuzaka-yuki/Mizuki
+    link: https://github.com/souloss/Mizuki
 features:
   - title: 响应式布局
     icon: 💻

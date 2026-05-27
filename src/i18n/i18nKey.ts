@@ -532,7 +532,6 @@ enum I18nKey {
 	navSponsor = "navSponsor",
 	navGitHub = "navGitHub",
 	navBilibili = "navBilibili",
-	navGitee = "navGitee",
 }
 
 export default I18nKey;

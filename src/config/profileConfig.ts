@@ -1,8 +1,8 @@
 import type { ProfileConfig } from "../types/config";
 
 export const profileConfig: ProfileConfig = {
-	avatar: "assets/images/avatar.webp",
-	name: "松坂 雪",
+	avatar: "assets/images/avatar.jpg",
+	name: "松坂雪",
 	bio: "世界很大，你必须去看看",
 	typewriter: {
 		enable: true,
@@ -12,12 +12,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "Bilibili",
 			icon: "fa7-brands:bilibili",
-			url: "https://space.bilibili.com/701864046",
-		},
-		{
-			name: "Gitee",
-			icon: "mdi:git",
-			url: "https://gitee.com/souloss",
+			url: "https://space.bilibili.com/15269273",
 		},
 		{
 			name: "GitHub",

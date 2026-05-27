@@ -545,5 +545,4 @@ export const zh_CN: Translation = {
 	[Key.navSponsor]: "赞助",
 	[Key.navGitHub]: "GitHub",
 	[Key.navBilibili]: "哔哩哔哩",
-	[Key.navGitee]: "Gitee",
 };

@@ -84,5 +84,5 @@ copyright:
 
 ## 附：核心资源速查
 - 官方文档：[https://docs.mizuki.mysqil.com/](https://docs.mizuki.mysqil.com/)
-- 项目仓库：GitHub（[matsuzaka-yuki/Mizuki](https://github.com/matsuzaka-yuki/Mizuki)）
+- 项目仓库：GitHub（[souloss/Mizuki](https://github.com/souloss/Mizuki)）
 - 常见问题：文档“FAQ”模块、群聊置顶消息、仓库 Issues 区（搜索关键词）

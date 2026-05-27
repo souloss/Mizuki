@@ -547,5 +547,4 @@ export const zh_TW: Translation = {
 	[Key.navSponsor]: "贊助",
 	[Key.navGitHub]: "GitHub",
 	[Key.navBilibili]: "嗶哩嗶哩",
-	[Key.navGitee]: "Gitee",
 };

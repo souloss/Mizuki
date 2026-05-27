@@ -47,7 +47,7 @@ Mizuki 主题支持多种 Markdown 扩展语法：
 使用 `::github{repo="用户名/仓库名"}` 语法嵌入 GitHub 仓库卡片：
 
 ```
-::github{repo="matsuzaka-yuki/mizuki"}
+::github{repo="souloss/mizuki"}
 ```
 
 ### 2. 注意框

@@ -63,7 +63,7 @@ banner: {
 			url: "http://domain.com/api_v2.php?format=text&count=4", // API地址，返回每行一个图片链接的文本
 		},
 		// 这里需要使用PicFlow API的Text返回类型,所以我们需要format=text参数
-		// 项目地址:https://github.com/matsuzaka-yuki/PicFlow-API
+		// 项目地址:https://github.com/souloss/PicFlow-API
 		// 请自行搭建API
 
 		homeText: {

@@ -561,5 +561,4 @@ export const ja: Translation = {
 	[Key.navSponsor]: "スポンサー",
 	[Key.navGitHub]: "GitHub",
 	[Key.navBilibili]: "ビリビリ",
-	[Key.navGitee]: "Gitee",
 };

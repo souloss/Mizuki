@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repo = process.env.DOCS_MIZUKI_REPO || "https://github.com/matsuzaka-yuki/Docs-Mizuki.git";
+const repo = process.env.DOCS_MIZUKI_REPO || "https://github.com/souloss/Docs-Mizuki.git";
 const ref = process.env.DOCS_MIZUKI_REF || "master";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const work = mkdtempSync(join(tmpdir(), "docs-mizuki-check-"));
