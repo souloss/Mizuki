@@ -553,3 +553,5 @@ const themeOptimizer = new ThemeOptimizer();
 
 // 导出到全局（统一API）
 window.themeOptimizer = themeOptimizer;
+
+export {};
