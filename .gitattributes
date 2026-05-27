@@ -1,2 +1,9 @@
 * text=auto eol=lf
 *.js linguist-language=astro
+
+# ==================== 用户内容（合并时保留 ours）====================
+# 用户文章和内容
+src/content/** merge=ours
+
+# 静态资源（用户自定义的 favicon 等）
+public/** merge=ours
