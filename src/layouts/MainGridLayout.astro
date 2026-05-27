@@ -300,7 +300,7 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 	}
 
 	<!-- Sticky Navbar 初始化脚本 -->
-	<script is:inline data-swup-ignore-script>
+	<script is:inline data-swup-ignore-script define:vars={{stickyNavbar}}>
 		(function initStickyNavbar() {
 			// 检查是否有存储的设置
 			let stickyEnabled;
@@ -309,7 +309,7 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 				stickyEnabled = stored === 'true';
 			} else {
 				// 使用配置的默认值
-				stickyEnabled = {stickyNavbar};
+				stickyEnabled = stickyNavbar;
 			}
 
 			// 应用设置到 data 属性
