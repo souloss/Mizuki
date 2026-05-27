@@ -69,7 +69,7 @@
  * — overrides the blog theme's constrained page-width
  * ================================================================ */
 html.docs-page {
-	background: var(--docs-bg) !important;
+	background: var(--docs-bg);
 	color: var(--docs-text-100);
 }
 
@@ -80,7 +80,7 @@ body.docs-page {
 /* /docs/ index page uses MainGridLayout — override its background too */
 body.docs-page .page-container,
 body.docs-page .main-grid-container {
-	background: var(--docs-bg) !important;
+	background: var(--docs-bg);
 }
 
 /* /docs/ index page content area — uses MainGridLayout so needs scoped overrides */
@@ -93,10 +93,10 @@ body.docs-page .main-grid-container {
 }
 
 .docs-index-grid .card-base {
-	background: var(--docs-bg) !important;
-	border: 1px solid var(--docs-divider) !important;
-	border-radius: 12px !important;
-	box-shadow: none !important;
+	background: var(--docs-bg);
+	border: 1px solid var(--docs-divider);
+	border-radius: 12px;
+	box-shadow: none;
 }
 
 /* ================================================================
@@ -120,38 +120,38 @@ body.docs-page .main-grid-container {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	max-width: none !important;
-	padding: 0 1rem !important;
+	max-width: none;
+	padding: 0 1rem;
 }
 
 .docs-navbar-inner > div {
-	max-width: none !important;
+	max-width: none;
 }
 
 /* Override blog theme's Navbar card-base styling on docs pages */
 body.docs-page #navbar-wrapper {
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
-	border-radius: 0 !important;
-	backdrop-filter: none !important;
-	position: static !important;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	border-radius: 0;
+	backdrop-filter: none;
+	position: static;
 }
 
 body.docs-page #navbar-wrapper > div,
 body.docs-page #navbar-wrapper nav {
-	max-width: none !important;
-	border-radius: 0 !important;
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
+	max-width: none;
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 body.docs-page #navbar-wrapper .card-base {
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
-	border-radius: 0 !important;
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	border-radius: 0;
 }
 
 /* ================================================================
@@ -440,8 +440,8 @@ body.docs-page #navbar-wrapper .card-base {
 	transition: max-height 0.3s ease;
 }
 
-.docs-sidebar-section-items-hidden {
-	max-height: 0 !important;
+.docs-sidebar-section-items-hidden.docs-sidebar-section-items-hidden {
+	max-height: 0;
 	overflow: hidden;
 	opacity: 0;
 }
@@ -465,8 +465,8 @@ body.docs-page #navbar-wrapper .card-base {
 	background: var(--docs-bg-mute);
 }
 
-.docs-sidebar-item-active {
-	color: var(--docs-brand) !important;
+.docs-sidebar-item-active.docs-sidebar-item-active {
+	color: var(--docs-brand);
 	font-weight: 500;
 	background: var(--docs-brand-dim);
 }
@@ -580,8 +580,8 @@ body.docs-page #navbar-wrapper .card-base {
 	overflow: hidden;
 }
 
-.docs-sidebar-nested-items-hidden {
-	max-height: 0 !important;
+.docs-sidebar-nested-items-hidden.docs-sidebar-nested-items-hidden {
+	max-height: 0;
 	overflow: hidden;
 	opacity: 0;
 }
@@ -719,8 +719,8 @@ body.docs-page table-of-contents a.visible {
 }
 
 body.docs-page #active-indicator {
-	border-color: var(--docs-brand-dim) !important;
-	background: var(--docs-brand-dim) !important;
+	border-color: var(--docs-brand-dim);
+	background: var(--docs-brand-dim);
 }
 
 /* ================================================================
@@ -1226,7 +1226,7 @@ body.docs-page .footer.onload-animation {
 body.docs-page #navbar.onload-animation {
 	opacity: 1;
 	animation: none;
-	transform: none !important;
+	transform: none;
 }
 
 /* Prevent OverlayScrollbars from interfering with docs layout */
@@ -1247,14 +1247,14 @@ body.docs-page .docs-toc-wrapper[data-overlayscrollbars-viewport] {
 	.docs-toc-wrapper,
 	.docs-sidebar-toggle,
 	.docs-sidebar-overlay {
-		display: none !important;
+		display: none;
 	}
 
 	.docs-layout-container {
-		padding: 0 !important;
+		padding: 0;
 	}
 
 	.docs-content-wrapper {
-		padding: 0 !important;
+		padding: 0;
 	}
 }

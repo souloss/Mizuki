@@ -119,8 +119,8 @@
   border-color: var(--primary);
 }
 
-.anime-grid-container [data-anime-status].anime-hidden {
-  display: none !important;
+.anime-grid-container.anime-grid-container [data-anime-status].anime-hidden {
+  display: none;
 }
 
 .anime-grid-container [data-anime-status] {
