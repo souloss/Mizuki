@@ -6,6 +6,7 @@ import { removeFileExtension } from "@/utils/url-utils";
 
 import Giscus from "./Giscus.astro";
 import Twikoo from "./Twikoo.astro";
+import Waline from "./Waline.astro";
 
 interface Props {
 	post?: CollectionEntry<"posts">;
@@ -35,6 +36,7 @@ const commentEnabled = post ? (post.data.comment ?? true) : true;
 	commentConfig?.enable && commentEnabled && path && (
 		<div class="card-base p-6 mb-4">
 			{commentService === "twikoo" && <Twikoo path={path} />}
+			{commentService === "waline" && <Waline path={path} />}
 			{commentService === "giscus" && <Giscus path={path} />}
 			{commentService === "" && null}
 		</div>
