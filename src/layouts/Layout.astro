@@ -318,25 +318,57 @@ if (defaultFontItem) {
 </style>
 
 <script>
-	// Swup 页面过渡管理器 - 统一入口
-	// 所有功能已重构为模块化架构，详见 src/scripts/ 目录
-	import { initSwupManager } from "../scripts/swup-manager";
-
-	// 初始化 Swup 管理器
-	initSwupManager();
+	// Swup 页面过渡管理器 - 统一入口 - 延迟到 idle 后加载
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(() => {
+			import("../scripts/swup-manager").then(({ initSwupManager }) => {
+				initSwupManager();
+			});
+		}, { timeout: 2000 });
+	} else {
+		setTimeout(() => {
+			import("../scripts/swup-manager").then(({ initSwupManager }) => {
+				initSwupManager();
+			});
+		}, 500);
+	}
 </script>
 
-<!-- 代码块折叠功能 -->
+<!-- 代码块折叠功能 - 延迟加载 -->
 <script>
-	import "../scripts/code-collapse.js";
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(() => {
+			import("../scripts/code-collapse.js");
+		}, { timeout: 5000 });
+	} else {
+		setTimeout(() => {
+			import("../scripts/code-collapse.js");
+		}, 2000);
+	}
 </script>
 
-<!-- Markdown 指令交互脚本 -->
+<!-- Markdown 指令交互脚本 - 延迟加载 -->
 <script>
-	import "../scripts/directive-interactions.js";
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(() => {
+			import("../scripts/directive-interactions.js");
+		}, { timeout: 5000 });
+	} else {
+		setTimeout(() => {
+			import("../scripts/directive-interactions.js");
+		}, 2000);
+	}
 </script>
 
-<!-- 主题切换综合性能优化器（包含代码块优化、重型元素优化、性能诊断） -->
+<!-- 主题切换综合性能优化器 - 延迟到 idle 后加载 -->
 <script>
-	import "../scripts/theme-optimizer.js";
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(() => {
+			import("../scripts/theme-optimizer.js");
+		}, { timeout: 3000 });
+	} else {
+		setTimeout(() => {
+			import("../scripts/theme-optimizer.js");
+		}, 1000);
+	}
 </script>
