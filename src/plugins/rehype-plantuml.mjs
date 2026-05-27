@@ -3,8 +3,23 @@ import { visit } from "unist-util-visit";
 
 import plantumlRenderScript from "./plantuml-render-script.js?raw";
 
-/** Dev 模式下跳过重量级渲染，仅输出占位符 */
-const isDev = () => process.env.NODE_ENV !== "production";
+/**
+ * 检测是否为开发环境：
+ * - 优先检查通过参数传入的 isDev
+ * - 否则检查 process.env.npm_lifecycle_event
+ * - 最后检查 process.env.NODE_ENV
+ */
+function isDevMode(options = {}) {
+	if (typeof options?.isDev === "boolean") {
+		return options.isDev;
+	}
+	// 通过 npm script 判断
+	if (process.env.npm_lifecycle_event) {
+		return process.env.npm_lifecycle_event.startsWith("dev");
+	}
+	// 回退到 NODE_ENV
+	return process.env.NODE_ENV !== "production";
+}
 
 /**
  * 从 HAST 节点递归提取所有文本内容，作为 `<img>` 的 alt 回退文案。
@@ -37,7 +52,7 @@ const scriptInjectedTrees = new WeakSet();
  * Dev 模式下跳过脚本注入，仅输出带虚线边框的静态占位符（可选附带 light 图片预览）。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
  */
-export function rehypePlantuml() {
+export function rehypePlantuml(options = {}) {
 	return (tree) => {
 		let foundAny = false;
 
@@ -56,7 +71,7 @@ export function rehypePlantuml() {
 			}
 
 			// Dev: 跳过客户端脚本注入，仅输出带虚线边框的静态占位符
-			if (isDev()) {
+			if (isDevMode(options)) {
 				let altText =
 					node.properties["data-plantuml-alt"] ||
 					node.properties.dataPlantumlAlt ||
