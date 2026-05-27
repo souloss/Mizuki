@@ -3,9 +3,6 @@ import { visit } from "unist-util-visit";
 
 import mermaidRenderScript from "./mermaid-render-script.js?raw";
 
-/** Dev 模式下跳过重量级渲染，仅输出占位符 */
-const isDev = () => process.env.NODE_ENV !== "production";
-
 /**
  * 递归提取 HAST 节点树中的所有文本内容
  */
@@ -15,7 +12,7 @@ function extractText(node) {
 	return "";
 }
 
-export function rehypeMermaid() {
+export function rehypeMermaid({ isDev = false } = {}) {
 	return (tree) => {
 		visit(tree, "element", (node) => {
 			if (
@@ -31,7 +28,7 @@ export function rehypeMermaid() {
 				}
 
 				// Dev: 跳过 16KB 渲染脚本注入，仅输出带虚线边框的代码占位符
-				if (isDev()) {
+				if (isDev) {
 					node.tagName = "div";
 					node.properties = {
 						class: "mermaid-dev-placeholder",
@@ -64,3 +61,5 @@ export function rehypeMermaid() {
 		});
 	};
 }
+
+export default rehypeMermaid;

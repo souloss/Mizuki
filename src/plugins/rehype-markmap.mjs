@@ -3,9 +3,6 @@ import { visit } from "unist-util-visit";
 
 import markmapRenderScript from "./markmap-render-script.js?raw";
 
-/** Dev 模式下跳过重量级渲染，仅输出占位符 */
-const isDev = () => process.env.NODE_ENV !== "production";
-
 /**
  * 递归提取 HAST 节点树中的所有文本内容
  * @param {import('hast').Node} node 节点
@@ -37,7 +34,7 @@ const scriptInjectedTrees = new WeakSet();
  * Dev 模式下跳过脚本注入，仅输出带虚线边框的代码占位符。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
  */
-export function rehypeMarkmap() {
+export function rehypeMarkmap({ isDev = false } = {}) {
 	return (tree) => {
 		let foundAny = false;
 
@@ -64,7 +61,7 @@ export function rehypeMarkmap() {
 			}
 
 			// Dev: 跳过客户端脚本注入，仅输出带虚线边框的代码占位符
-			if (isDev()) {
+			if (isDev) {
 				node.tagName = "div";
 				node.properties = {
 					class: "markmap-dev-placeholder",
