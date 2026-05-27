@@ -173,6 +173,29 @@ export const siteConfig: SiteConfig = {
 		clarityId: "",
 	},
 
+	// 统计分析配置
+	analytics: {
+		umamiAnalytics: {
+			// Umami Website ID，在 Umami 后台获取
+			// 示例："12345678-1234-1234-1234-123456789abc"
+			websiteId: "",
+			// Umami JS 地址，自建的话填自己的地址
+			// 示例："https://umami.example.com/script.js"
+			scriptUrl: "",
+			// 是否追踪出站链接点击事件，默认 true
+			trackOutboundLinks: true,
+			// 是否自动收集访客浏览器核心网页指标，默认 false
+			collectWebVitals: false,
+			// 会话回放配置（可选）
+			relpays: {
+				enabled: false,
+				sampleRate: 0.15,
+				maskLevel: "moderate",
+				maxDuration: 300000,
+			},
+		},
+	},
+
 	card: {
 		border: true,
 		followTheme: false,

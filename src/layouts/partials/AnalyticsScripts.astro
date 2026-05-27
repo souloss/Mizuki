@@ -6,6 +6,7 @@
  * 包含:
  * - Google Tag Manager (GTM)
  * - Microsoft Clarity (可选，通过 thirdPartyAnalytics 配置控制)
+ * - Umami Analytics (可选，通过 analytics.umamiAnalytics 配置控制)
  *
  * 使用 requestIdleCallback 延迟加载以优化性能
  */
@@ -16,15 +17,30 @@ interface Props {
 		enable: boolean;
 		clarityId?: string;
 	};
+	umamiAnalytics?: {
+		websiteId?: string;
+		scriptUrl?: string;
+		trackOutboundLinks?: boolean;
+		collectWebVitals?: boolean;
+		relpays?: {
+			enabled?: boolean;
+			sampleRate?: number;
+			maskLevel?: "moderate" | "strict";
+			maxDuration?: number;
+			blockSelector?: string;
+		};
+	};
 }
 
 const {
 	gtmId = "GTM-KRX3XGVH",
 	thirdPartyAnalytics = { enable: false, clarityId: "" },
+	umamiAnalytics,
 } = Astro.props;
 
 const clarityEnable =
 	thirdPartyAnalytics.enable && thirdPartyAnalytics.clarityId;
+const umamiEnable = umamiAnalytics && umamiAnalytics.websiteId && umamiAnalytics.scriptUrl;
 ---
 
 <!-- 第三方分析脚本 - 仅在用户交互后延迟加载 -->
@@ -34,6 +50,16 @@ const clarityEnable =
 		gtmId,
 		clarityEnable,
 		clarityId: thirdPartyAnalytics.clarityId || "",
+		umamiEnable,
+		umamiWebsiteId: umamiAnalytics?.websiteId || "",
+		umamiScriptUrl: umamiAnalytics?.scriptUrl || "",
+		umamiTrackOutboundLinks: umamiAnalytics?.trackOutboundLinks ?? true,
+		umamiCollectWebVitals: umamiAnalytics?.collectWebVitals ?? false,
+		umamiRelpaysEnabled: umamiAnalytics?.relpays?.enabled ?? false,
+		umamiRelpaysSampleRate: umamiAnalytics?.relpays?.sampleRate ?? 0.15,
+		umamiRelpaysMaskLevel: umamiAnalytics?.relpays?.maskLevel ?? "moderate",
+		umamiRelpaysMaxDuration: umamiAnalytics?.relpays?.maxDuration ?? 300000,
+		umamiRelpaysBlockSelector: umamiAnalytics?.relpays?.blockSelector || "",
 	}}
 >
 	(function () {
@@ -74,6 +100,30 @@ const clarityEnable =
 					y = l.getElementsByTagName(r)[0];
 					y.parentNode.insertBefore(t, y);
 				})(window, document, "clarity", "script", clarityId);
+			}
+
+			// Umami (仅在启用时加载)
+			if (umamiEnable && umamiScriptUrl && umamiWebsiteId) {
+				var umamiScript = document.createElement("script");
+				umamiScript.defer = true;
+				umamiScript.src = umamiScriptUrl;
+				umamiScript.setAttribute("data-website-id", umamiWebsiteId);
+				if (umamiTrackOutboundLinks) {
+					umamiScript.setAttribute("data-track-outbound-links", "true");
+				}
+				if (umamiCollectWebVitals) {
+					umamiScript.setAttribute("data-collect-web-vitals", "true");
+				}
+				if (umamiRelpaysEnabled) {
+					umamiScript.setAttribute("data-relpays-enabled", "true");
+					umamiScript.setAttribute("data-relpays-sample-rate", umamiRelpaysSampleRate);
+					umamiScript.setAttribute("data-relpays-mask-level", umamiRelpaysMaskLevel);
+					umamiScript.setAttribute("data-relpays-max-duration", umamiRelpaysMaxDuration);
+					if (umamiRelpaysBlockSelector) {
+						umamiScript.setAttribute("data-relpays-block-selector", umamiRelpaysBlockSelector);
+					}
+				}
+				document.head.appendChild(umamiScript);
 			}
 		}
 

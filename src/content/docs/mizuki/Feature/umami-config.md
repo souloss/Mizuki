@@ -75,28 +75,35 @@ https://cloud.umami.is/share/xxxxx
 
 :::
 
-### 4. 手动插入统计脚本到 Layout.astro
+### 4. 配置 siteConfig.ts
 
-打开 `src/layouts/Layout.astro` 文件，在 `<head>` 标签内添加 Umami 跟踪脚本：
+打开 `src/config/siteConfig.ts` 文件，在 `analytics.umamiAnalytics` 配置中填写您的 Umami 信息：
 
-```astro title="src/layouts/Layout.astro"
-<head>
-  <!-- Umami 统计脚本 -->
-  <script defer src="https://analytics.umami.is/script.js" data-website-id="your-website-id"></script>
-  
-  <!-- 其他 head 内容 -->
-</head>
-```
-
-如果您使用自建 Umami 服务，请替换为您的服务地址：
-
-```astro
-<script defer src="https://your-umami-instance.com/script.js" data-website-id="your-website-id"></script>
+```typescript title="src/config/siteConfig.ts"
+analytics: {
+  umamiAnalytics: {
+    // Umami Website ID，在 Umami 后台获取
+    websiteId: "your-website-id",
+    // Umami JS 地址，云服务或自建服务的地址
+    scriptUrl: "https://umami.example.com/script.js",
+    // 是否追踪出站链接点击事件，默认 true
+    trackOutboundLinks: true,
+    // 是否自动收集访客浏览器核心网页指标，默认 false
+    collectWebVitals: false,
+    // 会话回放配置（可选）
+    relpays: {
+      enabled: false,
+      sampleRate: 0.15,
+      maskLevel: "moderate",
+      maxDuration: 300000,
+    },
+  },
+},
 ```
 
 ### 5. 完整配置示例
 
-#### astro.config.mjs
+#### astro.config.mjs（用于显示访问量数据）
 
 ```typescript title="astro.config.mjs"
 import { umami } from "oddmisc";
@@ -111,15 +118,15 @@ export default defineConfig({
 });
 ```
 
-#### Layout.astro
+#### siteConfig.ts（用于数据追踪）
 
-```astro title="src/layouts/Layout.astro"
-<head>
-  <!-- Umami 统计脚本 -->
-  <script defer src="https://cloud.umami.is/script.js" data-website-id="606672ff-6f67-4dc0-8006-bfc094539ecb"></script>
-  
-  <!-- 其他 head 内容 -->
-</head>
+```typescript title="src/config/siteConfig.ts"
+analytics: {
+  umamiAnalytics: {
+    websiteId: "606672ff-6f67-4dc0-8006-bfc094539ecb",
+    scriptUrl: "https://cloud.umami.is/script.js",
+  },
+},
 ```
 
 ### 6. 保存并重新构建
