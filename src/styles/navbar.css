@@ -39,13 +39,13 @@ body.sticky-navbar #navbar-wrapper {
 
 /* 防止 navbar-hidden 在 Sticky Navbar 模式下隐藏导航栏 */
 body.sticky-navbar #navbar-wrapper.navbar-hidden {
-  opacity: 1 !important;
-  transform: none !important;
+  opacity: 1;
+  transform: none;
 }
 
 body.sticky-navbar #navbar.navbar-hidden {
-  opacity: 1 !important;
-  transform: none !important;
+  opacity: 1;
+  transform: none;
 }
 
 /* Sticky Navbar 模式下侧边栏偏移调整 */
