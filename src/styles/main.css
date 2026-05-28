@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "katex/dist/katex.css";
 
 /* grid-layout-utils.ts dynamically constructs Tailwind arbitrary-value
    classes that the content scanner cannot detect. Define them as real CSS
