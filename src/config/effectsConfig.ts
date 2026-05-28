@@ -1,4 +1,4 @@
-import type { EffectsConfig, SakuraConfig } from "../types/config";
+import type { EffectsConfig } from "../types/config";
 
 // 特效配置
 export const effectsConfig: EffectsConfig = {
@@ -31,31 +31,4 @@ export const effectsConfig: EffectsConfig = {
       zIndex: 100,
     },
   },
-};
-
-export const sakuraConfig: SakuraConfig = {
-  enable: false,
-  sakuraNum: 21,
-  limitTimes: -1,
-  size: {
-    min: 0.5,
-    max: 1.1,
-  },
-  opacity: {
-    min: 0.3,
-    max: 0.9,
-  },
-  speed: {
-    horizontal: {
-      min: -1.7,
-      max: -1.2,
-    },
-    vertical: {
-      min: 1.5,
-      max: 2.2,
-    },
-    rotation: 0.03,
-    fadeSpeed: 0.03,
-  },
-  zIndex: 100,
 };

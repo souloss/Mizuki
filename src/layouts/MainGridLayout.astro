@@ -11,8 +11,8 @@ import SideBar from "@components/widgets/sidebar/SideBar.astro";
 import type { MarkdownHeading } from "astro";
 import { Icon } from "astro-icon/components";
 
-import { fullscreenWallpaperConfig, siteConfig } from "../config";
-import { BANNER_HEIGHT } from "../constants/constants";
+import { backgroundWallpaperConfig, siteConfig } from "../config";
+import { BANNER_HEIGHT, WALLPAPER_BANNER } from "../constants/constants";
 import {
 	calculateGridLayout,
 	getBannerImages,
@@ -37,7 +37,7 @@ interface Props {
 }
 
 // 获取 banner 图片
-const bannerImages = await getBannerImages(siteConfig);
+const bannerImages = await getBannerImages();
 
 const {
 	title,
@@ -60,7 +60,7 @@ const mobileNonHomeBannerClass = !isHomePage ? "mobile-hide-banner" : "";
 
 // 计算主内容区域位置
 const finalMainPanelTop = getMainPanelTop(
-	siteConfig.wallpaperMode.defaultMode,
+	backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER,
 	BANNER_HEIGHT,
 );
 
@@ -84,7 +84,7 @@ const { hasRightSidebarComponents, hasMobileDrawerComponents } =
 
 // 半透明效果
 const shouldEnable = shouldEnableTransparency(
-	siteConfig.wallpaperMode.defaultMode,
+	backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER,
 );
 const transparentClass = getTransparencyClass(shouldEnable);
 
@@ -108,14 +108,14 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 	<GridScripts
 		navbarTransparentMode={siteConfig.banner?.navbar?.transparentMode ||
 			"semi"}
-		defaultWallpaperMode={siteConfig.wallpaperMode.defaultMode}
+		defaultWallpaperMode={backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER}
 		defaultPostListLayout={siteConfig.postListLayout?.defaultMode || "list"}
 		BANNER_HEIGHT={BANNER_HEIGHT}
 		pageScaling={siteConfig.pageScaling}
 	/>
 
 	<!-- 全屏壁纸 - 始终渲染，通过 JS 控制显示隐藏 -->
-	<FullscreenWallpaper config={fullscreenWallpaperConfig} />
+	<FullscreenWallpaper config={backgroundWallpaperConfig.fullscreen!} />
 
 	<!-- 全局图标加载器 -->
 	<IconifyLoader />
@@ -139,12 +139,12 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 		bannerImages={bannerImages}
 		mobileNonHomeBannerClass={mobileNonHomeBannerClass}
 		showTextOverlay={isHomePage &&
-			(siteConfig.banner.homeText?.enable ?? false)}
+			(siteConfig.banner.bannerHomeText?.enable ?? false)}
 	/>
 
 	<!-- Main content -->
 	<div
-		class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? "mobile-main-no-banner" : ""} ${siteConfig.wallpaperMode.defaultMode === "none" ? "no-banner-layout" : ""} ${transparentClass}`}
+		class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? "mobile-main-no-banner" : ""} ${(backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER) === "none" ? "no-banner-layout" : ""} ${transparentClass}`}
 		style={`top: ${finalMainPanelTop}`}
 	>
 		<!-- The pointer-events-none here prevent blocking the click event of the TOC -->
@@ -270,7 +270,7 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 							"-right-(--toc-width)",
 							{
 								"toc-hide":
-									siteConfig.wallpaperMode.defaultMode ===
+									backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER ===
 									"banner",
 							},
 						]}

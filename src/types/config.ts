@@ -57,7 +57,7 @@ export type SiteConfig = {
 
 	// 顶栏标题配置
 	navbarTitle?: {
-		mode?: "text-icon" | "logo"; // 显示模式："text-icon" 显示图标+文本，"logo" 仅显示Logo
+		mode?: "text-icon" | "logo"; // 显示模式，使用常量 NAVBAR_TITLE_TEXT_ICON / NAVBAR_TITLE_LOGO
 		text: string; // 顶栏标题文本
 		icon?: string; // 顶栏标题图标路径
 		logo?: string; // 网站Logo图片路径
@@ -86,7 +86,7 @@ export type SiteConfig = {
 
 	// 番剧页面配置
 	anime?: {
-		mode?: "bangumi" | "local" | "bilibili"; // 番剧页面模式
+		mode?: "bangumi" | "local" | "bilibili"; // 番剧页面模式，使用常量 ANIME_MODE_BANGUMI / ANIME_MODE_LOCAL / ANIME_MODE_BILIBILI
 	};
 
 	// 说说/动态页面 Memos API 地址，客户端 fetch 获取动态数据
@@ -136,22 +136,13 @@ export type SiteConfig = {
 		sponsor: boolean; // 赞助页面开关
 	};
 
-	// 页面开关配置 (Firefly-compatible)
-	pages?: {
-		friends: boolean; // 友链页面开关
-		sponsor: boolean; // 赞助页面开关
-		guestbook: boolean; // 留言板页面开关
-		bangumi: boolean;
-		gallery: boolean; // 相册页面开关
-	};
-
 	// 分类导航栏开关
 	categoryBar?: boolean;
 
 	// 文章列表布局配置
 	postListLayout: {
-		defaultMode: "list" | "grid"; // 默认布局模式：list=列表模式，grid=网格模式
-		mobileDefaultMode?: "list" | "grid"; // 移动端默认布局模式（视口宽度<780px时使用），不设置则跟随 defaultMode
+		defaultMode: "list" | "grid"; // 默认布局模式，使用常量 POST_LAYOUT_LIST / POST_LAYOUT_GRID
+		mobileDefaultMode?: "list" | "grid"; // 移动端默认布局模式，使用常量 POST_LAYOUT_LIST / POST_LAYOUT_GRID
 		showTags?: boolean; // 是否在文章列表中显示标签
 		descriptionLines?: number; // 文章简介显示行数，0 表示不截断，默认 2
 		allowSwitch: boolean; // 是否允许用户切换布局
@@ -167,44 +158,48 @@ export type SiteConfig = {
 		};
 	};
 
-	// 壁纸模式配置 (保留 Mizuki 结构)
-	wallpaperMode: {
-		defaultMode: "banner" | "fullscreen" | "none"; // 默认壁纸模式：banner=顶部横幅，fullscreen=全屏壁纸，none=无壁纸
-		showModeSwitchOnMobile?: "off" | "mobile" | "desktop" | "both"; // 整体布局方案切换按钮显示设置：off=隐藏，mobile=仅移动端，desktop=仅桌面端，both=全部显示
-	};
-
-	// 横幅配置 (保留 Mizuki 结构)
+	// 横幅行为/文案配置（图片资源归 backgroundWallpaperConfig.banner）
 	banner: {
-		src:
-			| string
-			| string[]
-			| {
-					desktop?: string | string[];
-					mobile?: string | string[];
-			  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-		position?: "top" | "center" | "bottom";
 		carousel?: {
 			enable: boolean; // 是否启用轮播
 			interval: number; // 轮播间隔时间（秒）
+			switchable?: boolean; // 是否允许用户通过控制面板切换轮播
 		};
 		waves?: {
 			enable: boolean; // 是否启用水波纹效果
+			switchable?: boolean; // 是否允许用户通过控制面板切换水波纹
 			performanceMode?: boolean; // 性能模式：减少动画复杂度
 			mobileDisable?: boolean; // 移动端禁用
 		};
-		imageApi?: {
-			enable: boolean; // 是否启用图片API
-			url: string; // API地址，返回每行一个图片链接的文本
+		gradient?: {
+			enable: boolean; // 是否启用渐变遮罩
+			switchable?: boolean; // 是否允许用户通过控制面板切换渐变
+			colors?: Array<{ color: string; stop: number }>; // 渐变遮罩颜色配置（从下往上）
 		};
-		homeText?: {
-			enable: boolean; // 是否在首页显示自定义文字
+		// Banner 模式文案
+		bannerHomeText?: {
+			enable: boolean; // 是否在 banner 模式下显示自定义文字
+			switchable?: boolean; // 是否允许用户切换 banner 文案显示
 			title?: string; // 主标题
-			subtitle?: string | string[]; // 副标题，支持单个字符串或字符串数组
+			subtitle?: string | string[]; // 副标题
 			typewriter?: {
-				enable: boolean; // 是否启用打字机效果
-				speed: number; // 打字速度（毫秒）
-				deleteSpeed: number; // 删除速度（毫秒）
-				pauseTime: number; // 完整显示后的暂停时间（毫秒）
+				enable: boolean;
+				speed: number;
+				deleteSpeed: number;
+				pauseTime: number;
+			};
+		};
+		// 壁纸模式文案（可选，fallback 到 bannerHomeText）
+		wallpaperHomeText?: {
+			enable: boolean; // 是否在壁纸模式下显示自定义文字
+			switchable?: boolean;
+			title?: string;
+			subtitle?: string | string[];
+			typewriter?: {
+				enable: boolean;
+				speed: number;
+				deleteSpeed: number;
+				pauseTime: number;
 			};
 		};
 		credit?: {
@@ -213,7 +208,9 @@ export type SiteConfig = {
 			url?: string;
 		};
 		navbar?: {
-			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式
+			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式，使用常量 NAVBAR_TRANSPARENT_SEMI / NAVBAR_TRANSPARENT_FULL / NAVBAR_TRANSPARENT_SEMIFULL，使用常量 NAVBAR_TRANSPARENT_SEMI / NAVBAR_TRANSPARENT_FULL / NAVBAR_TRANSPARENT_SEMIFULL
+			enableBlur?: boolean; // 是否开启毛玻璃模糊效果
+			blur?: number; // 毛玻璃模糊度
 		};
 	};
 
@@ -340,6 +337,8 @@ export interface ProfileConfig {
 	typewriter?: {
 		enable: boolean; // 是否启用打字机效果
 		speed?: number; // 打字速度（毫秒）
+		deleteSpeed?: number; // 删除速度（毫秒）
+		pauseTime?: number; // 完整显示后的暂停时间（毫秒）
 	};
 }
 
@@ -387,21 +386,27 @@ export interface CommentConfig {
 	 * 当前启用的评论系统类型
 	 * "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk"
 	 */
-	system?: "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk";
-	/**
-	 * 当前启用的评论系统类型 (旧版字段，与 system 功能相同)
-	 */
-	type?: "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk";
+	system?: "none" | "twikoo" | "waline" | "giscus" | "disqus" | "artalk"; // 评论系统，使用常量 COMMENT_NONE / COMMENT_TWIKOO / COMMENT_WALINE / COMMENT_GISCUS / COMMENT_DISQUS / COMMENT_ARTALK
 	twikoo?: {
 		envId: string;
 		region?: string;
 		visitorCount?: boolean;
 	};
 	waline?: {
+		enabled?: boolean;
 		serverURL: string;
-		emoji: string[];
-		login?: "enable" | "force" | "disable";
+		emoji?: string[];
+		lang?: string;
+		pageview?: boolean;
+		reaction?: boolean;
+		login?: "enable" | "force" | "disable"; // 登录模式，使用常量 WALINE_LOGIN_ENABLE / WALINE_LOGIN_FORCE / WALINE_LOGIN_DISABLE
 		visitorCount?: boolean; // 是否统计访问量，true 启用访问量，false 关闭
+		wordLimit?: number[];
+		imageUploader?: boolean;
+		requiredMeta?: string[];
+		copyright?: boolean;
+		recaptchaV3Key?: string;
+		turnstileKey?: string;
 	};
 	artalk?: {
 		// 后端程序 API 地址
@@ -466,8 +471,6 @@ export interface BlogPostData {
 }
 
 export interface ExpressiveCodeConfig {
-	/** @deprecated 使用 darkTheme 和 lightTheme 代替 */
-	theme?: string;
 	/** 暗色主题名称（用于暗色模式） */
 	darkTheme: string;
 	/** 亮色主题名称（用于亮色模式） */
@@ -733,174 +736,33 @@ export interface SpineModelConfig {
 }
 
 export interface BackgroundWallpaperConfig {
-	defaultMode: WALLPAPER_MODE; // 默认壁纸模式，使用常量值如 WALLPAPER_BANNER 等
-	mode?: "banner" | "fullscreen" | "overlay" | "none"; // 壁纸模式：banner横幅模式、fullscreen全屏壁纸、overlay全屏透明覆盖模式或none纯色背景
-	switchable?: boolean; // 是否允许用户通过导航栏切换壁纸模式，默认true
-	src?:
-		| string
-		| string[]
-		| {
-				desktop?: string | string[];
-				mobile?: string | string[];
-		  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-
-	// 整体布局方案切换按钮显示设置
-	showModeSwitch?: {
-		enable?: boolean; // 是否显示切换按钮
-		visibility?: "off" | "mobile" | "desktop" | "both"; // 显示设置
-	};
-
-	// 横幅壁纸和全屏壁纸共享配置
-	common?: {
-		dimOpacity?: number; // 横幅文字遮罩暗度，0-1之间，值越大越暗，默认0.15
-		homeText?: {
-			enable: boolean; // 是否在首页显示自定义文字（全局开关）
-			switchable?: boolean; // 是否允许用户通过控制面板切换横幅标题显示
-			title?: string; // 主标题
-			subtitle?: string | string[]; // 副标题，支持单个字符串或字符串数组
-			titleSize?: string; // 主标题字体大小，如 "3.5rem"
-			subtitleSize?: string; // 副标题字体大小，如 "1.5rem"
-			typewriter?: {
-				enable: boolean; // 是否启用打字机效果
-				speed: number; // 打字速度（毫秒）
-				deleteSpeed: number; // 删除速度（毫秒）
-				pauseTime: number; // 完整显示后的暂停时间（毫秒）
-			};
-		};
-		navbar?: {
-			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式
-			enableBlur?: boolean; // 是否开启毛玻璃模糊效果
-			blur?: number; // 毛玻璃模糊度
-		};
-		waves?: {
-			enable:
-				| boolean
-				| {
-						desktop: boolean; // 桌面端是否启用水波纹动画效果
-						mobile: boolean; // 移动端是否启用水波纹动画效果
-				  }; // 是否启用水波纹动画效果，支持布尔值或分别设置桌面端和移动端
-			switchable?: boolean; // 是否允许用户通过控制面板切换水波纹动画
-		};
-		// 渐变过渡效果配置，当水波纹关闭时自动启用，提供壁纸底部到背景色的平滑过渡
-		gradient?: {
-			enable:
-				| boolean
-				| {
-						desktop: boolean; // 桌面端是否启用渐变过渡
-						mobile: boolean; // 移动端是否启用渐变过渡
-				  }; // 是否启用渐变过渡，支持布尔值或分别设置桌面端和移动端，默认true（水波纹关闭时自动生效）
-			height?: string; // 渐变高度，默认 "30vh"
-			switchable?: boolean; // 是否允许用户通过控制面板切换渐变过渡
-			colors?: Array<{ color: string; stop: number }>; // 渐变遮罩颜色配置
+	// 壁纸模式控制
+	mode?: {
+		defaultMode: WALLPAPER_MODE; // 默认壁纸模式，使用常量值如 WALLPAPER_BANNER 等
+		switchable?: boolean; // 是否允许用户通过导航栏切换壁纸模式，默认true
+		showModeSwitch?: {
+			enable?: boolean; // 是否显示切换按钮
+			visibility?: "off" | "mobile" | "desktop" | "both"; // 显示范围，使用常量 MODE_SWITCH_OFF / MODE_SWITCH_MOBILE / MODE_SWITCH_DESKTOP / MODE_SWITCH_BOTH // 显示设置："off"=不显示 | "mobile"=仅移动端 | "desktop"=仅桌面端 | "both"=全部显示
 		};
 	};
 
-	// Banner模式特有配置
+	// Banner 模式图片资源（行为/文案配置归 siteConfig.banner）
 	banner?: {
-		src?:
+		src:
 			| string
 			| string[]
 			| {
 					desktop?: string | string[];
 					mobile?: string | string[];
-			  };
-		position?:
-			| "top"
-			| "center"
-			| "bottom"
-			| "top left"
-			| "top center"
-			| "top right"
-			| "center left"
-			| "center center"
-			| "center right"
-			| "bottom left"
-			| "bottom center"
-			| "bottom right"
-			| "left top"
-			| "left center"
-			| "left bottom"
-			| "right top"
-			| "right center"
-			| "right bottom"
-			| string; // 壁纸位置，支持CSS object-position的所有值，包括百分比和像素值
-		carousel?: {
-			enable: boolean; // 是否启用横幅图片轮播
-			interval?: number; // 轮播间隔时间，单位毫秒
-			switchable?: boolean; // 是否允许用户通过控制面板切换横幅轮播
-		};
-		waves?: {
-			enable:
-				| boolean
-				| {
-						desktop: boolean; // 桌面端是否启用水波纹动画效果
-						mobile: boolean; // 移动端是否启用水波纹动画效果
-				  }; // 是否启用水波纹动画效果，支持布尔值或分别设置桌面端和移动端
-			switchable?: boolean; // 是否允许用户切换
-			performanceMode?: boolean; // 性能模式：减少动画复杂度
-			mobileDisable?: boolean; // 移动端禁用
-		};
-		gradient?: {
-			enable:
-				| boolean
-				| {
-						desktop: boolean; // 桌面端是否启用渐变过渡
-						mobile: boolean; // 移动端是否启用渐变过渡
-				  }; // 是否启用渐变过渡，支持布尔值或分别设置桌面端和移动端
-			switchable?: boolean; // 是否允许用户切换
-			colors?: Array<{ color: string; stop: number }>; // 渐变遮罩颜色配置
-		};
-		homeText?: {
-			enable: boolean; // 是否在首页显示自定义文字
-			switchable?: boolean; // 是否允许用户切换
-			title?: string; // 主标题
-			subtitle?: string | string[]; // 副标题
-			typewriter?: {
-				enable: boolean; // 是否启用打字机效果
-				speed: number; // 打字速度（毫秒）
-				deleteSpeed: number; // 删除速度（毫秒）
-				pauseTime: number; // 完整显示后的暂停时间（毫秒）
-			};
-		};
-		credit?: {
-			enable: boolean;
-			text: string;
-			url?: string;
-		};
-		navbar?: {
-			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式
-			enableBlur?: boolean; // 是否开启毛玻璃模糊效果
-			blur?: number; // 毛玻璃模糊度
-		};
+			  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
+		position?: "top" | "center" | "bottom"; // 图片定位
 		imageApi?: {
 			enable: boolean; // 是否启用图片API
 			url: string; // API地址，返回每行一个图片链接的文本
 		};
 	};
-	// 全屏透明覆盖模式特有配置
-	overlay?: {
-		src?: string | string[] | { desktop?: string | string[]; mobile?: string | string[] };
-		position?: string; // 壁纸位置，如 "top-left" | "top-right" | "bottom-left" | "bottom-right"
-		size?: {
-			width?: number; // 宽度(px)
-			height?: number; // 高度(px)
-		};
-		switchable?:
-			| boolean
-			| {
-					opacity?: boolean; // 是否允许用户在控制面板调整壁纸透明度
-					blur?: boolean; // 是否允许用户在控制面板调整背景模糊度
-					cardOpacity?: boolean; // 是否允许用户在控制面板调整卡片透明度
-			  }; // 透明模式参数是否可在控制面板调整，支持统一开关或分项开关
-		zIndex?: number; // 层级，确保壁纸在合适的层级显示
-		opacity?: number; // 壁纸透明度，0-1之间
-		blur?: number; // 背景模糊度，单位px
-		cardOpacity?: number; // 卡片背景透明度，0-1之间
-		borderRadius?: string; // 圆角
-		margin?: string; // 外边距
-		shadow?: boolean; // 是否显示阴影
-	};
-	// 全屏壁纸模式特有配置
+
+	// 全屏壁纸模式配置
 	fullscreen?: {
 		src?:
 			| string
@@ -910,9 +772,13 @@ export interface BackgroundWallpaperConfig {
 					mobile?: string | string[];
 			  };
 		position?: string; // 壁纸位置，支持CSS object-position的所有值
+		imageApi?: {
+			enable: boolean; // 是否启用图片API
+			url: string; // API地址
+		};
 		carousel?: {
 			enable: boolean; // 是否启用轮播
-			interval?: number; // 轮播间隔时间，单位毫秒
+			interval?: number; // 轮播间隔时间（秒）
 		};
 		zIndex?: number; // 层级
 		opacity?: number; // 壁纸透明度，0-1之间
@@ -922,10 +788,34 @@ export interface BackgroundWallpaperConfig {
 			colors?: Array<{ color: string; stop: number }>; // 渐变遮罩颜色配置
 		};
 		navbar?: {
-			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式
+			transparentMode?: "semi" | "full" | "semifull"; // 导航栏透明模式，使用常量 NAVBAR_TRANSPARENT_SEMI / NAVBAR_TRANSPARENT_FULL / NAVBAR_TRANSPARENT_SEMIFULL
 			enableBlur?: boolean; // 是否开启毛玻璃模糊效果
 			blur?: number; // 毛玻璃模糊度
 		};
+	};
+
+	// 全屏透明覆盖模式配置
+	overlay?: {
+		src?: string | string[] | { desktop?: string | string[]; mobile?: string | string[] };
+		position?: string; // 壁纸位置："top-left" | "top-right" | "bottom-left" | "bottom-right"
+		size?: {
+			width?: number; // 宽度(px)
+			height?: number; // 高度(px)
+		};
+		switchable?:
+			| boolean
+			| {
+					opacity?: boolean; // 是否允许用户调整壁纸透明度
+					blur?: boolean; // 是否允许用户调整背景模糊度
+					cardOpacity?: boolean; // 是否允许用户调整卡片透明度
+			  };
+		zIndex?: number; // 层级
+		opacity?: number; // 壁纸透明度，0-1之间
+		blur?: number; // 背景模糊度，单位px
+		cardOpacity?: number; // 卡片背景透明度，0-1之间
+		borderRadius?: string; // 圆角
+		margin?: string; // 外边距
+		shadow?: boolean; // 是否显示阴影
 	};
 }
 
@@ -984,13 +874,13 @@ export interface MusicPlayerConfig {
 	enable?: boolean; // 是否启用音乐播放器功能
 
 	// 使用方式："meting" 或 "local"
-	mode: "meting" | "local"; // 音乐播放器模式
+	mode: "meting" | "local"; // 音乐播放器模式，使用常量 MUSIC_MODE_METING / MUSIC_MODE_LOCAL
 
 	// 默认音量 (0-1)
 	volume?: number;
 
 	// 播放模式：'list'=列表循环, 'one'=单曲循环, 'random'=随机播放
-	playMode?: "list" | "one" | "random";
+	playMode?: "list" | "one" | "random"; // 播放模式，使用常量 MUSIC_PLAY_MODE_LIST / MUSIC_PLAY_MODE_ONE / MUSIC_PLAY_MODE_RANDOM
 
 	// 是否显示歌词
 	showLyrics?: boolean;
@@ -1002,7 +892,7 @@ export interface MusicPlayerConfig {
 	showFloatingPlayer?: boolean;
 
 	// 悬浮入口模式："default" 为独立悬浮播放器，"fab" 为集成到通用 FAB 组
-	floatingEntryMode?: "default" | "fab";
+	floatingEntryMode?: "default" | "fab"; // 悬浮入口模式，使用常量 MUSIC_FLOATING_DEFAULT / MUSIC_FLOATING_FAB
 
 	// Meting API 配置
 	meting?: {
@@ -1010,10 +900,10 @@ export interface MusicPlayerConfig {
 		api?: string;
 
 		// 音乐源服务器
-		server?: "netease" | "tencent" | "kugou" | "xiami" | "baidu";
+		server?: "netease" | "tencent" | "kugou" | "xiami" | "baidu"; // 音乐源服务器，使用常量 METING_SERVER_NETEASE / METING_SERVER_TENCENT / METING_SERVER_KUGOU / METING_SERVER_XIAMI / METING_SERVER_BAIDU
 
 		// 类型：song=单曲, playlist=歌单, album=专辑, search=搜索, artist=艺术家
-		type?: "song" | "playlist" | "album" | "search" | "artist";
+		type?: "song" | "playlist" | "album" | "search" | "artist"; // 资源类型，使用常量 METING_TYPE_SONG / METING_TYPE_PLAYLIST / METING_TYPE_ALBUM / METING_TYPE_SEARCH / METING_TYPE_ARTIST
 
 		// 歌单/专辑/单曲 ID 或搜索关键词
 		id?: string;
@@ -1035,12 +925,6 @@ export interface MusicPlayerConfig {
 			lrc?: string; // 歌词内容，支持 LRC 格式
 		}>;
 	};
-
-	// 旧版 Meting API 字段 (保留 Mizuki)
-	meting_api?: string;
-	server?: string;
-	type?: string;
-	id?: string; // 歌单ID（旧版顶层字段）
 }
 
 // 赞助方式类型
@@ -1105,7 +989,7 @@ export interface PioConfig {
 	position?: "left" | "right"; // 看板娘位置
 	width?: number; // 看板娘宽度
 	height?: number; // 看板娘高度
-	mode?: "static" | "fixed" | "draggable"; // 展现模式
+	mode?: "static" | "fixed" | "draggable"; // 展现模式，使用常量 PIO_MODE_STATIC / PIO_MODE_FIXED / PIO_MODE_DRAGGABLE
 	hiddenOnMobile?: boolean; // 是否在移动设备上隐藏
 	hideAboutMenu?: boolean; // 是否隐藏内置 About 菜单按钮
 	dialog?: {
@@ -1186,27 +1070,6 @@ export interface PageProgressBarConfig {
 export interface ThirdPartyAnalyticsConfig {
 	enable: boolean; // 是否启用第三方统计（Microsoft Clarity），默认关闭
 	clarityId?: string; // Clarity 项目 ID
-}
-
-/**
- * 全屏壁纸配置 (旧版，保留 Mizuki)
- */
-export interface FullscreenWallpaperConfig {
-	src:
-		| string
-		| string[]
-		| {
-				desktop?: string | string[];
-				mobile?: string | string[];
-		  }; // 支持单个图片、图片数组或分别设置桌面端和移动端图片
-	position?: string; // 壁纸位置，等同于 object-position
-	carousel?: {
-		enable: boolean; // 是否启用轮播
-		interval?: number; // 轮播间隔时间（秒）
-	};
-	zIndex?: number; // 层级，确保壁纸在背景层
-	opacity?: number; // 壁纸透明度，0-1之间
-	blur?: number; // 背景模糊程度，单位px
 }
 
 /**

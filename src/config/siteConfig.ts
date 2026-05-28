@@ -1,5 +1,4 @@
 import type { SiteConfig } from "../types/config";
-import { LinkPreset } from "../types/config";
 
 const SITE_LANG = "zh_CN";
 
@@ -8,7 +7,7 @@ export { SITE_LANG };
 export const siteConfig: SiteConfig = {
 	title: "Mizuki",
 	subtitle: "One demo website",
-	siteURL: "https://mizuki.mysqil.com/",
+	siteURL: "https://blog.souloss.com/",
 	siteStartDate: "2025-01-01",
 
 	lang: SITE_LANG,
@@ -35,7 +34,7 @@ export const siteConfig: SiteConfig = {
 
 	navbarTitle: {
 		mode: "text-icon",
-		text: "MizukiUI",
+		text: "souloss",
 		icon: "assets/home/home.webp",
 		logo: "assets/home/default-logo.webp",
 	},
@@ -80,47 +79,54 @@ export const siteConfig: SiteConfig = {
 		useNewStyle: false,
 	},
 
-	wallpaperMode: {
-		defaultMode: "banner",
-		showModeSwitchOnMobile: "desktop",
-	},
-
+	// 横幅行为/文案配置（图片资源归 backgroundWallpaperConfig.banner）
 	banner: {
-		src: {
-			desktop: [
-				"/assets/desktop-banner/1.webp",
-				"/assets/desktop-banner/2.webp",
-				"/assets/desktop-banner/3.webp",
-				"/assets/desktop-banner/4.webp",
-			],
-			mobile: [
-				"/assets/mobile-banner/1.webp",
-				"/assets/mobile-banner/2.webp",
-				"/assets/mobile-banner/3.webp",
-				"/assets/mobile-banner/4.webp",
-			],
-		},
-
-		position: "center",
-
 		carousel: {
 			enable: true,
 			interval: 3,
+			switchable: true,
 		},
 
 		waves: {
 			enable: true,
+			switchable: true,
 			performanceMode: false,
 			mobileDisable: false,
 		},
 
-		imageApi: {
-			enable: false,
-			url: "http://domain.com/api_v2.php?format=text&count=4",
+		gradient: {
+			enable: true,
+			switchable: true,
+			colors: [
+				{ color: "var(--color-bg)", stop: 0.2 },
+				{ color: "transparent", stop: 0.7 },
+			],
 		},
 
-		homeText: {
+		bannerHomeText: {
 			enable: true,
+			switchable: true,
+			title: "我的小窝",
+
+			subtitle: [
+				"没有什么特别的，但有你在就足够了",
+				"至今你依然是我的光",
+				"你啊，不知不觉间成了我的每一天",
+				"和你说话的时候，总觉得每天变得有趣了一点",
+				"今天是很普通的一天，但也是有点美好的一天",
+			],
+			typewriter: {
+				enable: true,
+				speed: 100,
+				deleteSpeed: 50,
+				pauseTime: 2000,
+			},
+		},
+
+		// 壁纸模式文案（可选，fallback 到 bannerHomeText）
+		wallpaperHomeText: {
+			enable: true,
+			switchable: true,
 			title: "我的小窝",
 
 			subtitle: [
@@ -146,8 +152,11 @@ export const siteConfig: SiteConfig = {
 
 		navbar: {
 			transparentMode: "semifull",
+			enableBlur: true,
+			blur: 10,
 		},
 	},
+
 	toc: {
 		enable: true,
 		mobileTop: true,
@@ -177,11 +186,9 @@ export const siteConfig: SiteConfig = {
 	analytics: {
 		umamiAnalytics: {
 			// Umami Website ID，在 Umami 后台获取
-			// 示例："12345678-1234-1234-1234-123456789abc"
-			websiteId: "",
+			websiteId: "cdbf170a-fddb-4963-92e7-aab575aa26eb",
 			// Umami JS 地址，自建的话填自己的地址
-			// 示例："https://umami.example.com/script.js"
-			scriptUrl: "",
+			scriptUrl: "https://umami.souloss.cn/script.js",
 			// 是否追踪出站链接点击事件，默认 true
 			trackOutboundLinks: true,
 			// 是否自动收集访客浏览器核心网页指标，默认 false

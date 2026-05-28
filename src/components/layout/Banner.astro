@@ -36,9 +36,9 @@ const {
 	bannerImages,
 	mobileNonHomeBannerClass = "",
 	showTextOverlay = false,
-	overlayTitle = siteConfig.banner.homeText?.title,
-	overlaySubtitle = siteConfig.banner.homeText?.subtitle,
-	typewriter = siteConfig.banner.homeText?.typewriter?.enable ?? false,
+	overlayTitle = siteConfig.banner.bannerHomeText?.title,
+	overlaySubtitle = siteConfig.banner.bannerHomeText?.subtitle,
+	typewriter = siteConfig.banner.bannerHomeText?.typewriter?.enable ?? false,
 	showWave = siteConfig.banner.waves?.enable ?? true,
 } = Astro.props;
 
@@ -69,7 +69,7 @@ const hasBannerCredit = siteConfig.banner.credit?.enable ?? false;
 const hasBannerLink = !!siteConfig.banner.credit?.url;
 
 // 渐变过渡配置
-const gradientConfig = backgroundWallpaperConfig.banner?.gradient;
+const gradientConfig = siteConfig.banner.gradient;
 const isGradientEnabled = gradientConfig?.enable ?? true;
 const gradientColors = gradientConfig?.colors ?? [
 	{ color: "var(--color-bg)", stop: 0.2 },
@@ -100,7 +100,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 						alt="Mobile banner image 1"
 						class="object-cover h-full w-full"
 						src={mobileImages[0]}
-						position={siteConfig.banner.position}
+						position={backgroundWallpaperConfig.banner?.position}
 						widths={[640, 1024, 1536]}
 						sizes="100vw"
 						loading="eager"
@@ -114,7 +114,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 						alt={`Mobile banner image ${i + 2}`}
 						class="object-cover h-full w-full"
 						src={src}
-						position={siteConfig.banner.position}
+						position={backgroundWallpaperConfig.banner?.position}
 						widths={[640, 1024, 1536]}
 						sizes="100vw"
 						loading="eager"
@@ -131,7 +131,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 						alt="Desktop banner image 1"
 						class="object-cover h-full w-full"
 						src={desktopImages[0]}
-						position={siteConfig.banner.position}
+						position={backgroundWallpaperConfig.banner?.position}
 						widths={[1024, 1536, 2048, 2560]}
 						sizes="100vw"
 						loading="eager"
@@ -145,7 +145,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 						alt={`Desktop banner image ${i + 2}`}
 						class="object-cover h-full w-full"
 						src={src}
-						position={siteConfig.banner.position}
+						position={backgroundWallpaperConfig.banner?.position}
 						widths={[1024, 1536, 2048, 2560]}
 						sizes="100vw"
 						loading="eager"
@@ -162,7 +162,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 				define:vars={{
 					desktopImages: bannerImages.desktop,
 					mobileImages: bannerImages.mobile,
-					position: siteConfig.banner.position,
+					position: backgroundWallpaperConfig.banner?.position,
 				}}
 			>
 				(function () {
@@ -628,7 +628,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 	)}
 
 	<!-- 首页文字覆盖层 -->
-	{siteConfig.banner.homeText?.enable && (
+	{siteConfig.banner.bannerHomeText?.enable && (
 		<div class={`banner-text-overlay absolute inset-0 z-20 flex items-center justify-center ${!showTextOverlay ? "hidden" : ""}`}>
 			<div class="w-4/5 lg:w-3/4 text-center mb-0">
 				<div class="flex flex-col">
@@ -643,9 +643,9 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 								{typewriter && Array.isArray(overlaySubtitle) ? (
 									<TypewriterText
 										text={overlaySubtitle}
-										speed={siteConfig.banner.homeText?.typewriter?.speed}
-										deleteSpeed={siteConfig.banner.homeText?.typewriter?.deleteSpeed}
-										pauseTime={siteConfig.banner.homeText?.typewriter?.pauseTime}
+										speed={siteConfig.banner.bannerHomeText?.typewriter?.speed}
+										deleteSpeed={siteConfig.banner.bannerHomeText?.typewriter?.deleteSpeed}
+										pauseTime={siteConfig.banner.bannerHomeText?.typewriter?.pauseTime}
 									/>
 								) : Array.isArray(overlaySubtitle) ? (
 									overlaySubtitle[0]

@@ -4,6 +4,7 @@ import MusicPlayer from "@components/widgets/music-player/MusicPlayer.svelte";
 import Pio from "@components/features/pio/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
 import { PageProgressBar } from "@components/control/PageProgressBar";
 import { fontConfig, pioConfig, profileConfig, siteConfig } from "@/config";
+import { backgroundWallpaperConfig } from "@/config";
 
 const BANNER_HEIGHT = 35;
 const BANNER_HEIGHT_EXTEND = 30;
@@ -65,7 +66,7 @@ const shouldShowTopHighlight =
 
 // 获取默认banner图片的辅助函数
 const getDefaultBanner = (): string => {
-	const src = siteConfig.banner.src;
+	const src = backgroundWallpaperConfig.banner?.src;
 	if (typeof src === "string") {
 		return src;
 	}
@@ -99,7 +100,7 @@ if (!banner || typeof banner !== "string" || banner.trim() === "") {
 // TODO don't use post cover as banner for now
 banner = getDefaultBanner();
 
-const enableBanner = !!siteConfig.banner.src;
+const enableBanner = !!backgroundWallpaperConfig.banner?.src;
 
 let pageTitle: string;
 if (title) {
@@ -137,7 +138,7 @@ const bannerOffsetByPosition = {
 	bottom: "0",
 };
 const bannerOffset =
-	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+	bannerOffsetByPosition[backgroundWallpaperConfig.banner?.position || "center"];
 
 // 构建字体配置的 CSS 变量
 // 从 fontConfig 的默认字体选项构建 body font-family

@@ -12,9 +12,9 @@ import {
 
 import {
 	backgroundWallpaperConfig,
+	effectsConfig,
 	expressiveCodeConfig,
 	fontConfig,
-	sakuraConfig,
 	siteConfig,
 } from "@/config";
 import type { LIGHT_DARK_MODE, WALLPAPER_MODE } from "@/types/config";
@@ -287,7 +287,7 @@ export function applyWallpaperModeToDocument(
 	animate = true,
 ) {
 	// Check if wallpaper mode switching is allowed
-	const isSwitchable = backgroundWallpaperConfig.switchable ?? true;
+	const isSwitchable = backgroundWallpaperConfig.mode?.switchable ?? true;
 	if (!isSwitchable) {
 		// If switching not allowed, return directly, don't perform any operation
 		return;
@@ -297,7 +297,7 @@ export function applyWallpaperModeToDocument(
 	const currentMode =
 		(document.documentElement.getAttribute(
 			"data-wallpaper-mode",
-		) as WALLPAPER_MODE) || backgroundWallpaperConfig.defaultMode;
+		) as WALLPAPER_MODE) || backgroundWallpaperConfig.mode?.defaultMode;
 
 	// If mode hasn't changed, return directly
 	if (currentMode === mode) {
@@ -432,7 +432,7 @@ function showBannerMode(animate = false) {
 	) as HTMLElement | null;
 	if (bannerTextOverlay) {
 		// Check if homeText is enabled
-		const homeTextEnabled = backgroundWallpaperConfig.banner?.homeText?.enable;
+		const homeTextEnabled = siteConfig.banner.bannerHomeText?.enable;
 
 		// Check if currently on homepage
 		const isHome = isHomePage(window.location.pathname);
@@ -474,7 +474,7 @@ function showBannerMode(animate = false) {
 	if (navbar) {
 		// Get navbar transparency mode config (banner mode)
 		const transparentMode =
-			backgroundWallpaperConfig.banner?.navbar?.transparentMode || "semi";
+			siteConfig.banner.navbar?.transparentMode || "semi";
 		navbar.setAttribute("data-transparent-mode", transparentMode);
 
 		// Reinitialize semifull mode scroll detection (if needed)
@@ -521,7 +521,7 @@ function showFullscreenMode(animate = false) {
 		".banner-text-overlay",
 	) as HTMLElement | null;
 	if (bannerTextOverlay) {
-		const homeTextEnabled = backgroundWallpaperConfig.banner?.homeText?.enable;
+		const homeTextEnabled = siteConfig.banner.bannerHomeText?.enable;
 		if (homeTextEnabled && isHome) {
 			bannerTextOverlay.classList.remove("hidden");
 			if (animate) {
@@ -551,7 +551,7 @@ function showFullscreenMode(animate = false) {
 	if (navbar) {
 		const transparentMode =
 			backgroundWallpaperConfig.fullscreen?.navbar?.transparentMode ||
-			backgroundWallpaperConfig.banner?.navbar?.transparentMode ||
+			siteConfig.banner.navbar?.transparentMode ||
 			"semi";
 		navbar.setAttribute("data-transparent-mode", transparentMode);
 
@@ -642,22 +642,22 @@ function updateNavbarTransparency(mode: WALLPAPER_MODE) {
 		// Fullscreen wallpaper mode: use fullscreen configured transparency mode and blur effect
 		transparentMode =
 			backgroundWallpaperConfig.fullscreen?.navbar?.transparentMode ||
-			backgroundWallpaperConfig.banner?.navbar?.transparentMode ||
+			siteConfig.banner.navbar?.transparentMode ||
 			"semi";
 		enableBlur =
 			backgroundWallpaperConfig.fullscreen?.navbar?.enableBlur ??
-			backgroundWallpaperConfig.banner?.navbar?.enableBlur ??
+			siteConfig.banner.navbar?.enableBlur ??
 			true;
 		blurAmount =
 			backgroundWallpaperConfig.fullscreen?.navbar?.blur ??
-			backgroundWallpaperConfig.banner?.navbar?.blur ??
+			siteConfig.banner.navbar?.blur ??
 			20;
 	} else {
 		// Banner mode: use configured transparency mode and blur effect
 		transparentMode =
-			backgroundWallpaperConfig.banner?.navbar?.transparentMode || "semi";
-		enableBlur = backgroundWallpaperConfig.banner?.navbar?.enableBlur ?? true;
-		blurAmount = backgroundWallpaperConfig.banner?.navbar?.blur ?? 20;
+			siteConfig.banner.navbar?.transparentMode || "semi";
+		enableBlur = siteConfig.banner.navbar?.enableBlur ?? true;
+		blurAmount = siteConfig.banner.navbar?.blur ?? 20;
 	}
 
 	// Update navbar transparency mode attribute
@@ -877,23 +877,24 @@ export function initWallpaperMode(): void {
 }
 
 export function getStoredWallpaperMode(): WALLPAPER_MODE {
+	const defaultMode = backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER;
 	// Check if in browser environment
 	if (
 		typeof localStorage === "undefined" ||
 		typeof localStorage.getItem !== "function"
 	) {
-		return backgroundWallpaperConfig.defaultMode;
+		return defaultMode;
 	}
 
-	const isSwitchable = backgroundWallpaperConfig.switchable ?? true;
+	const isSwitchable = backgroundWallpaperConfig.mode?.switchable ?? true;
 	if (!isSwitchable) {
 		localStorage.removeItem("wallpaperMode");
-		return backgroundWallpaperConfig.defaultMode;
+		return defaultMode;
 	}
 
 	return (
 		(localStorage.getItem("wallpaperMode") as WALLPAPER_MODE) ||
-		backgroundWallpaperConfig.defaultMode
+		defaultMode
 	);
 }
 
@@ -1045,16 +1046,7 @@ export function applyStoredOverlaySettingsToDocument(): void {
 
 // Waves animation functions
 export function getDefaultWavesEnabled(): boolean {
-	const wavesConfig = backgroundWallpaperConfig.banner?.waves?.enable;
-	if (typeof wavesConfig === "object") {
-		// If device-specific configuration, check current device
-		const isMobile =
-			typeof window !== "undefined" ? window.innerWidth < 768 : false;
-		return isMobile
-			? (wavesConfig.mobile ?? false)
-			: (wavesConfig.desktop ?? false);
-	}
-	return wavesConfig ?? false;
+	return siteConfig.banner.waves?.enable ?? false;
 }
 
 export function getStoredWavesEnabled(): boolean {
@@ -1103,15 +1095,7 @@ export function applyWavesEnabledToDocument(enabled: boolean): void {
 
 // Gradient transition functions
 export function getDefaultGradientEnabled(): boolean {
-	const gradientConfig = backgroundWallpaperConfig.banner?.gradient?.enable;
-	if (typeof gradientConfig === "object") {
-		const isMobile =
-			typeof window !== "undefined" ? window.innerWidth < 768 : false;
-		return isMobile
-			? (gradientConfig.mobile ?? true)
-			: (gradientConfig.desktop ?? true);
-	}
-	return gradientConfig ?? true;
+	return siteConfig.banner.gradient?.enable ?? true;
 }
 
 export function getStoredGradientEnabled(): boolean {
@@ -1161,7 +1145,7 @@ export function applyGradientEnabledToDocument(enabled: boolean): void {
 
 // Sakura effect functions
 export function getDefaultSakuraEnabled(): boolean {
-	return sakuraConfig?.enable ?? false;
+	return effectsConfig.sakura?.enable ?? false;
 }
 
 export function getStoredSakuraEnabled(): boolean {
@@ -1192,11 +1176,11 @@ export function setSakuraEnabled(enabled: boolean): void {
 
 // Banner title functions
 export function getDefaultBannerTitleEnabled(): boolean {
-	return backgroundWallpaperConfig.banner?.homeText?.enable ?? true;
+	return siteConfig.banner.bannerHomeText?.enable ?? true;
 }
 
 export function getDefaultBannerCarouselEnabled(): boolean {
-	return backgroundWallpaperConfig.banner?.carousel?.enable ?? false;
+	return siteConfig.banner.carousel?.enable ?? false;
 }
 
 export function getStoredBannerTitleEnabled(): boolean {
@@ -1215,7 +1199,7 @@ export function getStoredBannerTitleEnabled(): boolean {
 
 export function getStoredBannerCarouselEnabled(): boolean {
 	const isSwitchable =
-		backgroundWallpaperConfig.banner?.carousel?.switchable ?? false;
+		siteConfig.banner.carousel?.switchable ?? false;
 	if (!isSwitchable) {
 		return getDefaultBannerCarouselEnabled();
 	}
@@ -1246,7 +1230,7 @@ export function setBannerTitleEnabled(enabled: boolean): void {
 export function setBannerCarouselEnabled(enabled: boolean): void {
 	const safeEnabled = !!enabled;
 	const isSwitchable =
-		backgroundWallpaperConfig.banner?.carousel?.switchable ?? false;
+		siteConfig.banner.carousel?.switchable ?? false;
 	if (
 		isSwitchable &&
 		typeof localStorage !== "undefined" &&

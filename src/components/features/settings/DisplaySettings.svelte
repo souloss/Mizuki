@@ -49,7 +49,7 @@ import {
 } from "@utils/setting-utils";
 import { onMount } from "svelte";
 
-import { backgroundWallpaperConfig, fontConfig, sakuraConfig, siteConfig } from "@/config";
+import { backgroundWallpaperConfig, effectsConfig, fontConfig, siteConfig } from "@/config";
 
 type OverlaySliderItem = {
 	key: "opacity" | "blur" | "cardOpacity";
@@ -66,8 +66,8 @@ type OverlaySliderItem = {
 
 let hue = $state(getHue());
 const defaultHue = getDefaultHue();
-let wallpaperMode: WALLPAPER_MODE = $state(backgroundWallpaperConfig.defaultMode);
-const defaultWallpaperMode = backgroundWallpaperConfig.defaultMode;
+let wallpaperMode: WALLPAPER_MODE = $state(backgroundWallpaperConfig.mode?.defaultMode);
+const defaultWallpaperMode = backgroundWallpaperConfig.mode?.defaultMode;
 let currentLayout: "list" | "grid" = $state("list");
 const defaultLayout = siteConfig.postListLayout.defaultMode;
 const mobileDefaultLayout = siteConfig.postListLayout.mobileDefaultMode || defaultLayout;
@@ -96,23 +96,23 @@ const defaultFont = getDefaultFont();
 let stickyNavbarEnabled = $state(getDefaultStickyNavbar());
 const defaultStickyNavbar = getDefaultStickyNavbar();
 
-const isWallpaperSwitchable = backgroundWallpaperConfig.switchable ?? true;
+const isWallpaperSwitchable = backgroundWallpaperConfig.mode?.switchable ?? true;
 const allowLayoutSwitch = siteConfig.postListLayout.allowSwitch;
 const isFontSwitchable = fontConfig?.switchable ?? true;
 const effectiveDefaultLayout = $derived(isMobileWidth ? mobileDefaultLayout : defaultLayout);
 const showThemeColor = !siteConfig.themeColor.fixed;
 // 是否允许用户切换水波纹动画（只看 switchable 配置）
-const isWavesSwitchable = backgroundWallpaperConfig.banner?.waves?.switchable ?? false;
+const isWavesSwitchable = siteConfig.banner.waves?.switchable ?? false;
 // 是否允许用户切换渐变过渡（只看 switchable 配置）
-const isGradientSwitchable = backgroundWallpaperConfig.banner?.gradient?.switchable ?? false;
+const isGradientSwitchable = siteConfig.banner.gradient?.switchable ?? false;
 // 检查是否启用横幅标题配置
-const isBannerTitleEnabled = backgroundWallpaperConfig.banner?.homeText?.enable ?? false;
+const isBannerTitleEnabled = siteConfig.banner.bannerHomeText?.enable ?? false;
 // 是否允许用户切换横幅标题
-const isBannerTitleSwitchable = isBannerTitleEnabled && (backgroundWallpaperConfig.banner?.homeText?.switchable ?? false);
+const isBannerTitleSwitchable = isBannerTitleEnabled && (siteConfig.banner.bannerHomeText?.switchable ?? false);
 // 是否允许用户切换横幅轮播
-const isBannerCarouselSwitchable = backgroundWallpaperConfig.banner?.carousel?.switchable ?? false;
+const isBannerCarouselSwitchable = siteConfig.banner.carousel?.switchable ?? false;
 // 是否允许用户切换樱花特效
-const isSakuraSwitchable = sakuraConfig?.switchable ?? false;
+const isSakuraSwitchable = effectsConfig.sakura?.switchable ?? false;
 // 是否有任何横幅设置可显示（后续添加新设置时在此处添加条件）
 const hasBannerSettings = isWavesSwitchable || isGradientSwitchable || isBannerTitleSwitchable || isBannerCarouselSwitchable;
 const overlaySwitchableConfig = backgroundWallpaperConfig.overlay?.switchable ?? false;

@@ -1,10 +1,8 @@
 ---
-import { siteConfig } from "../../config";
-import { backgroundWallpaperConfig } from "../../config";
-import type { FullscreenWallpaperConfig } from "../../types/config";
+import type { BackgroundWallpaperConfig } from "../../types/config";
 
 interface Props {
-	config: FullscreenWallpaperConfig;
+	config: NonNullable<BackgroundWallpaperConfig["fullscreen"]>;
 	className?: string;
 }
 
@@ -15,9 +13,9 @@ const getImageSources = async () => {
 	const srcConfig = config.src;
 
 	// API 图片逻辑
-	if (siteConfig.banner.imageApi?.enable && siteConfig.banner.imageApi?.url) {
+	if (config.imageApi?.enable && config.imageApi?.url) {
 		try {
-			const response = await fetch(siteConfig.banner.imageApi.url);
+			const response = await fetch(config.imageApi.url);
 			const text = await response.text();
 			const apiImages = text.split("\n").filter((line) => line.trim());
 			if (apiImages.length > 0) {
@@ -85,7 +83,7 @@ const renderGroups = [
 ];
 
 // 渐变过渡配置
-const gradientConfig = backgroundWallpaperConfig.banner?.gradient;
+const gradientConfig = config.gradient;
 const isGradientEnabled = gradientConfig?.enable ?? true;
 const gradientColors = gradientConfig?.colors ?? [
 	{ color: "var(--color-bg)", stop: 0.2 },
