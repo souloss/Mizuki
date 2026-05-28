@@ -5,15 +5,15 @@ const SITE_LANG = "zh_CN";
 export { SITE_LANG };
 
 export const siteConfig: SiteConfig = {
-	title: "Mizuki",
-	subtitle: "One demo website",
-	siteURL: "https://blog.souloss.com/",
-	siteStartDate: "2025-01-01",
+	title: "souloss",
+	subtitle: "个人技术博客",
+	siteURL: "https://mizuki-bt7.pages.dev/",
+	siteStartDate: "2020-01-01",
 
 	lang: SITE_LANG,
 
 	themeColor: {
-		hue: 240,
+		hue: 250,
 		fixed: false,
 	},
 
@@ -106,14 +106,12 @@ export const siteConfig: SiteConfig = {
 		bannerHomeText: {
 			enable: true,
 			switchable: true,
-			title: "我的小窝",
+			title: "Souloss 的技术博客",
 
 			subtitle: [
-				"没有什么特别的，但有你在就足够了",
-				"至今你依然是我的光",
-				"你啊，不知不觉间成了我的每一天",
-				"和你说话的时候，总觉得每天变得有趣了一点",
-				"今天是很普通的一天，但也是有点美好的一天",
+				"向下深挖一英里，向上构建一厘米",
+				"Stay Hungry, Stay Foolish",
+				"Digging deeper, building simpler",
 			],
 			typewriter: {
 				enable: true,
@@ -127,14 +125,12 @@ export const siteConfig: SiteConfig = {
 		wallpaperHomeText: {
 			enable: true,
 			switchable: true,
-			title: "我的小窝",
+			title: "Souloss 的技术博客",
 
 			subtitle: [
-				"没有什么特别的，但有你在就足够了",
-				"至今你依然是我的光",
-				"你啊，不知不觉间成了我的每一天",
-				"和你说话的时候，总觉得每天变得有趣了一点",
-				"今天是很普通的一天，但也是有点美好的一天",
+				"向下深挖一英里，向上构建一厘米",
+				"Stay Hungry, Stay Foolish",
+				"Digging deeper, building simpler",
 			],
 			typewriter: {
 				enable: true,
@@ -192,7 +188,7 @@ export const siteConfig: SiteConfig = {
 			// 是否追踪出站链接点击事件，默认 true
 			trackOutboundLinks: true,
 			// 是否自动收集访客浏览器核心网页指标，默认 false
-			collectWebVitals: false,
+			collectWebVitals: true,
 			// 会话回放配置（可选）
 			relpays: {
 				enabled: false,

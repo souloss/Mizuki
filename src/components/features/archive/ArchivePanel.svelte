@@ -1,9 +1,8 @@
 <script lang="ts">
 	import I18nKey from "@i18n/i18nKey";
 	import { i18n } from "@i18n/translation";
-	import { onMount } from "svelte";
 
-	export let sortedPosts: Post[] = [];
+	let { sortedPosts = [] }: { sortedPosts?: Post[] } = $props();
 
 	interface Post {
 		id: string;
@@ -23,7 +22,7 @@
 		posts: Post[];
 	}
 
-	let groups: Group[] = [];
+	let groups: Group[] = $state([]);
 
 	function formatDate(date: Date) {
 		const month = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -93,19 +92,18 @@
 	}
 
 	// Read URL filter params
-	let filterTags: string[] = [];
-	let filterCategories: string[] = [];
-	let filterUncategorized: string | null = null;
+	let filterTags: string[] = $state([]);
+	let filterCategories: string[] = $state([]);
+	let filterUncategorized: string | null = $state(null);
 
-	if (typeof window !== "undefined") {
-		const params = new URLSearchParams(window.location.search);
-		filterTags = params.has("tag") ? params.getAll("tag") : [];
-		filterCategories = params.has("category") ? params.getAll("category") : [];
-		filterUncategorized = params.get("uncategorized");
-	}
+	$effect(() => {
+		if (typeof window !== "undefined") {
+			const params = new URLSearchParams(window.location.search);
+			filterTags = params.has("tag") ? params.getAll("tag") : [];
+			filterCategories = params.has("category") ? params.getAll("category") : [];
+			filterUncategorized = params.get("uncategorized");
+		}
 
-	// Compute groups after props are available via onMount
-	onMount(() => {
 		if (filterTags.length > 0 || filterCategories.length > 0 || filterUncategorized) {
 			groups = filterAndGroupPosts(sortedPosts, filterTags, filterCategories, filterUncategorized);
 		} else {

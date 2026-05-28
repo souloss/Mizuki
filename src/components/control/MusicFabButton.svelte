@@ -5,20 +5,20 @@
 	import type { MusicPlayerState } from "@/stores/musicPlayerStore";
 	import { musicPlayerStore } from "@/stores/musicPlayerStore";
 
-	let state: MusicPlayerState = musicPlayerStore.getState();
+	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	let unsubscribe: (() => void) | undefined;
 
 	function toggleControlCenter() {
 		musicPlayerStore.toggleExpanded();
 	}
 
-	$: currentSongTitle = state.currentSong?.title || "音乐控制中心";
-	$: ariaLabel = state.isExpanded
+	let currentSongTitle = $derived(state.currentSong?.title || "音乐控制中心");
+	let ariaLabel = $derived(state.isExpanded
 		? `收起音乐控制中心：${currentSongTitle}`
-		: `打开音乐控制中心：${currentSongTitle}`;
-	$: statusIcon = state.isLoading
+		: `打开音乐控制中心：${currentSongTitle}`);
+	let statusIcon = $derived(state.isLoading
 		? "svg-spinners:90-ring-with-bg"
-		: "material-symbols:music-note-rounded";
+		: "material-symbols:music-note-rounded");
 
 	onMount(() => {
 		unsubscribe = musicPlayerStore.subscribe((nextState) => {

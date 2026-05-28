@@ -5,9 +5,10 @@ import { navBarConfig, siteConfig } from "../../../config"
 import { LinkPresets } from "../../../constants/link-presets"
 import { LinkPreset, type NavBarLink } from "../../../types/config"
 import { url } from "../../../utils/url-utils"
+import DocSearch from "../../features/docs/DocSearch.svelte"
 import ThemeSwitch from "../../control/ThemeSwitch.svelte"
 
-const className = Astro.props.class
+const { docSlug, class: className } = Astro.props
 
 const links: NavBarLink[] = navBarConfig.links.map(
 	(item: NavBarLink | LinkPreset): NavBarLink => {
@@ -67,6 +68,7 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
             </div>
         </a>
         <div class="flex items-center gap-2">
+            {docSlug && <DocSearch docSlug={docSlug} variant="navbar" client:load />}
             <a href={url('/docs/')} class="btn-plain scale-animation rounded-lg h-11 px-4 text-sm font-medium active:scale-90">
                 {siteConfig.lang === 'zh_CN' || siteConfig.lang === 'zh_TW' ? '文档' : 'Docs'}
             </a>

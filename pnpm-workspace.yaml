@@ -4,3 +4,5 @@ onlyBuiltDependencies:
   - sharp
   - swup
   - ttf2woff2
+patchedDependencies:
+  svelte@5.55.5: patches/svelte@5.55.5.patch

@@ -15,7 +15,7 @@
 	import Playlist from "./organisms/Playlist.svelte";
 	import type { RepeatMode, Song } from "./types";
 
-	let state: MusicPlayerState = musicPlayerStore.getState();
+	let state: MusicPlayerState = $state(musicPlayerStore.getState());
 	const showFloatingPlayer = musicPlayerConfig.showFloatingPlayer;
 	const floatingEntryMode = musicPlayerConfig.floatingEntryMode ?? "default";
 	const useFabEntry = floatingEntryMode === "fab";

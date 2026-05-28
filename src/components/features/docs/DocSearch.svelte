@@ -1,326 +1,461 @@
 <script lang="ts">
 	import Icon from "@iconify/svelte";
-	import { onDestroy, onMount } from "svelte";
+	import { onMount } from "svelte";
 
-	interface Props {
+	import I18nKey from "@i18n/i18nKey";
+	import { i18n } from "@i18n/translation";
+
+	let {
+		docSlug,
+		variant = "sidebar",
+	}: {
 		docSlug: string;
-		placeholder?: string;
-	}
+		variant?: "sidebar" | "navbar";
+	} = $props();
 
-	const { docSlug, placeholder = "Search docs..." }: Props = $props();
-
-	let keyword = $state("");
-	let result: { url: string; meta: { title: string }; excerpt: string }[] = $state([]);
-	let pagefindLoaded = false;
+	let isOpen = $state(false);
+	let query = $state("");
+	let results = $state<SearchResult[]>([]);
+	let activeIndex = $state(-1);
+	let isLoading = $state(false);
+	let searchIndex: PagefindIndex | null = null;
 	let initialized = $state(false);
-	let debounceTimer: ReturnType<typeof setTimeout>;
-	let isExpanded = $state(false);
-	let isSearching = $state(false);
-	let hasSearched = $state(false);
 	let searchUnavailable = $state(false);
-	let searchBtnEl: HTMLElement | undefined = $state();
-	let resultsStyle = $state<Record<string, string>>({});
-	let blurTimer: ReturnType<typeof setTimeout>;
 
-	function updatePagefindState() {
-		pagefindLoaded =
-			typeof window !== "undefined" &&
-			!!window.pagefindMizuki &&
-			typeof window.pagefindMizuki.search === "function";
-		searchUnavailable = initialized && !pagefindLoaded && import.meta.env.PROD;
-		return pagefindLoaded;
+	interface SearchResult {
+		url: string;
+		title: string;
+		content: string;
+		tag?: string;
+		sub_results?: { title: string; url: string; content: string }[];
 	}
 
-	async function ensurePagefind() {
+	interface PagefindIndex {
+		search: (query: string, options?: { filters?: Record<string, string> }) => Promise<{ results: SearchResult[] }>;
+		options: (opts: Record<string, unknown>) => Promise<void>;
+	}
+
+	async function loadSearchIndex() {
+		if (searchIndex) return true;
+
 		if (import.meta.env.DEV) {
 			initialized = true;
+			searchUnavailable = true;
 			return false;
 		}
 
-		if (updatePagefindState()) {
+		// @ts-expect-error Pagefind runtime global
+		if (typeof window.pagefindMizuki !== "undefined" && window.pagefindMizuki.search) {
+			// @ts-expect-error
+			searchIndex = window.pagefindMizuki;
 			initialized = true;
 			return true;
 		}
 
-		try {
-			if (typeof window.loadPagefindMizuki === "function") {
+		// @ts-expect-error
+		if (typeof window.loadPagefindMizuki === "function") {
+			try {
+				// @ts-expect-error
 				await window.loadPagefindMizuki();
+			} catch {
+				// ignore
 			}
-		} finally {
-			initialized = true;
-			updatePagefindState();
 		}
 
-		return pagefindLoaded;
+		// @ts-expect-error
+		if (typeof window.pagefindMizuki !== "undefined" && window.pagefindMizuki.search) {
+			// @ts-expect-error
+			searchIndex = window.pagefindMizuki;
+			initialized = true;
+			return true;
+		}
+
+		initialized = true;
+		searchUnavailable = true;
+		return false;
 	}
 
-	function updateResultsPosition() {
-		if (!searchBtnEl) return;
-		const rect = searchBtnEl.getBoundingClientRect();
-		resultsStyle = {
-			position: "fixed",
-			top: `${rect.bottom + 4}px`,
-			left: `${rect.left}px`,
-			width: `${rect.width}px`,
-			zIndex: "100",
-		};
+	async function doSearch(term: string) {
+		if (!term.trim()) {
+			results = [];
+			return;
+		}
+		isLoading = true;
+		try {
+			const loaded = await loadSearchIndex();
+			if (!loaded || !searchIndex) {
+				results = [];
+				return;
+			}
+			const search = await searchIndex.search(term, {
+				filters: { slug: docSlug },
+			});
+			const items = await Promise.all(
+				search.results.slice(0, 15).map(async (r: SearchResult) => {
+					if (r.sub_results?.length) return r;
+					try {
+						const data = await r.data?.();
+						return data ?? r;
+					} catch {
+						return r;
+					}
+				}),
+			);
+			results = items;
+			activeIndex = -1;
+		} finally {
+			isLoading = false;
+		}
 	}
 
-	function handleFocus() {
-		isExpanded = true;
-		void ensurePagefind();
-		updateResultsPosition();
+	let debounceTimer: ReturnType<typeof setTimeout>;
+	function onInput(e: Event) {
+		const val = (e.target as HTMLInputElement).value;
+		query = val;
+		clearTimeout(debounceTimer);
+		debounceTimer = setTimeout(() => doSearch(val), 200);
 	}
 
-	function handleBlur() {
-		blurTimer = setTimeout(() => {
-			if (!keyword) isExpanded = false;
-		}, 200);
+	function navigate(index: number) {
+		const r = results[index];
+		if (!r) return;
+		const url = r.sub_results?.[0]?.url ?? r.url;
+		window.location.href = url;
+		closeModal();
 	}
 
-	function handleResultClick() {
-		isExpanded = false;
-		keyword = "";
-		result = [];
+	function onKeyDown(e: KeyboardEvent) {
+		if (e.key === "ArrowDown") {
+			e.preventDefault();
+			activeIndex = Math.min(activeIndex + 1, results.length - 1);
+		} else if (e.key === "ArrowUp") {
+			e.preventDefault();
+			activeIndex = Math.max(activeIndex - 1, 0);
+		} else if (e.key === "Enter" && activeIndex >= 0) {
+			e.preventDefault();
+			navigate(activeIndex);
+		} else if (e.key === "Escape") {
+			closeModal();
+		}
+	}
+
+	function openModal() {
+		isOpen = true;
+		query = "";
+		results = [];
+		activeIndex = -1;
+		document.body.style.overflow = "hidden";
+		setTimeout(() => {
+			document.getElementById("doc-search-input")?.focus();
+		}, 50);
+	}
+
+	function closeModal() {
+		isOpen = false;
+		document.body.style.overflow = "";
 	}
 
 	onMount(() => {
-		const handlePagefindReady = () => {
-			initialized = true;
-			updatePagefindState();
-		};
-		const handlePagefindError = () => {
-			initialized = true;
-			updatePagefindState();
-		};
-
-		if (import.meta.env.DEV) {
-			initialized = true;
-		} else {
-			document.addEventListener("pagefindmizukiready", handlePagefindReady);
-			document.addEventListener("pagefindmizukiloaderror", handlePagefindError);
-			void ensurePagefind();
-			setTimeout(() => {
-				if (!initialized) {
-					void ensurePagefind();
-				}
-			}, 2000);
-		}
-
-		// Ctrl+K shortcut
-		const handleKeyDown = (e: KeyboardEvent) => {
-			if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+		function onKeydown(e: KeyboardEvent) {
+			if ((e.metaKey || e.ctrlKey) && e.key === "k") {
 				e.preventDefault();
-				isExpanded = true;
-				void ensurePagefind();
-				updateResultsPosition();
-				const input = searchBtnEl?.querySelector<HTMLInputElement>("input");
-				input?.focus();
+				if (isOpen) closeModal();
+				else openModal();
 			}
-			if (e.key === "Escape" && isExpanded) {
-				isExpanded = false;
-				if (!keyword) result = [];
-			}
-		};
-		document.addEventListener("keydown", handleKeyDown);
-
-		// Update position on scroll/resize
-		const handleResize = () => { if (isExpanded) updateResultsPosition(); };
-		window.addEventListener("resize", handleResize);
-
-		return () => {
-			document.removeEventListener("pagefindmizukiready", handlePagefindReady);
-			document.removeEventListener("pagefindmizukiloaderror", handlePagefindError);
-			document.removeEventListener("keydown", handleKeyDown);
-			window.removeEventListener("resize", handleResize);
-		};
+		}
+		document.addEventListener("keydown", onKeydown);
+		return () => document.removeEventListener("keydown", onKeydown);
 	});
 
-	async function searchDocs(term: string) {
-		if (!term) {
-			result = [];
-			hasSearched = false;
-			return;
-		}
-		if (!initialized || !pagefindLoaded) {
-			await ensurePagefind();
-		}
-		if (!initialized) {return;}
-
-		try {
-			isSearching = true;
-			hasSearched = true;
-			if (import.meta.env.PROD && pagefindLoaded && window.pagefindMizuki) {
-				const response = await window.pagefindMizuki.search(term);
-				result = await Promise.all(response.results.map((item) => item.data()));
-			} else if (import.meta.env.DEV) {
-				result = [
-					{
-						url: `/docs/${docSlug}/`,
-						meta: { title: "Dev mode - search not available" },
-						excerpt: "Run <mark>build</mark> then <mark>preview</mark> to test search.",
-					},
-				];
-			} else {
-				result = [];
-			}
-		} catch (error) {
-			console.error("Docs search error:", error);
-			result = [];
-		} finally {
-			isSearching = false;
-		}
-	}
-
+	// Portal: move the overlay to <body> so it's not trapped inside
+	// the docs-navbar's containing block (backdrop-filter creates one)
 	$effect(() => {
-		if (initialized) {
-			clearTimeout(debounceTimer);
-			if (keyword) {
-				debounceTimer = setTimeout(() => searchDocs(keyword), 300);
-			} else {
-				result = [];
-			}
+		if (!isOpen) return;
+		const overlay = document.querySelector(".doc-search-overlay");
+		if (overlay && overlay.parentElement !== document.body) {
+			document.body.appendChild(overlay);
 		}
-	});
-
-	onDestroy(() => {
-		clearTimeout(debounceTimer);
-		clearTimeout(blurTimer);
 	});
 </script>
 
-<div class="docs-search-btn" role="search" bind:this={searchBtnEl}>
-	<Icon icon="material-symbols:search" class="search-icon" />
-	<input
-		type="text"
-		class="docs-search-input"
-		placeholder={placeholder}
-		bind:value={keyword}
-		onfocus={handleFocus}
-		onblur={handleBlur}
-	/>
-	<span class="search-shortcut">Ctrl K</span>
-</div>
+{#if variant === "navbar"}
+	<button
+		class="doc-search-nav-btn"
+		onclick={openModal}
+		aria-label={i18n(I18nKey.search)}
+		title="{i18n(I18nKey.search)} (⌘K)"
+	>
+		<Icon icon="material-symbols:search-rounded" width="20" height="20" />
+		<span class="doc-search-nav-hint">
+			<kbd>⌘</kbd><kbd>K</kbd>
+		</span>
+	</button>
+{:else}
+	<button
+		class="doc-search-trigger"
+		onclick={openModal}
+		aria-label={i18n(I18nKey.search)}
+	>
+		<Icon icon="material-symbols:search-rounded" width="18" height="18" />
+		<span>{i18n(I18nKey.search)}</span>
+		<kbd class="doc-search-kbd">⌘K</kbd>
+	</button>
+{/if}
 
-{#if isExpanded && keyword && (result.length > 0 || isSearching || searchUnavailable || hasSearched)}
-	<div class="docs-search-results" style="{Object.entries(resultsStyle).map(([k, v]) => `${k}: ${v}`).join(';')}">
-		{#if isSearching}
-			<div class="docs-search-no-results">Searching...</div>
-		{:else if searchUnavailable}
-			<div class="docs-search-no-results">Search index is not available.</div>
-		{:else if result.length === 0}
-			<div class="docs-search-no-results">No results found.</div>
-		{:else}
-			{#each result as item}
-				<a href={item.url} class="docs-search-result-item" onclick={handleResultClick}>
-					<div class="result-title">{item.meta.title}</div>
-					<div class="result-excerpt">{@html item.excerpt}</div>
-				</a>
-			{/each}
-		{/if}
+{#if isOpen}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="doc-search-overlay"
+		onclick={closeModal}
+		onkeydown={onKeyDown}
+	>
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="doc-search-modal" onclick={(e) => e.stopPropagation()}>
+			<div class="doc-search-input-row">
+				<Icon icon="material-symbols:search-rounded" width="20" height="20" />
+				<input
+					id="doc-search-input"
+					type="text"
+					placeholder={i18n(I18nKey.search)}
+					value={query}
+					oninput={onInput}
+					onkeydown={onKeyDown}
+				/>
+				<button class="doc-search-close-btn" onclick={closeModal} aria-label="Close">
+					<kbd>ESC</kbd>
+				</button>
+			</div>
+
+			{#if isLoading}
+				<div class="doc-search-loading">
+					<div class="doc-search-spinner"></div>
+				</div>
+			{/if}
+
+			{#if results.length > 0}
+				<ul class="doc-search-results">
+					{#each results as result, i}
+						<li>
+							<button
+								class="doc-search-result"
+								class:active={i === activeIndex}
+								onclick={() => navigate(i)}
+								onmouseenter={() => (activeIndex = i)}
+							>
+								<span class="doc-search-result-title">{result.title}</span>
+								{#if result.content}
+									<span class="doc-search-result-content">{result.content.slice(0, 120)}</span>
+								{/if}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			{:else if query && !isLoading}
+				<div class="doc-search-empty">{i18n(I18nKey.noData)}</div>
+			{/if}
+		</div>
 	</div>
 {/if}
 
 <style>
-	.docs-search-btn {
+	/* ---------- Navbar trigger button ---------- */
+	.doc-search-nav-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.375rem;
+		padding: 0.25rem 0.625rem;
+		border-radius: 0.5rem;
+		border: 1px solid var(--line-color);
+		background: var(--card-bg);
+		color: var(--text-75);
+		font-size: 0.8125rem;
+		cursor: pointer;
+		transition: border-color 0.2s, background 0.2s;
+		white-space: nowrap;
+	}
+	.doc-search-nav-btn:hover {
+		border-color: var(--primary);
+		background: var(--btn-plain-bg-hover);
+	}
+	.doc-search-nav-hint {
+		display: inline-flex;
+		gap: 0.125rem;
+		color: var(--text-30);
+		font-size: 0.6875rem;
+		line-height: 1;
+	}
+	.doc-search-nav-hint kbd {
+		padding: 0.1rem 0.25rem;
+		border-radius: 0.25rem;
+		border: 1px solid var(--line-color);
+		background: var(--btn-card-bg-hover);
+		font-family: inherit;
+		font-size: inherit;
+	}
+
+	@media (max-width: 768px) {
+		.doc-search-nav-btn {
+			padding: 0.25rem;
+		}
+		.doc-search-nav-hint {
+			display: none;
+		}
+	}
+
+	/* ---------- Sidebar trigger button ---------- */
+	.doc-search-trigger {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
-		padding: 0.375rem 0.75rem;
-		border: 1px solid var(--docs-border);
-		border-radius: 8px;
-		background-color: var(--docs-bg);
-		color: var(--docs-text-50);
-		font-size: 0.8125rem;
-		cursor: text;
-		transition:
-			border-color 0.2s ease,
-			background-color 0.2s ease;
 		width: 100%;
-		position: relative;
+		padding: 0.5rem 0.75rem;
+		border: 1px solid var(--entry-border, var(--line-color));
+		border-radius: 0.5rem;
+		background: var(--card-bg);
+		color: var(--text-50);
+		font-size: 0.8125rem;
+		cursor: pointer;
+		transition: border-color 0.2s, background 0.2s;
+	}
+	.doc-search-trigger:hover {
+		border-color: var(--primary);
+		background: var(--btn-plain-bg-hover);
+	}
+	.doc-search-trigger span {
+		flex: 1;
+		text-align: left;
+		color: var(--text-30);
+	}
+	.doc-search-kbd {
+		padding: 0.1rem 0.375rem;
+		border-radius: 0.25rem;
+		border: 1px solid var(--line-color);
+		background: var(--btn-card-bg-hover);
+		color: var(--text-30);
+		font-family: inherit;
+		font-size: 0.6875rem;
 	}
 
-	.docs-search-btn:hover {
-		border-color: var(--docs-text-50);
-		background-color: var(--docs-bg-soft);
+	/* ---------- Modal overlay — uses :global to escape containing blocks ---------- */
+	:global(.doc-search-overlay) {
+		position: fixed !important;
+		inset: 0 !important;
+		z-index: 9999 !important;
+		display: flex !important;
+		align-items: center !important;
+		justify-content: center !important;
+		background: rgba(0, 0, 0, 0.5);
+		backdrop-filter: blur(4px);
 	}
 
-	.search-icon {
-		flex-shrink: 0;
-		color: var(--docs-text-50);
-		font-size: 1rem;
+	/* ---------- Modal ---------- */
+	:global(.doc-search-modal) {
+		width: min(560px, 90vw);
+		max-height: 70vh;
+		display: flex;
+		flex-direction: column;
+		border-radius: 0.75rem;
+		border: 1px solid var(--line-color);
+		background: var(--card-bg);
+		box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+		overflow: hidden;
 	}
 
-	.docs-search-input {
+	/* ---------- Input row ---------- */
+	:global(.doc-search-input-row) {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.75rem 1rem;
+		border-bottom: 1px solid var(--line-color);
+		color: var(--text-50);
+	}
+	:global(.doc-search-input-row input) {
 		flex: 1;
 		border: none;
-		outline: none;
 		background: transparent;
-		color: var(--docs-text-100);
-		font-size: 0.8125rem;
-		font-family: inherit;
-		min-width: 0;
+		color: var(--text-75);
+		font-size: 0.9375rem;
+		outline: none;
 	}
-
-	.docs-search-input::placeholder {
-		color: var(--docs-text-25);
+	:global(.doc-search-input-row input::placeholder) {
+		color: var(--text-30);
 	}
-
-	.search-shortcut {
-		margin-left: auto;
-		padding: 0.125rem 0.375rem;
-		border: 1px solid var(--docs-border);
-		border-radius: 4px;
+	:global(.doc-search-close-btn) {
+		padding: 0.15rem 0.4rem;
+		border-radius: 0.25rem;
+		border: 1px solid var(--line-color);
+		background: var(--btn-card-bg-hover);
+		color: var(--text-30);
 		font-size: 0.6875rem;
-		color: var(--docs-text-50);
+		cursor: pointer;
+	}
+	:global(.doc-search-close-btn kbd) {
 		font-family: inherit;
-		flex-shrink: 0;
 	}
 
-	.docs-search-results {
-		max-height: min(360px, calc(100vh - 10rem));
-		overflow-y: auto;
+	/* ---------- Loading spinner ---------- */
+	:global(.doc-search-loading) {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 2rem;
+	}
+	:global(.doc-search-spinner) {
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 2px solid var(--line-color);
+		border-top-color: var(--primary);
+		border-radius: 50%;
+		animation: doc-search-spin 0.6s linear infinite;
+	}
+	@keyframes doc-search-spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	/* ---------- Results list ---------- */
+	:global(.doc-search-results) {
+		list-style: none;
+		margin: 0;
 		padding: 0.5rem;
-		border: 1px solid var(--docs-border);
-		border-radius: 8px;
-		background: var(--docs-bg);
-		box-shadow: var(--docs-shadow-3);
+		overflow-y: auto;
 	}
-
-	.docs-search-result-item {
-		display: block;
+	:global(.doc-search-result) {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		width: 100%;
 		padding: 0.625rem 0.75rem;
-		border-radius: 6px;
-		text-decoration: none;
-		transition: background-color 0.15s ease;
+		border-radius: 0.5rem;
+		border: none;
+		background: transparent;
+		color: var(--text-75);
+		text-align: left;
+		cursor: pointer;
+		transition: background 0.15s;
 	}
-
-	.docs-search-result-item:hover {
-		background-color: var(--docs-bg-mute);
+	:global(.doc-search-result:hover),
+	:global(.doc-search-result.active) {
+		background: var(--btn-plain-bg-hover);
 	}
-
-	.result-title {
+	:global(.doc-search-result-title) {
+		font-weight: 600;
 		font-size: 0.875rem;
-		font-weight: 500;
-		color: var(--docs-text-100);
 	}
-
-	.result-excerpt {
-		font-size: 0.8125rem;
-		color: var(--docs-text-50);
-		margin-top: 0.125rem;
+	:global(.doc-search-result-content) {
+		font-size: 0.75rem;
+		color: var(--text-30);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
-
-	.result-excerpt :global(mark) {
-		border-radius: 0.2rem;
-		background: color-mix(in oklch, var(--primary) 22%, transparent);
-		color: var(--docs-text-100);
-	}
-
-	.docs-search-no-results {
-		padding: 1.5rem;
+	:global(.doc-search-empty) {
+		padding: 2rem;
 		text-align: center;
-		color: var(--docs-text-50);
+		color: var(--text-30);
 		font-size: 0.875rem;
 	}
 </style>

@@ -10,7 +10,7 @@ export const pioConfig: PioConfig = {
 	hiddenOnMobile: true,
 	hideAboutMenu: false,
 	dialog: {
-		welcome: "Welcome to Mizuki Website!",
+		welcome: "Welcome to souloss Blog!",
 		touch: [
 			"What are you doing?",
 			"Stop touching me!",

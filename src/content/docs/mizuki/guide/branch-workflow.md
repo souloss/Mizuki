@@ -30,7 +30,7 @@ copyright:
 
 项目根目录的 `.gitattributes` 文件已配置好合并策略：
 
-```gitattributes
+```txt
 * text=auto eol=lf
 *.js linguist-language=astro
 

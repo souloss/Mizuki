@@ -5,9 +5,9 @@
 
 	import type { PioProps } from "./types";
 
-	export let config: Partial<PioProps["config"]> = {};
+	let { config = {} }: { config?: Partial<PioProps["config"]> } = $props();
 
-	const merged = {
+	const merged = $derived({
 		mode: config?.mode ?? pioConfig.mode,
 		hidden: config?.hiddenOnMobile ?? pioConfig.hiddenOnMobile,
 		dialog: config?.dialog ?? pioConfig.dialog ?? {},
@@ -18,7 +18,7 @@
 		menus: config?.menus ?? pioConfig.menus,
 		position: config?.position ?? pioConfig.position,
 		hideAboutMenu: config?.hideAboutMenu ?? pioConfig.hideAboutMenu ?? true,
-	};
+	});
 
 	let widgetInstance: { destroy: () => Promise<void>; sleep: () => void } | null =
 		null;

@@ -132,6 +132,7 @@ export default defineConfig({
 			},
 		}),
 		svelte({
+			compilerOptions: { runes: true },
 			preprocess: vitePreprocess(),
 		}),
 		sitemap(),

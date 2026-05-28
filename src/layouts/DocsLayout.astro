@@ -12,7 +12,6 @@ import BackToHome from "@components/control/BackToHome.astro";
 import BackToTop from "@components/control/BackToTop.astro";
 import { PageProgressBar } from "@components/control/PageProgressBar";
 import DocLangSwitcher from "@components/features/docs/DocLangSwitcher.astro";
-import DocSearch from "@components/features/docs/DocSearch.svelte";
 import { SidebarTOC } from "@components/features/toc";
 import ConfigCarrier from "@components/misc/ConfigCarrier.astro";
 import IconifyLoader from "@components/misc/IconifyLoader.astro";
@@ -115,7 +114,7 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 
 		<!-- Navbar: full-width, flat style for docs -->
 		<header class="docs-navbar" id="docs-navbar">
-			<DocsNavbar />
+			<DocsNavbar docSlug={docSlug} />
 		</header>
 
 		<!-- Docs Main Layout: full-screen with fixed sidebar and TOC -->
@@ -153,7 +152,6 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 							docSlug={docSlug}
 						/>
 					)}
-					{docSlug && <DocSearch docSlug={docSlug} placeholder={i18n(I18nKey.docsSearchPlaceholder)} client:load />}
 					<nav class="docs-sidebar-nav" id="docs-sidebar-nav">
 						{sidebarData.map((section) => {
 							const hasActiveItem = section.items.some((item) => item.isCurrent);
