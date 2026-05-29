@@ -79,6 +79,7 @@ export class BackToTopHandler {
 			this.updateBackToTopButton(scrollTop, showBackToTopThreshold);
 			this.updateTOCVisibility(scrollTop, bannerHeight);
 			this.updateNavbarVisibility(scrollTop);
+			this.updatePageOverlayScroll(scrollTop);
 		});
 	}
 
@@ -167,6 +168,28 @@ export class BackToTopHandler {
 		} else {
 			this.navbar.classList.remove("navbar-hidden");
 		}
+	}
+
+	/**
+	 * 页面标题覆盖层随滚动淡出
+	 */
+	private updatePageOverlayScroll(scrollTop: number): void {
+		const pageOverlay = document.getElementById("banner-page-overlay");
+		if (!pageOverlay) {
+			return;
+		}
+
+		// 首页不处理
+		const isHome = document.body.classList.contains("lg:is-home");
+		if (isHome) {
+			return;
+		}
+
+		const bannerHeight =
+			document.getElementById("banner-wrapper")?.offsetHeight || 400;
+		const fadeRatio = Math.max(0, 1 - scrollTop / (bannerHeight * 0.5));
+		pageOverlay.style.opacity = String(fadeRatio);
+		pageOverlay.style.transform = `translateY(${scrollTop * 0.15}px)`;
 	}
 
 	/**

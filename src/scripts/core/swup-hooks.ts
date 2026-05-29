@@ -79,6 +79,9 @@ export class SwupHooksManager {
 		this.registerVisitStartHook();
 		this.registerPageViewHook();
 		this.registerVisitEndHook();
+
+		// 初始化页面标题覆盖层
+		this.updatePageOverlay();
 	}
 
 	/**
@@ -123,6 +126,9 @@ export class SwupHooksManager {
 
 			// 全屏壁纸模式下重新同步布局，防止 Swup 替换内容后 #top-row 高度塌陷
 			this.syncFullscreenLayout();
+
+			// 更新页面标题覆盖层
+			this.updatePageOverlay();
 		});
 	}
 
@@ -272,6 +278,70 @@ export class SwupHooksManager {
 			// 强制重排，使 CSS 规则重新计算
 			void topRow.offsetHeight;
 		}
+	}
+
+	/**
+	 * 更新页面标题覆盖层
+	 * 从 #page-overlay-data 读取元数据并填充 #banner-page-overlay
+	 */
+	private updatePageOverlay(): void {
+		const overlay = document.getElementById("banner-page-overlay");
+		const dataEl = document.getElementById("page-overlay-data");
+		if (!overlay) {
+			return;
+		}
+
+		// 首页不显示覆盖层
+		const isHome = document.body.classList.contains("lg:is-home");
+		if (isHome) {
+			overlay.classList.add("hidden");
+			overlay.classList.remove("lg:flex");
+			return;
+		}
+
+		if (!dataEl || !dataEl.dataset.title) {
+			overlay.classList.add("hidden");
+			overlay.classList.remove("lg:flex");
+			return;
+		}
+
+		const titleEl = document.getElementById("page-overlay-title");
+		const dateEl = document.getElementById("page-overlay-date");
+		const categoryEl = document.getElementById("page-overlay-category");
+		const wordsEl = document.getElementById("page-overlay-words");
+		const metaEl = document.getElementById("page-overlay-meta");
+
+		if (titleEl) {
+			titleEl.textContent = dataEl.dataset.title || "";
+		}
+		if (dateEl) {
+			dateEl.textContent = dataEl.dataset.date || "";
+		}
+		if (categoryEl) {
+			categoryEl.textContent = dataEl.dataset.category || "";
+		}
+		if (wordsEl) {
+			wordsEl.textContent = dataEl.dataset.words || "";
+		}
+
+		// 显示/隐藏元数据行
+		const hasMeta = !!(
+			dataEl.dataset.date ||
+			dataEl.dataset.category ||
+			dataEl.dataset.words
+		);
+		if (metaEl) {
+			if (hasMeta) {
+				metaEl.classList.remove("hidden");
+				metaEl.classList.add("flex");
+			} else {
+				metaEl.classList.add("hidden");
+				metaEl.classList.remove("flex");
+			}
+		}
+
+		overlay.classList.remove("hidden");
+		overlay.classList.add("lg:flex");
 	}
 
 	/**

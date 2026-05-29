@@ -127,6 +127,10 @@ const jsonLd = {
 	postSlug={entry.id}
 	headings={headings}
 	canonicalUrl={canonicalUrl}
+	pageOverlayTitle={entry.data.title}
+	pageOverlayDate={entry.data.published ? formatDateToYYYYMMDD(entry.data.published) : undefined}
+	pageOverlayCategory={entry.data.category}
+	pageOverlayWords={remarkPluginFrontmatter.words ? String(remarkPluginFrontmatter.words) : undefined}
 >
 	<script
 		is:inline

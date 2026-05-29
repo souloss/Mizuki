@@ -34,6 +34,10 @@ interface Props {
 	headings?: MarkdownHeading[];
 	coverImage?: string;
 	canonicalUrl?: string;
+	pageOverlayTitle?: string;
+	pageOverlayDate?: string;
+	pageOverlayCategory?: string;
+	pageOverlayWords?: string;
 }
 
 // 获取 banner 图片
@@ -49,6 +53,10 @@ const {
 	coverImage,
 	headings = [],
 	canonicalUrl,
+	pageOverlayTitle,
+	pageOverlayDate,
+	pageOverlayCategory,
+	pageOverlayWords,
 } = Astro.props;
 const hasBannerCredit = siteConfig.banner.credit?.enable ?? false;
 const hasBannerLink = !!siteConfig.banner.credit?.url;
@@ -141,6 +149,19 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 		showTextOverlay={isHomePage &&
 			(siteConfig.banner.bannerHomeText?.enable ?? false)}
 	/>
+
+	<!-- 页面覆盖层数据源（供 JS 读取，不在首页显示） -->
+	{pageOverlayTitle && (
+		<div
+			id="page-overlay-data"
+			data-title={pageOverlayTitle}
+			data-date={pageOverlayDate || ""}
+			data-category={pageOverlayCategory || ""}
+			data-words={pageOverlayWords || ""}
+			class="hidden"
+		>
+		</div>
+	)}
 
 	<!-- Main content -->
 	<div
