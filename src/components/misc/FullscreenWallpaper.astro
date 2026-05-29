@@ -97,7 +97,7 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 		"fixed inset-0 w-full h-full overflow-hidden pointer-events-none",
 		className
 	]}
-	style={`z-index: ${zIndex}; opacity: ${opacity}; transform: translateZ(0); perspective: 1000px;`}
+	style={`z-index: ${zIndex}; opacity: var(--wallpaper-opacity, ${opacity}); filter: blur(var(--wallpaper-blur, ${blurAmount}px)); transform: translateZ(0); perspective: 1000px;`}
 	data-fullscreen-wallpaper
 >
 	<script is:inline>
