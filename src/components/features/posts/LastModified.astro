@@ -14,7 +14,7 @@ dayjs.extend(utc);
 
 const { updatedDate, class: className } = Astro.props;
 
-const lastModified = dayjs(updatedDate).format("YYYY-MM-DDTHH:mm:ss");
+const lastModified = dayjs(updatedDate).utc().format("YYYY-MM-DDTHH:mm:ss[Z]");
 ---
 
 <>
