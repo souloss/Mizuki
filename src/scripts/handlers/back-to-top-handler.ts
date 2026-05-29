@@ -186,7 +186,7 @@ export class BackToTopHandler {
 		}
 
 		const bannerHeight =
-			document.getElementById("banner-wrapper")?.offsetHeight || 400;
+			document.getElementById("wallpaper-wrapper")?.offsetHeight || 400;
 		const fadeRatio = Math.max(0, 1 - scrollTop / (bannerHeight * 0.5));
 		pageOverlay.style.opacity = String(fadeRatio);
 		pageOverlay.style.transform = `translateY(${scrollTop * 0.15}px)`;

@@ -128,7 +128,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    ========================================================================== */
 @media (max-width: 479px) {
   /* Banner wrapper 高度优化 */
-  body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
+  body.enable-banner #wallpaper-wrapper:not(.mobile-hide-banner) {
     height: max(70vh, 450px) !important;
     min-height: 450px;
     max-height: none;
@@ -184,7 +184,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    ========================================================================== */
 @media (min-width: 480px) and (max-width: 767px) {
   /* Banner wrapper 高度优化 */
-  body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
+  body.enable-banner #wallpaper-wrapper:not(.mobile-hide-banner) {
     height: max(75vh, 500px) !important;
     min-height: 500px;
     max-height: none;
@@ -240,7 +240,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    ========================================================================== */
 @media (min-width: 768px) and (max-width: 1279px) {
   /* Banner wrapper 高度优化 */
-  body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
+  body.enable-banner #wallpaper-wrapper:not(.mobile-hide-banner) {
     height: max(70vh, 500px) !important;
     min-height: 500px;
     top: 0 !important;
@@ -378,7 +378,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    手机端非首页隐藏 Banner
    ========================================================================== */
 @media (max-width: 1279px) {
-  #banner-wrapper {
+  #wallpaper-wrapper {
     transition:
       transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
       opacity 0.3s ease-out;
@@ -605,7 +605,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    移动端横屏优化
    ========================================================================== */
 @media (max-width: 1279px) and (orientation: landscape) {
-  #banner-wrapper:not(.mobile-hide-banner) {
+  #wallpaper-wrapper:not(.mobile-hide-banner) {
     top: 0 !important;
     height: 60vh !important;
   }
@@ -729,7 +729,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
    ========================================================================== */
 /* 极小高度屏幕 (高度 ≤ 500px) */
 @media (max-height: 500px) {
-  #banner-wrapper {
+  #wallpaper-wrapper {
     height: 85vh !important;
     min-height: 350px !important;
   }
@@ -761,7 +761,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
 /* 小高度屏幕 (高度 501px - 600px) */
 @media (min-height: 501px) and (max-height: 600px) {
-  #banner-wrapper {
+  #wallpaper-wrapper {
     height: 80vh !important;
     min-height: 400px !important;
   }
@@ -793,7 +793,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
 /* 中等高度屏幕 (高度 601px - 700px) */
 @media (min-height: 601px) and (max-height: 700px) {
-  #banner-wrapper {
+  #wallpaper-wrapper {
     height: 75vh !important;
     min-height: 450px !important;
   }
@@ -825,7 +825,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
 /* 横屏模式特殊处理 */
 @media (orientation: landscape) and (max-height: 500px) {
-  #banner-wrapper {
+  #wallpaper-wrapper {
     height: 90vh !important;
     min-height: 300px !important;
   }

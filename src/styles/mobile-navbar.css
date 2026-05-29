@@ -11,8 +11,8 @@
 
 /* 桌面端 - 亮色 */
 @media (min-width: 1280px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semi"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.55);
@@ -22,8 +22,8 @@
 
 /* 移动端 (仅首页) - 亮色 */
 @media (max-width: 1279px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.55);
@@ -33,8 +33,8 @@
 
 /* 桌面端 - 暗色 */
 @media (min-width: 1280px) {
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semi"] > div {
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"] > div {
     backdrop-filter: blur(20px);
     background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(0, 0, 0, 0.55);
@@ -44,8 +44,8 @@
 
 /* 移动端 (仅首页) - 暗色 */
 @media (max-width: 1279px) {
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semi"][data-is-home="true"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semi"][data-is-home="true"] > div {
     backdrop-filter: blur(20px);
     background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(0, 0, 0, 0.55);
@@ -59,10 +59,10 @@
 
 /* 桌面端 */
 @media (min-width: 1280px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="full"] > div,
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="full"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"] > div,
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"] > div {
     background: transparent;
     box-shadow: none;
     border: 1px solid transparent;
@@ -72,10 +72,10 @@
 
 /* 移动端 (仅首页) */
 @media (max-width: 1279px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="full"][data-is-home="true"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="full"][data-is-home="true"] > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="full"][data-is-home="true"] > div {
     background: transparent;
     box-shadow: none;
     border: 1px solid transparent;
@@ -85,8 +85,8 @@
 
 /* --- 初始状态 (Initial) --- */
 @media (min-width: 1280px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"] > div {
     background: transparent;
     box-shadow: none;
     border: 1px solid transparent;
@@ -94,8 +94,8 @@
 }
 
 @media (max-width: 1279px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"] > div {
     background: transparent;
     box-shadow: none;
     border: 1px solid transparent;
@@ -104,16 +104,16 @@
 
 /* 桌面端 - 滚动后 */
 @media (min-width: 1280px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"].scrolled > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"].scrolled > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.55);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"].scrolled > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"].scrolled > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"].scrolled > div {
     background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(0, 0, 0, 0.55);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -122,16 +122,16 @@
 
 /* 移动端 - 滚动后 */
 @media (max-width: 1279px) {
-  #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
-  body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
+  #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
+  body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.55);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 
-  :root.dark #banner-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
-  :root.dark body:has(#banner-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-transparent-mode="semifull"][data-is-home="true"].scrolled > div {
     background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(0, 0, 0, 0.55);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -168,54 +168,54 @@
   }
 
   /* 移动端禁用面板 blur 效果提升性能 */
-  #banner-wrapper ~ * .float-panel,
-  body:has(#banner-wrapper) .float-panel,
-  #banner-wrapper ~ * .dropdown-content,
-  body:has(#banner-wrapper) .dropdown-content,
-  #banner-wrapper ~ * #display-setting,
-  body:has(#banner-wrapper) #display-setting,
-  #banner-wrapper ~ * #nav-menu-panel,
-  body:has(#banner-wrapper) #nav-menu-panel,
-  #banner-wrapper ~ * #mobile-toc-panel,
-  body:has(#banner-wrapper) #mobile-toc-panel,
-  #banner-wrapper ~ * #search-panel,
-  body:has(#banner-wrapper) #search-panel {
+  #wallpaper-wrapper ~ * .float-panel,
+  body:has(#wallpaper-wrapper) .float-panel,
+  #wallpaper-wrapper ~ * .dropdown-content,
+  body:has(#wallpaper-wrapper) .dropdown-content,
+  #wallpaper-wrapper ~ * #display-setting,
+  body:has(#wallpaper-wrapper) #display-setting,
+  #wallpaper-wrapper ~ * #nav-menu-panel,
+  body:has(#wallpaper-wrapper) #nav-menu-panel,
+  #wallpaper-wrapper ~ * #mobile-toc-panel,
+  body:has(#wallpaper-wrapper) #mobile-toc-panel,
+  #wallpaper-wrapper ~ * #search-panel,
+  body:has(#wallpaper-wrapper) #search-panel {
     backdrop-filter: none;
   }
 }
 
 /* 通用样式 */
 @media (min-width: 1280px) {
-  #banner-wrapper ~ * .float-panel,
-  body:has(#banner-wrapper) .float-panel,
-  #banner-wrapper ~ * .dropdown-content,
-  body:has(#banner-wrapper) .dropdown-content,
-  #banner-wrapper ~ * #display-setting,
-  body:has(#banner-wrapper) #display-setting,
-  #banner-wrapper ~ * #nav-menu-panel,
-  body:has(#banner-wrapper) #nav-menu-panel,
-  #banner-wrapper ~ * #mobile-toc-panel,
-  body:has(#banner-wrapper) #mobile-toc-panel,
-  #banner-wrapper ~ * #search-panel,
-  body:has(#banner-wrapper) #search-panel {
+  #wallpaper-wrapper ~ * .float-panel,
+  body:has(#wallpaper-wrapper) .float-panel,
+  #wallpaper-wrapper ~ * .dropdown-content,
+  body:has(#wallpaper-wrapper) .dropdown-content,
+  #wallpaper-wrapper ~ * #display-setting,
+  body:has(#wallpaper-wrapper) #display-setting,
+  #wallpaper-wrapper ~ * #nav-menu-panel,
+  body:has(#wallpaper-wrapper) #nav-menu-panel,
+  #wallpaper-wrapper ~ * #mobile-toc-panel,
+  body:has(#wallpaper-wrapper) #mobile-toc-panel,
+  #wallpaper-wrapper ~ * #search-panel,
+  body:has(#wallpaper-wrapper) #search-panel {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
   /* 暗色模式 */
-  :root.dark #banner-wrapper ~ * .float-panel,
-  :root.dark body:has(#banner-wrapper) .float-panel,
-  :root.dark #banner-wrapper ~ * .dropdown-content,
-  :root.dark body:has(#banner-wrapper) .dropdown-content,
-  :root.dark #banner-wrapper ~ * #display-setting,
-  :root.dark body:has(#banner-wrapper) #display-setting,
-  :root.dark #banner-wrapper ~ * #nav-menu-panel,
-  :root.dark body:has(#banner-wrapper) #nav-menu-panel,
-  :root.dark #banner-wrapper ~ * #mobile-toc-panel,
-  :root.dark body:has(#banner-wrapper) #mobile-toc-panel,
-  :root.dark #banner-wrapper ~ * #search-panel,
-  :root.dark body:has(#banner-wrapper) #search-panel {
+  :root.dark #wallpaper-wrapper ~ * .float-panel,
+  :root.dark body:has(#wallpaper-wrapper) .float-panel,
+  :root.dark #wallpaper-wrapper ~ * .dropdown-content,
+  :root.dark body:has(#wallpaper-wrapper) .dropdown-content,
+  :root.dark #wallpaper-wrapper ~ * #display-setting,
+  :root.dark body:has(#wallpaper-wrapper) #display-setting,
+  :root.dark #wallpaper-wrapper ~ * #nav-menu-panel,
+  :root.dark body:has(#wallpaper-wrapper) #nav-menu-panel,
+  :root.dark #wallpaper-wrapper ~ * #mobile-toc-panel,
+  :root.dark body:has(#wallpaper-wrapper) #mobile-toc-panel,
+  :root.dark #wallpaper-wrapper ~ * #search-panel,
+  :root.dark body:has(#wallpaper-wrapper) #search-panel {
     background: rgba(24, 25, 38, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   }
@@ -223,32 +223,32 @@
 
 /* 移动端 (仅首页) */
 @media (max-width: 1279px) {
-  #banner-wrapper ~ * #navbar[data-is-home="true"] .float-panel,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] .float-panel,
-  #banner-wrapper ~ * #navbar[data-is-home="true"] .dropdown-content,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] .dropdown-content,
-  #banner-wrapper ~ * #navbar[data-is-home="true"] ~ * #display-setting,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] #search-panel,
-  body:has(#banner-wrapper) #navbar[data-is-home="true"] #display-setting {
+  #wallpaper-wrapper ~ * #navbar[data-is-home="true"] .float-panel,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] .float-panel,
+  #wallpaper-wrapper ~ * #navbar[data-is-home="true"] .dropdown-content,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] .dropdown-content,
+  #wallpaper-wrapper ~ * #navbar[data-is-home="true"] ~ * #display-setting,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #search-panel,
+  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #display-setting {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
 
   /* 暗色模式 */
-  :root.dark #banner-wrapper ~ * #navbar[data-is-home="true"] .float-panel,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] .float-panel,
-  :root.dark #banner-wrapper ~ * #navbar[data-is-home="true"] .dropdown-content,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] .dropdown-content,
-  :root.dark #banner-wrapper ~ * #navbar[data-is-home="true"] ~ * #display-setting,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] #search-panel,
-  :root.dark body:has(#banner-wrapper) #navbar[data-is-home="true"] #display-setting {
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-is-home="true"] .float-panel,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] .float-panel,
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-is-home="true"] .dropdown-content,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] .dropdown-content,
+  :root.dark #wallpaper-wrapper ~ * #navbar[data-is-home="true"] ~ * #display-setting,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #search-panel,
+  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #display-setting {
     background: rgba(24, 25, 38, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   }

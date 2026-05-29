@@ -25,7 +25,7 @@ export const SWUP_SELECTORS = {
 	],
 
 	// Banner 相关
-	bannerWrapper: "#banner-wrapper",
+	bannerWrapper: "#wallpaper-wrapper",
 	banner: "#banner",
 	bannerTextOverlay: ".banner-text-overlay",
 
