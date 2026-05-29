@@ -67,6 +67,14 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   box-shadow: var(--shadow-lg);
 }
 
+/* 全屏壁纸模式下 #top-row 需要作为 navbar 的包含块，防止 height:0 导致 navbar 无定位基准 */
+[data-wallpaper-mode="fullscreen"] #top-row {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
 /* 桌面端 Banner 模式下的主内容区域位置 */
 @media (min-width: 1280px) {
   body.enable-banner .absolute.w-full.z-30 {
@@ -121,7 +129,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (max-width: 479px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 70vh !important;
+    height: max(70vh, 450px) !important;
     min-height: 450px;
     max-height: none;
     top: 0 !important;
@@ -129,8 +137,8 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 70vh !important;
-    min-height: calc(100vh - 70vh) !important;
+    top: max(70vh, 450px) !important;
+    min-height: calc(100vh - max(70vh, 450px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */
@@ -177,7 +185,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (min-width: 480px) and (max-width: 767px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 75vh !important;
+    height: max(75vh, 500px) !important;
     min-height: 500px;
     max-height: none;
     top: 0 !important;
@@ -185,8 +193,8 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 75vh !important;
-    min-height: calc(100vh - 75vh) !important;
+    top: max(75vh, 500px) !important;
+    min-height: calc(100vh - max(75vh, 500px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */
@@ -233,15 +241,15 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 @media (min-width: 768px) and (max-width: 1279px) {
   /* Banner wrapper 高度优化 */
   body.enable-banner #banner-wrapper:not(.mobile-hide-banner) {
-    height: 70vh !important;
+    height: max(70vh, 500px) !important;
     min-height: 500px;
     top: 0 !important;
   }
 
   /* 主内容区域位置调整 */
   body.enable-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
-    top: 70vh !important;
-    min-height: calc(100vh - 70vh) !important;
+    top: max(70vh, 500px) !important;
+    min-height: calc(100vh - max(70vh, 500px)) !important;
   }
 
   /* 横幅文本覆盖层优化 */

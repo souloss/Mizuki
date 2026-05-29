@@ -120,6 +120,9 @@ export class SwupHooksManager {
 
 			// 重新初始化 semifull 模式滚动检测
 			this.reinitSemifullScrollDetection();
+
+			// 全屏壁纸模式下重新同步布局，防止 Swup 替换内容后 #top-row 高度塌陷
+			this.syncFullscreenLayout();
 		});
 	}
 
@@ -251,6 +254,23 @@ export class SwupHooksManager {
 					(window as any).initSemifullScrollDetection();
 				}
 			}
+		}
+	}
+
+	/**
+	 * 全屏壁纸模式下重新同步布局
+	 * Swup content:replace 后 #top-row 可能因内容替换导致高度塌陷，
+	 * 需要强制重排使 [data-wallpaper-mode="fullscreen"] #top-row CSS 生效
+	 */
+	private syncFullscreenLayout(): void {
+		const mode = document.documentElement.getAttribute("data-wallpaper-mode");
+		if (mode !== "fullscreen") {
+			return;
+		}
+		const topRow = document.getElementById("top-row");
+		if (topRow) {
+			// 强制重排，使 CSS 规则重新计算
+			void topRow.offsetHeight;
 		}
 	}
 
