@@ -4,7 +4,7 @@
  */
 
 import type { SakuraConfig } from "../../types/config";
-import { initSakura } from "../../utils/sakura-manager";
+import { initSakura, getSakuraStatus, stopSakura } from "../../utils/sakura-manager";
 
 /**
  * Sakura 特效处理器类
@@ -75,6 +75,8 @@ export function setupSakura(widgetConfigs: any): void {
  */
 export function setupSakuraOnDOMReady(widgetConfigs: any): void {
 	const handler = getSakuraEffectHandler();
+	// Store raw widgetConfigs so we can access sakura params even when config.enable is false
+	const sakuraWidgetConfig = widgetConfigs?.sakura;
 
 	const init = () => {
 		handler.init(widgetConfigs);
@@ -85,4 +87,31 @@ export function setupSakuraOnDOMReady(widgetConfigs: any): void {
 	} else {
 		init();
 	}
+
+	// Listen for settings panel toggle events
+	window.addEventListener("sakuraToggle", (event) => {
+		const detail = (event as CustomEvent<{ enabled: boolean }>).detail;
+		const isRunning = getSakuraStatus();
+		if (detail.enabled && !isRunning) {
+			// Build SakuraConfig from EffectsConfig.sakura: { enable, config: {...} }
+			const innerConfig = sakuraWidgetConfig?.config || {};
+			const sakuraConfig: SakuraConfig = {
+				enable: true,
+				sakuraNum: innerConfig.sakuraNum ?? 21,
+				limitTimes: innerConfig.limitTimes ?? -1,
+				size: innerConfig.size ?? { min: 0.5, max: 1.1 },
+				opacity: innerConfig.opacity ?? { min: 0.3, max: 0.9 },
+				speed: innerConfig.speed ?? {
+					horizontal: { min: -1.7, max: -1.2 },
+					vertical: { min: 1.5, max: 2.2 },
+					rotation: 0.03,
+					fadeSpeed: 0.03,
+				},
+				zIndex: innerConfig.zIndex ?? 100,
+			};
+			initSakura(sakuraConfig);
+		} else if (!detail.enabled && isRunning) {
+			stopSakura();
+		}
+	});
 }

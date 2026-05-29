@@ -871,8 +871,9 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   overflow: hidden !important;
   border-radius: 1rem !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-  opacity: 0.9 !important;
-  transition: opacity 0.3s ease, transform 0.3s ease !important;
+  opacity: var(--overlay-opacity, 0.9) !important;
+  filter: blur(var(--overlay-blur, 0px)) !important;
+  transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease !important;
 }
 
 :root.dark #wallpaper-wrapper.wallpaper-overlay {
@@ -881,6 +882,7 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
 
 #wallpaper-wrapper.wallpaper-overlay:hover {
   opacity: 1 !important;
+  filter: none !important;
   transform: scale(1.02) !important;
 }
 
@@ -915,4 +917,18 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
     bottom: 0.75rem !important;
     border-radius: 0.75rem !important;
   }
+}
+
+/* ==========================================================================
+   Settings Panel Toggle Styles
+   ========================================================================== */
+
+/* Banner title toggle: hide when user disabled via settings */
+.banner-text-overlay.user-hidden {
+  display: none !important;
+}
+
+/* Gradient toggle: hide when user disabled via settings */
+[data-gradient-enabled="false"] #wallpaper-gradient {
+  display: none !important;
 }

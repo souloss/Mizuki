@@ -404,9 +404,9 @@ onMount(() => {
 		wallpaperMode = customEvent.detail.mode;
 	};
 
-	window.addEventListener("wallpaperModeChange", handleWallpaperModeChange);
+	window.addEventListener("wallpaper-mode-change", handleWallpaperModeChange);
 
-	return () => { window.removeEventListener("wallpaperModeChange", handleWallpaperModeChange); };
+	return () => { window.removeEventListener("wallpaper-mode-change", handleWallpaperModeChange); };
 });
 
 $effect(() => {

@@ -263,9 +263,15 @@ const {
 		}
 	}
 
-	// 监听壁纸模式变化，立即应用（不重载页面）
+	// 监听壁纸模式变化（来自 settings panel）
+	// setting-utils.ts 已在 dispatch 前应用了 DOM 变更，此处只同步布局模式
 	window.addEventListener("wallpaper-mode-change", function (_event) {
-		applyWallpaperMode();
+		const mainGrid = document.getElementById("main-grid");
+		if (mainGrid) {
+			const savedLayout = localStorage.getItem("postListLayout");
+			const currentLayout = savedLayout || defaultPostListLayout;
+			mainGrid.setAttribute("data-layout-mode", currentLayout);
+		}
 	});
 
 	// 在 DOM 加载后执行
