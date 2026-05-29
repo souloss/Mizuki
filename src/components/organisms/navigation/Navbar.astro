@@ -6,7 +6,6 @@ import { LinkPresets } from "../../../constants/link-presets"
 import { LinkPreset, type NavBarLink } from "../../../types/config"
 import { url } from "../../../utils/url-utils"
 import ThemeSwitch from "../../control/ThemeSwitch.svelte"
-import DisplaySettings from "../../features/settings/DisplaySettings.svelte"
 import MobileTOC from "../../features/toc/MobileTOC.svelte"
 import DropdownMenu from "./DropdownMenu.astro"
 import NavMenuPanel from "./NavMenuPanel.astro"
@@ -140,8 +139,7 @@ const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : i
             </button>
         </div>
         <NavMenuPanel links={links}></NavMenuPanel>
-        <DisplaySettings client:only="svelte"></DisplaySettings>
-    </div>
+            </div>
 </div>
 
 <script>
