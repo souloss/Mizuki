@@ -46,6 +46,14 @@ const lastModified = dayjs(updatedDate).format("YYYY-MM-DDTHH:mm:ss");
 				);
 				const currentDate = new Date();
 				const diff = currentDate - startDate;
+				// When the date is in the future, show "just now" instead of negative time
+				if (diff < 0) {
+					const prefix = lastModifiedElement.dataset.prefix;
+					const secondKey = lastModifiedElement.dataset.second;
+					document.getElementById("modifiedtime").innerHTML =
+						prefix + " 0 " + secondKey;
+					return;
+				}
 				const seconds = Math.floor(diff / 1000);
 				const days = Math.floor(seconds / 86400);
 				const hours = Math.floor((seconds % 86400) / 3600);

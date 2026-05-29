@@ -88,7 +88,7 @@
 				return;
 			}
 			const search = await searchIndex.search(term, {
-				filters: { slug: docSlug },
+				filters: { docSlug: docSlug },
 			});
 			const items = await Promise.all(
 				search.results.slice(0, 15).map(async (r: SearchResult) => {
