@@ -660,6 +660,32 @@ const gradientCSS = `linear-gradient(to top, ${gradientColors.map((c) => `${c.co
 		</div>
 	)}
 
+		<!-- 非首页页面标题覆盖层 -->
+		<div
+			id="banner-page-overlay"
+			class="hidden absolute inset-0 z-20 flex-col items-center justify-center text-center pointer-events-none"
+		>
+			<h1
+				id="page-overlay-title"
+				class="text-3xl lg:text-5xl text-white drop-shadow-lg font-bold mb-3 px-4"
+			>
+			</h1>
+			<div id="page-overlay-meta" class="hidden flex-row items-center gap-3 text-white/70 text-sm">
+				<span class="flex items-center gap-1">
+					<Icon name="material-symbols:calendar-today-outline-rounded" class="text-base" />
+					<span id="page-overlay-date"></span>
+				</span>
+				<span class="flex items-center gap-1">
+					<Icon name="material-symbols:folder-outline-rounded" class="text-base" />
+					<span id="page-overlay-category"></span>
+				</span>
+				<span class="flex items-center gap-1">
+					<Icon name="material-symbols:notes-rounded" class="text-base" />
+					<span id="page-overlay-words"></span>
+				</span>
+			</div>
+		</div>
+
 	<!-- 水波纹效果 -->
 	{showWave && (
 		<div
