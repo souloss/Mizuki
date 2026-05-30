@@ -321,6 +321,8 @@ export function applyWallpaperModeToDocument(
 			"enable-banner",
 			"wallpaper-transparent",
 			"no-banner-layout",
+				"no-banner-mode",
+				"fullscreen-banner",
 		);
 
 		// Add corresponding CSS class based on mode
@@ -330,20 +332,24 @@ export function applyWallpaperModeToDocument(
 				showBannerMode(true);
 				break;
 			case WALLPAPER_FULLSCREEN:
-				body.classList.add("no-banner-layout");
+				body.classList.remove("wallpaper-transparent", "no-banner-layout", "no-banner-mode");
+				body.classList.add("enable-banner", "fullscreen-banner");
 				showFullscreenMode(animate);
 				break;
 			case WALLPAPER_OVERLAY:
 				body.classList.add("wallpaper-transparent");
 				body.classList.add("no-banner-layout");
+				body.classList.add("no-banner-mode");
 				showOverlayMode();
 				break;
 			case WALLPAPER_NONE:
 				body.classList.add("no-banner-layout");
+				body.classList.add("no-banner-mode");
 				hideAllWallpapers();
 				break;
 			default:
 				body.classList.add("no-banner-layout");
+				body.classList.add("no-banner-mode");
 				hideAllWallpapers();
 				break;
 		}
@@ -367,6 +373,8 @@ function ensureWallpaperState(mode: WALLPAPER_MODE) {
 		"enable-banner",
 		"wallpaper-transparent",
 		"no-banner-layout",
+		"no-banner-mode",
+		"fullscreen-banner",
 	);
 
 	// Add corresponding CSS class based on mode
@@ -376,16 +384,19 @@ function ensureWallpaperState(mode: WALLPAPER_MODE) {
 			showBannerMode();
 			break;
 		case WALLPAPER_FULLSCREEN:
-			body.classList.add("no-banner-layout");
+				body.classList.remove("wallpaper-transparent", "no-banner-layout", "no-banner-mode");
+				body.classList.add("enable-banner", "fullscreen-banner");
 			showFullscreenMode();
 			break;
 		case WALLPAPER_OVERLAY:
 			body.classList.add("wallpaper-transparent");
 			body.classList.add("no-banner-layout");
+			body.classList.add("no-banner-mode");
 			showOverlayMode();
 			break;
 		case WALLPAPER_NONE:
 			body.classList.add("no-banner-layout");
+			body.classList.add("no-banner-mode");
 			hideAllWallpapers();
 			break;
 	}
@@ -397,13 +408,23 @@ function ensureWallpaperState(mode: WALLPAPER_MODE) {
 function showBannerMode(animate = false) {
 	// Show wallpaper-wrapper and switch to banner mode
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
+	) as HTMLElement | null;
+
+	// Hide fullscreen wallpaper
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.display = "none";
+	}
 	if (wallpaperWrapper) {
 		// Remove overlay and fullscreen wallpaper mode classes
 		wallpaperWrapper.classList.remove("wallpaper-overlay");
 		wallpaperWrapper.classList.remove("wallpaper-fullscreen");
 
-		// Restore banner mode top position
+		// Restore banner mode top position (needed to offset translateY on homepage)
 		wallpaperWrapper.style.top = `-${BANNER_HEIGHT_EXTEND}vh`;
+		// Clear inline transform:none left by fullscreen mode, so CSS translateY takes over
+		wallpaperWrapper.style.removeProperty("transform");
 
 		// Check if currently on homepage
 		const isHome = isHomePage(window.location.pathname);
@@ -487,91 +508,57 @@ function showBannerMode(animate = false) {
 	}
 }
 
+
+
 function showFullscreenMode(animate = false) {
-	// Show wallpaper-wrapper and switch to fullscreen wallpaper mode
+	// Fullscreen mode: show banner wrapper at 100vh (full viewport)
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
-	const isMobile = window.innerWidth < 1024;
-	const isHome = isHomePage(window.location.pathname);
-	if (wallpaperWrapper) {
-		// Remove overlay mode class
-		wallpaperWrapper.classList.remove("wallpaper-overlay");
-		// Add fullscreen wallpaper mode class
-		wallpaperWrapper.classList.add("wallpaper-fullscreen");
-
-		if (isMobile && !isHome) {
-			// Hide wallpaper on mobile non-homepage
-			wallpaperWrapper.style.display = "none";
-			wallpaperWrapper.classList.add("mobile-hide-banner");
-		} else {
-			// Show wallpaper
-			wallpaperWrapper.style.display = "block";
-			wallpaperWrapper.style.setProperty("display", "block", "important");
-			wallpaperWrapper.style.top = "";
-			requestAnimationFrame(() => {
-				wallpaperWrapper.classList.remove("hidden");
-				wallpaperWrapper.classList.remove("opacity-0");
-				wallpaperWrapper.classList.add("opacity-100");
-				wallpaperWrapper.classList.remove("mobile-hide-banner");
-			});
-		}
-	}
-
-	// Show banner homepage text (if enabled and on homepage)
-	const bannerTextOverlay = document.querySelector(
-		".banner-text-overlay",
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
 	) as HTMLElement | null;
+
+	// Hide fullscreen wallpaper component, use banner wrapper for fullscreen
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.display = "none";
+	}
+
+	// Show banner wrapper as fullscreen banner (CSS makes it 100vh with fullscreen-banner class)
+	if (wallpaperWrapper) {
+		wallpaperWrapper.classList.remove("wallpaper-overlay", "wallpaper-fullscreen", "mobile-hide-banner");
+		wallpaperWrapper.style.display = "block";
+		wallpaperWrapper.style.top = "0";
+		wallpaperWrapper.style.transform = "none";
+	}
+
+	// Hide banner text overlay in fullscreen mode
+	const bannerTextOverlay = document.querySelector(".banner-text-overlay") as HTMLElement | null;
 	if (bannerTextOverlay) {
-		const homeTextEnabled = siteConfig.banner.bannerHomeText?.enable;
-		if (homeTextEnabled && isHome) {
-			bannerTextOverlay.classList.remove("hidden");
-			if (animate) {
-				// Banner text follows downward movement: wrapper instantly becomes 100vh, text flex centers at 50vh
-				// First use -17.5vh to compensate to banner position (32.5vh), then transition to 0 (fullscreen center 50vh)
-				bannerTextOverlay.style.transition = "none";
-				bannerTextOverlay.style.transform = "translateY(-17.5vh)";
-				requestAnimationFrame(() => {
-					bannerTextOverlay.style.transition =
-						"transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
-					bannerTextOverlay.style.transform = "translateY(0)";
-				});
-			}
-		} else {
-			bannerTextOverlay.classList.add("hidden");
-		}
+		bannerTextOverlay.classList.add("hidden");
 	}
 
-	// Adjust main content position
 	adjustMainContentPosition("fullscreen", animate);
-
-	// Remove transparency (fullscreen wallpaper mode doesn't use transparency)
 	adjustMainContentTransparency(false);
-
-	// Adjust navbar transparency
-	const navbar = document.getElementById("navbar");
-	if (navbar) {
-		const transparentMode =
-			backgroundWallpaperConfig.fullscreen?.navbar?.transparentMode ||
-			siteConfig.banner.navbar?.transparentMode ||
-			"semi";
-		navbar.setAttribute("data-transparent-mode", transparentMode);
-
-		if (
-			transparentMode === "semifull" &&
-			typeof window.initSemifullScrollDetection === "function"
-		) {
-			window.initSemifullScrollDetection();
-		}
-	}
 }
 
 function showOverlayMode() {
-	// Switch wallpaper-wrapper to overlay mode
+	// Show fullscreen wallpaper as full-page background
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
+	) as HTMLElement | null;
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.display = "block";
+		// Apply overlay opacity/blur from localStorage to the fullscreen wallpaper
+		const opacity = getStoredOverlayOpacity();
+		const blur = getStoredOverlayBlur();
+		fullscreenWallpaper.style.setProperty("--wallpaper-opacity", String(opacity));
+		fullscreenWallpaper.style.setProperty("--wallpaper-blur", `${blur}px`);
+	}
+
+	// Also show wallpaper-wrapper as corner card overlay
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
 	if (wallpaperWrapper) {
-		// Add overlay mode class, remove fullscreen wallpaper mode class
 		wallpaperWrapper.classList.remove("wallpaper-fullscreen");
 		wallpaperWrapper.classList.add("wallpaper-overlay");
-		// Show wallpaper
 		wallpaperWrapper.style.display = "block";
 		wallpaperWrapper.style.setProperty("display", "block", "important");
 		wallpaperWrapper.style.top = "";
@@ -599,6 +586,13 @@ function showOverlayMode() {
 function hideAllWallpapers() {
 	// Hide wallpaper
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
+	) as HTMLElement | null;
+
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.display = "none";
+	}
 
 	if (wallpaperWrapper) {
 		wallpaperWrapper.style.display = "none";
@@ -974,12 +968,15 @@ export function applyOverlayOpacityToDocument(opacity: number): void {
 		return;
 	}
 	const safeOpacity = clampNumber(opacity, 0, 1);
+	// Corner card overlay
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
 	if (wallpaperWrapper) {
-		wallpaperWrapper.style.setProperty(
-			"--overlay-opacity",
-			String(safeOpacity),
-		);
+		wallpaperWrapper.style.setProperty("--overlay-opacity", String(safeOpacity));
+	}
+	// Full-page background
+	const fullscreenWallpaper = document.querySelector("[data-fullscreen-wallpaper]") as HTMLElement | null;
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.setProperty("--wallpaper-opacity", String(safeOpacity));
 	}
 }
 
@@ -988,9 +985,15 @@ export function applyOverlayBlurToDocument(blur: number): void {
 		return;
 	}
 	const safeBlur = clampNumber(blur, 0, 20);
+	// Corner card overlay
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
 	if (wallpaperWrapper) {
 		wallpaperWrapper.style.setProperty("--overlay-blur", `${safeBlur}px`);
+	}
+	// Full-page background
+	const fullscreenWallpaper = document.querySelector("[data-fullscreen-wallpaper]") as HTMLElement | null;
+	if (fullscreenWallpaper) {
+		fullscreenWallpaper.style.setProperty("--wallpaper-blur", `${safeBlur}px`);
 	}
 }
 

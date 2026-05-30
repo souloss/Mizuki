@@ -75,6 +75,75 @@ body.wallpaper-transparent #toc-inner-wrapper:has(table-of-contents[data-loaded=
   z-index: 50;
 }
 
+/* ==========================================================================
+   全屏横幅模式 (fullscreen-banner)
+   首屏展示整个壁纸，内容在下方
+   ========================================================================== */
+
+/* 桌面端全屏横幅 */
+@media (min-width: 1280px) {
+  body.enable-banner.fullscreen-banner #top-row {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 100vh !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
+  body.enable-banner.fullscreen-banner #wallpaper-wrapper {
+    position: relative !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    top: 0 !important;
+    transform: none !important;
+    overflow: hidden !important;
+  }
+
+  body.enable-banner.fullscreen-banner #banner {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    transform: none !important;
+  }
+
+  body.enable-banner.fullscreen-banner .absolute.w-full.z-30 {
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 1rem !important;
+  }
+
+  body.enable-banner.fullscreen-banner #main-grid {
+    transform: translateY(0) !important;
+  }
+}
+
+/* 移动端全屏横幅 */
+@media (max-width: 1279px) {
+  body.enable-banner.fullscreen-banner #top-row {
+    height: 0 !important;
+    overflow: visible !important;
+    transition: none !important;
+  }
+
+  body.enable-banner.fullscreen-banner #wallpaper-wrapper:not(.mobile-hide-banner) {
+    position: relative !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    max-height: none;
+    top: 0 !important;
+    transform: none !important;
+  }
+
+  body.enable-banner.fullscreen-banner .absolute.w-full.z-30:not(.mobile-main-no-banner) {
+    position: relative !important;
+    top: 0 !important;
+    margin-top: 0 !important;
+    min-height: 0 !important;
+  }
+}
+
 /* 桌面端 Banner 模式下的主内容区域位置 */
 @media (min-width: 1280px) {
   body.enable-banner .absolute.w-full.z-30 {

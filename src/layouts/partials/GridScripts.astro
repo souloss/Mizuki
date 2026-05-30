@@ -48,6 +48,10 @@ const {
 				);
 				break;
 			case "fullscreen":
+				body.classList.remove("enable-banner", "wallpaper-transparent", "no-banner-mode");
+				body.classList.add("enable-banner", "fullscreen-banner");
+				break;
+			case "overlay":
 				body.classList.remove("enable-banner");
 				body.classList.add("wallpaper-transparent", "no-banner-mode");
 				break;
@@ -146,6 +150,10 @@ const {
 			void document.body.offsetHeight;
 		};
 
+		// Remove all wallpaper body classes first, then add back only what's needed
+		body.classList.remove("enable-banner", "wallpaper-transparent", "no-banner-mode", "no-banner-layout", "fullscreen-banner");
+		forceReflow();
+
 		switch (wallpaperMode) {
 			case "banner":
 				// 显示 banner，隐藏全屏壁纸
@@ -164,16 +172,9 @@ const {
 						tocWrapper.classList.add("toc-hide");
 					}
 				}
-				// 先移除body类，避免CSS冲突
-				body.classList.remove("wallpaper-transparent");
-				body.classList.remove("no-banner-mode");
-				// 强制重排
-				forceReflow();
-				// 移除内联样式，让CSS完全接管
 				if (mainContent) {
 					mainContent.style.removeProperty("top");
 				}
-				// 再添加enable-banner类
 				body.classList.add("enable-banner");
 				// navbar 恢复原始透明模式（从 config 读取）
 				if (navbar) {
@@ -196,35 +197,53 @@ const {
 				break;
 
 			case "fullscreen":
-				// 隐藏 banner，显示全屏壁纸
+					// 全屏横幅模式：显示 banner wrapper（100vh），隐藏全屏壁纸组件
+					if (bannerWrapper) {
+						bannerWrapper.style.display = "block";
+					}
+					if (fullscreenWallpaper) {
+						fullscreenWallpaper.style.display = "none";
+					}
+					// 在全屏模式下始终显示 TOC
+					if (tocWrapper) {
+						tocWrapper.classList.remove("toc-hide");
+					}
+					if (mainContent) {
+						mainContent.style.removeProperty("top");
+					}
+					body.classList.add("enable-banner");
+					body.classList.add("fullscreen-banner");
+					// navbar 透明模式
+					if (navbar) {
+						navbar.removeAttribute("data-dynamic-transparent");
+						navbar.setAttribute("data-transparent-mode", navbarTransparentMode);
+					}
+					forceReflow();
+					break;
+
+			case "overlay":
+				// 隐藏 banner wrapper（叠加模式使用 setting-utils.ts 的角落卡片）
 				if (bannerWrapper) {
 					bannerWrapper.style.display = "none";
 				}
+				// 显示全屏壁纸作为全页背景
 				if (fullscreenWallpaper) {
 					fullscreenWallpaper.style.display = "block";
 				}
-				// 在全屏模式下始终显示 TOC
+				// 叠加模式下始终显示 TOC
 				if (tocWrapper) {
 					tocWrapper.classList.remove("toc-hide");
 				}
-				// 先移除body类，避免CSS冲突
-				body.classList.remove("enable-banner");
-				// 强制重排
-				forceReflow();
-				// 移除内联样式，让CSS完全接管
 				if (mainContent) {
 					mainContent.style.removeProperty("top");
 				}
-				// 再添加wallpaper-transparent和no-banner-mode类
 				body.classList.add("wallpaper-transparent");
 				body.classList.add("no-banner-mode");
-				// navbar 强制设置为 semi 透明模式（忽略 config 配置）
+				// navbar 半透明
 				if (navbar) {
 					navbar.setAttribute("data-dynamic-transparent", "semi");
-					// 强制移除 config 中的 data-transparent-mode 影响
 					navbar.removeAttribute("data-transparent-mode");
 				}
-				// 强制重排以确保CSS变量正确更新
 				forceReflow();
 				break;
 
@@ -240,16 +259,9 @@ const {
 				if (tocWrapper) {
 					tocWrapper.classList.remove("toc-hide");
 				}
-				// 先移除body类，避免CSS冲突
-				body.classList.remove("enable-banner");
-				body.classList.remove("wallpaper-transparent");
-				// 强制重排
-				forceReflow();
-				// 移除内联样式，让CSS完全接管
 				if (mainContent) {
 					mainContent.style.removeProperty("top");
 				}
-				// 再添加no-banner-mode类
 				body.classList.add("no-banner-mode");
 				// navbar 强制设置为不透明（忽略 config 配置）
 				if (navbar) {
