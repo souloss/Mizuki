@@ -128,7 +128,8 @@ export function calculateFallbackActiveHeading(
 		if (isInRange) {
 			activeStates[i] = true;
 			return i;
-		} else if (offsetTop > windowHeight) {
+		}
+		if (offsetTop > windowHeight) {
 			break;
 		}
 	}

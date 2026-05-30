@@ -88,7 +88,10 @@ export async function generatePosterImage(
 	if (coverImg) {
 		const imgRatio = coverImg.width / coverImg.height;
 		const targetRatio = width / coverHeight;
-		let sx: number, sy: number, sWidth: number, sHeight: number;
+		let sx: number;
+		let sy: number;
+		let sWidth: number;
+		let sHeight: number;
 
 		if (imgRatio > targetRatio) {
 			sHeight = coverImg.height;
@@ -101,17 +104,7 @@ export async function generatePosterImage(
 			sx = 0;
 			sy = (coverImg.height - sHeight) / 2;
 		}
-		ctx.drawImage(
-			coverImg,
-			sx,
-			sy,
-			sWidth,
-			sHeight,
-			0,
-			0,
-			width,
-			coverHeight,
-		);
+		ctx.drawImage(coverImg, sx, sy, sWidth, sHeight, 0, 0, width, coverHeight);
 	} else {
 		ctx.save();
 		ctx.fillStyle = themeColor;

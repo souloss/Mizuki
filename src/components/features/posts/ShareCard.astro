@@ -6,17 +6,22 @@ import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 
 interface Props {
-  class?: string;
+	class?: string;
 }
 
-const showSponsor = sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor;
+const showSponsor =
+	sponsorConfig.showButtonInPost !== false && siteConfig.featurePages?.sponsor;
 const showSharePoster = siteConfig.sharePoster !== false;
 
 // Determine which icon/title/description to show based on config
 const isSponsorMode = showSponsor;
-const iconName = isSponsorMode ? "material-symbols:favorite" : "material-symbols:share";
+const iconName = isSponsorMode
+	? "material-symbols:favorite"
+	: "material-symbols:share";
 const titleKey = isSponsorMode ? I18nKey.sponsorButton : I18nKey.shareOnSocial;
-const descKey = isSponsorMode ? I18nKey.sponsorButtonText : I18nKey.shareOnSocialDescription;
+const descKey = isSponsorMode
+	? I18nKey.sponsorButtonText
+	: I18nKey.shareOnSocialDescription;
 ---
 
 {(showSharePoster || showSponsor) && (

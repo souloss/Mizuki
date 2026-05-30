@@ -1,14 +1,14 @@
 <script lang="ts">
-	import CoverImage from "../../music-player/atoms/CoverImage.svelte";
-	import type { Song } from "../../music-player/types";
+import CoverImage from "../../music-player/atoms/CoverImage.svelte";
+import type { Song } from "../../music-player/types";
 
-	interface Props {
-		currentSong: Song;
-		isPlaying: boolean;
-		isLoading: boolean;
-	}
+interface Props {
+	currentSong: Song;
+	isPlaying: boolean;
+	isLoading: boolean;
+}
 
-	const { currentSong, isPlaying, isLoading }: Props = $props();
+const { currentSong, isPlaying, isLoading }: Props = $props();
 </script>
 
 <CoverImage

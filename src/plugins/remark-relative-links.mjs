@@ -24,10 +24,14 @@ const resolvedCache = new Map();
  */
 function extractSlug(content) {
 	const match = content.match(/^---\s*\n([\s\S]*?)\n---\s*\n/);
-	if (!match) {return null;}
+	if (!match) {
+		return null;
+	}
 	const yaml = match[1];
 	const slugMatch = yaml.match(/^slug:\s*(.+)$/m);
-	if (!slugMatch) {return null;}
+	if (!slugMatch) {
+		return null;
+	}
 	return slugMatch[1].trim().replace(/^["']|["']$/g, "");
 }
 
@@ -39,18 +43,26 @@ function computeUrl(absolutePath, slug) {
 	// Extract the relative path after src/content/posts/
 	const postsDir = "src/content/posts/";
 	const postsIndex = absolutePath.replace(/\\/g, "/").indexOf(postsDir);
-	if (postsIndex < 0) {return null;}
+	if (postsIndex < 0) {
+		return null;
+	}
 
-	const relativePath = absolutePath.replace(/\\/g, "/").substring(postsIndex + postsDir.length);
+	const relativePath = absolutePath
+		.replace(/\\/g, "/")
+		.substring(postsIndex + postsDir.length);
 	const lastSlashIndex = relativePath.lastIndexOf("/");
-	const dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+	const dir =
+		lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
 
 	if (slug) {
 		return `/posts/${dir}${slug}/`;
 	}
 
 	// No slug: use default path (based on filename without extension)
-	const filename = lastSlashIndex >= 0 ? relativePath.substring(lastSlashIndex + 1) : relativePath;
+	const filename =
+		lastSlashIndex >= 0
+			? relativePath.substring(lastSlashIndex + 1)
+			: relativePath;
 	const filenameWithoutExt = filename.replace(/\.(md|mdx|markdown)$/i, "");
 	return `/posts/${dir}${filenameWithoutExt}/`;
 }
@@ -80,18 +92,26 @@ function resolveLinkTarget(targetPath) {
 
 export function remarkRelativeLinks() {
 	return (tree, file) => {
-		if (isDev()) { return; }
-		const currentFilePath = file.path || (file.history && file.history[0]) || "";
-		if (!currentFilePath) {return;}
+		if (isDev()) {
+			return;
+		}
+		const currentFilePath = file.path || file.history?.[0] || "";
+		if (!currentFilePath) {
+			return;
+		}
 
 		const currentDir = path.dirname(currentFilePath);
 
 		visit(tree, "link", (node) => {
 			const url = node.url;
-			if (!url || typeof url !== "string") {return;}
+			if (!url || typeof url !== "string") {
+				return;
+			}
 
 			// Only process relative markdown links
-			if (!url.startsWith("./") && !url.startsWith("../")) {return;}
+			if (!url.startsWith("./") && !url.startsWith("../")) {
+				return;
+			}
 
 			// Separate anchor from path (e.g. ./file.md#section)
 			let anchor = "";
@@ -103,7 +123,9 @@ export function remarkRelativeLinks() {
 			}
 
 			// Only process links to .md/.mdx files
-			if (!/\.(md|mdx|markdown)$/i.test(linkPath)) {return;}
+			if (!/\.(md|mdx|markdown)$/i.test(linkPath)) {
+				return;
+			}
 
 			// Resolve relative path to absolute path
 			const resolvedPath = path.resolve(currentDir, linkPath);

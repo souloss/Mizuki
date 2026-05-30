@@ -1,15 +1,15 @@
 <script lang="ts">
-	import Key from "../../../../i18n/i18nKey";
-	import { i18n } from "../../../../i18n/translation";
+import Key from "../../../../i18n/i18nKey";
+import { i18n } from "../../../../i18n/translation";
 
-	interface Props {
-		currentTime: number;
-		duration: number;
-		onclick: (event: MouseEvent) => void;
-		onkeydown: (event: KeyboardEvent) => void;
-	}
+interface Props {
+	currentTime: number;
+	duration: number;
+	onclick: (event: MouseEvent) => void;
+	onkeydown: (event: KeyboardEvent) => void;
+}
 
-	const { currentTime, duration, onclick, onkeydown }: Props = $props();
+const { currentTime, duration, onclick, onkeydown }: Props = $props();
 </script>
 
 <div

@@ -24,7 +24,9 @@ interface FriendsCircleData {
 let cachedData: FriendsCircleData | undefined;
 
 function loadCircleData(): FriendsCircleData {
-	if (cachedData) {return cachedData;}
+	if (cachedData) {
+		return cachedData;
+	}
 	const jsonPath = path.resolve(__dirname, "friends-circle.json");
 	if (fs.existsSync(jsonPath)) {
 		try {

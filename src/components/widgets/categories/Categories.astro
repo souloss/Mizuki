@@ -22,7 +22,8 @@ const isCollapsed = categoriesComponent
 // 从 customProps 读取 topN 配置，0 或未设置表示显示全部
 const topN: number = (categoriesComponent?.customProps?.topN as number) || 0;
 const sortedCategories = [...allCategories].sort((a, b) => b.count - a.count);
-const categories = topN > 0 ? sortedCategories.slice(0, topN) : sortedCategories;
+const categories =
+	topN > 0 ? sortedCategories.slice(0, topN) : sortedCategories;
 const hasMore = topN > 0 && allCategories.length > topN;
 
 const CAT_HUES = [0, 25, 50, 85, 140, 175, 210, 255, 290, 330];

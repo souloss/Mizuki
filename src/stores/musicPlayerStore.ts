@@ -211,8 +211,8 @@ class MusicPlayerStore {
 		if (typeof localStorage !== "undefined") {
 			const savedVolume = localStorage.getItem(STORAGE_KEY_VOLUME);
 			if (savedVolume) {
-				const volume = parseFloat(savedVolume);
-				if (!isNaN(volume) && volume >= 0 && volume <= 1) {
+				const volume = Number.parseFloat(savedVolume);
+				if (!Number.isNaN(volume) && volume >= 0 && volume <= 1) {
 					this.state.volume = volume;
 					this.state.isMuted = volume === 0;
 					if (this.audio) {
@@ -292,15 +292,13 @@ class MusicPlayerStore {
 				throw new Error("meting api error");
 			}
 			const list: any[] = await res.json();
-			this.state.playlist = list.map((song) =>
-				this.convertMetingSong(song),
-			);
+			this.state.playlist = list.map((song) => this.convertMetingSong(song));
 			this.state.isLoading = false;
 
 			if (this.state.playlist.length > 0) {
 				this.loadSong(this.state.playlist[0], false);
 			}
-		} catch (e) {
+		} catch (_e) {
 			this.showError(i18n(Key.musicPlayerErrorPlaylist));
 			this.state.isLoading = false;
 		}
@@ -312,7 +310,7 @@ class MusicPlayerStore {
 		const artist = song.artist ?? song.author ?? i18n(Key.unknownArtist);
 		let dur = song.duration ?? 0;
 		if (typeof dur === "string") {
-			dur = parseInt(dur, 10);
+			dur = Number.parseInt(dur, 10);
 		}
 		if (dur > 10000) {
 			dur = Math.floor(dur / 1000);
@@ -324,7 +322,7 @@ class MusicPlayerStore {
 		return {
 			id:
 				typeof song.id === "string"
-					? parseInt(song.id, 10)
+					? Number.parseInt(song.id, 10)
 					: (song.id ?? 0),
 			title,
 			artist,
@@ -414,9 +412,7 @@ class MusicPlayerStore {
 		let newIndex: number;
 		if (this.state.isShuffled) {
 			do {
-				newIndex = Math.floor(
-					Math.random() * this.state.playlist.length,
-				);
+				newIndex = Math.floor(Math.random() * this.state.playlist.length);
 			} while (
 				newIndex === this.state.currentIndex &&
 				this.state.playlist.length > 1
@@ -494,8 +490,7 @@ class MusicPlayerStore {
 	}
 
 	toggleRepeat(): void {
-		this.state.isRepeating = ((this.state.isRepeating + 1) %
-			3) as RepeatMode;
+		this.state.isRepeating = ((this.state.isRepeating + 1) % 3) as RepeatMode;
 		if (this.state.isRepeating !== 0) {
 			this.state.isShuffled = false;
 		}

@@ -1,13 +1,13 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	interface Props {
-		isPlaying: boolean;
-		isLoading: boolean;
-		onclick: () => void;
-	}
+interface Props {
+	isPlaying: boolean;
+	isLoading: boolean;
+	onclick: () => void;
+}
 
-	const { isPlaying, isLoading, onclick }: Props = $props();
+const { isPlaying, isLoading, onclick }: Props = $props();
 </script>
 
 <button

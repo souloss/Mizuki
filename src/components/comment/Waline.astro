@@ -2,15 +2,15 @@
 import { commentConfig, siteConfig } from "@/config";
 
 interface Props {
-  path: string;
+	path: string;
 }
 
 const walineConfig = {
-  ...commentConfig.waline,
-  el: "#waline",
-  path: Astro.props.path,
-  lang: siteConfig.lang.replace("_", "-"),
-  dark: 'html[data-theme="dark"]',
+	...commentConfig.waline,
+	el: "#waline",
+	path: Astro.props.path,
+	lang: siteConfig.lang.replace("_", "-"),
+	dark: 'html[data-theme="dark"]',
 };
 ---
 

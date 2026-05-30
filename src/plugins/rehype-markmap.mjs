@@ -9,8 +9,12 @@ import markmapRenderScript from "./markmap-render-script.js?raw";
  * @returns {string} 拼接后的文本
  */
 function extractText(node) {
-	if (node.type === "text") {return node.value || "";}
-	if (node.children) {return node.children.map(extractText).join("");}
+	if (node.type === "text") {
+		return node.value || "";
+	}
+	if (node.children) {
+		return node.children.map(extractText).join("");
+	}
 	return "";
 }
 
@@ -83,11 +87,16 @@ export function rehypeMarkmap(options = {}) {
 				node.tagName = "div";
 				node.properties = {
 					class: "markmap-dev-placeholder",
-					style: "border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;",
+					style:
+						"border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;",
 				};
 				node.children = [
 					h("strong", "[Markmap mindmap — rendered in production]"),
-					h("pre", { style: "margin:0.5em 0 0;font-size:0.85em;" }, markmapCode),
+					h(
+						"pre",
+						{ style: "margin:0.5em 0 0;font-size:0.85em;" },
+						markmapCode,
+					),
 				];
 				foundAny = true;
 				return;

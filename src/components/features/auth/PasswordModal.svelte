@@ -1,63 +1,60 @@
 <script lang="ts">
-	import I18nKey from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
-	import { onMount } from "svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { onMount } from "svelte";
 
-	const { hint = "" } = $props();
+const { hint = "" } = $props();
 
-	let errorMessage = $state("");
-	let isLoading = $state(false);
-	let password = $state("");
+let errorMessage = $state("");
+let isLoading = $state(false);
+let password = $state("");
 
-	function dispatchUnlock(pwd: string) {
-		const event = new CustomEvent("password:unlock", {
-			detail: { password: pwd },
-			bubbles: true,
-			composed: true,
-		});
-		document.dispatchEvent(event);
-	}
-
-	function handleSubmit(e: Event) {
-		e.preventDefault();
-		if (password.trim()) {
-			dispatchUnlock(password);
-		}
-	}
-
-	function handleKeypress(e: KeyboardEvent) {
-		if (e.key === "Enter" && password.trim()) {
-			dispatchUnlock(password);
-		}
-	}
-
-	onMount(() => {
-		const handleLoading = ((e: CustomEvent<boolean>) => {
-			isLoading = e.detail;
-		}) as EventListener;
-
-		const handleError = ((e: CustomEvent<string>) => {
-			errorMessage = e.detail;
-			isLoading = false;
-		}) as EventListener;
-
-		const handleClearError = (() => {
-			errorMessage = "";
-		}) as EventListener;
-
-		document.addEventListener("password:loading", handleLoading);
-		document.addEventListener("password:error", handleError);
-		document.addEventListener("password:clear-error", handleClearError);
-
-		return () => {
-			document.removeEventListener("password:loading", handleLoading);
-			document.removeEventListener("password:error", handleError);
-			document.removeEventListener(
-				"password:clear-error",
-				handleClearError,
-			);
-		};
+function dispatchUnlock(pwd: string) {
+	const event = new CustomEvent("password:unlock", {
+		detail: { password: pwd },
+		bubbles: true,
+		composed: true,
 	});
+	document.dispatchEvent(event);
+}
+
+function handleSubmit(e: Event) {
+	e.preventDefault();
+	if (password.trim()) {
+		dispatchUnlock(password);
+	}
+}
+
+function handleKeypress(e: KeyboardEvent) {
+	if (e.key === "Enter" && password.trim()) {
+		dispatchUnlock(password);
+	}
+}
+
+onMount(() => {
+	const handleLoading = ((e: CustomEvent<boolean>) => {
+		isLoading = e.detail;
+	}) as EventListener;
+
+	const handleError = ((e: CustomEvent<string>) => {
+		errorMessage = e.detail;
+		isLoading = false;
+	}) as EventListener;
+
+	const handleClearError = (() => {
+		errorMessage = "";
+	}) as EventListener;
+
+	document.addEventListener("password:loading", handleLoading);
+	document.addEventListener("password:error", handleError);
+	document.addEventListener("password:clear-error", handleClearError);
+
+	return () => {
+		document.removeEventListener("password:loading", handleLoading);
+		document.removeEventListener("password:error", handleError);
+		document.removeEventListener("password:clear-error", handleClearError);
+	};
+});
 </script>
 
 <div class="password-protection">

@@ -38,8 +38,7 @@ export async function processPosterImage(
 			const response = await fetch(imagePath);
 			const arrayBuffer = await response.arrayBuffer();
 			const base64 = Buffer.from(arrayBuffer).toString("base64");
-			const contentType =
-				response.headers.get("content-type") || "image/jpeg";
+			const contentType = response.headers.get("content-type") || "image/jpeg";
 			return `data:${contentType};base64,${base64}`;
 		} catch {
 			return imagePath;

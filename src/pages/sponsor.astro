@@ -15,8 +15,7 @@ if (!siteConfig.featurePages.sponsor) {
 
 // 检查评论系统是否启用
 const isCommentEnabled =
-	commentConfig?.enable &&
-	sponsorConfig.showComment !== false;
+	commentConfig?.enable && sponsorConfig.showComment !== false;
 
 const title = sponsorConfig.title || i18n(I18nKey.sponsorTitle);
 const description =

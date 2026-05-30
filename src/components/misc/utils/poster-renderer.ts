@@ -201,7 +201,7 @@ export function drawDateBadge(
 	coverHeight: number,
 	scale: number,
 	FONT_FAMILY: string,
-	isDarkMode: boolean = false,
+	isDarkMode = false,
 ): void {
 	const dateBoxW = 60 * scale;
 	const dateBoxH = 60 * scale;

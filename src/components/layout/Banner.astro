@@ -5,11 +5,10 @@
  * 轮播模式使用 Ken Burns + Crossfade 动画（参考 Firefly 实现）
  */
 
-import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.astro";
 import Image from "@components/atoms/Image/Image.astro";
+import TypewriterText from "@components/atoms/typewriter-text/TypewriterText.astro";
 import { Icon } from "astro-icon/components";
-import { siteConfig } from "../../config";
-import { backgroundWallpaperConfig } from "../../config";
+import { backgroundWallpaperConfig, siteConfig } from "../../config";
 import { BANNER_HEIGHT_EXTEND } from "../../constants/constants";
 
 interface Props {
@@ -60,7 +59,10 @@ const carouselIntervalMs = Math.max(
 );
 
 // 淡入淡出时间：间隔的 40%，范围 500ms ~ 1500ms
-const fadeMs = Math.min(Math.max(Math.round(carouselIntervalMs * 0.4), 500), 1500);
+const fadeMs = Math.min(
+	Math.max(Math.round(carouselIntervalMs * 0.4), 500),
+	1500,
+);
 
 // Ken Burns 动画时长 = 间隔 + 淡入，确保旧图在 crossfade 期间仍在运动，消除停顿感
 const kbDurationMs = carouselIntervalMs + fadeMs;

@@ -35,8 +35,8 @@ export function parseDateFromPath(
 	const match = path.match(/(\d{4})-(\d{2})-\d{2}/);
 	if (match) {
 		return {
-			year: parseInt(match[1]),
-			month: parseInt(match[2]) - 1,
+			year: Number.parseInt(match[1], 10),
+			month: Number.parseInt(match[2], 10) - 1,
 		};
 	}
 	return null;

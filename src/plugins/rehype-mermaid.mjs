@@ -55,13 +55,11 @@ export function rehypeMermaid(options = {}) {
 					node.tagName = "div";
 					node.properties = {
 						class: "mermaid-dev-placeholder",
-						style: "border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;",
+						style:
+							"border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;",
 					};
 					node.children = [
-						h(
-							"strong",
-							"[Mermaid diagram — rendered in production]",
-						),
+						h("strong", "[Mermaid diagram — rendered in production]"),
 						h(
 							"pre",
 							{ style: "margin:0.5em 0 0;font-size:0.85em;" },

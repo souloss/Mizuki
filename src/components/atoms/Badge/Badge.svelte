@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { BadgeProps } from "./types";
+import type { BadgeProps } from "./types";
 
-	interface Props extends BadgeProps {}
-	const { value, class: className = "" }: Props = $props();
+interface Props extends BadgeProps {}
+const { value, class: className = "" }: Props = $props();
 </script>
 
 {#if value !== undefined && value !== null && value !== ""}

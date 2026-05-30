@@ -1,55 +1,53 @@
 <script lang="ts">
-	import { onMount } from "svelte";
+import { onMount } from "svelte";
 
-	import type { CalendarStats } from "../types/calendar";
+import type { CalendarStats } from "../types/calendar";
 
-	interface Props {
-		currentYear: number;
-		stats: CalendarStats;
-		onYearSelect: (year: number) => void;
+interface Props {
+	currentYear: number;
+	stats: CalendarStats;
+	onYearSelect: (year: number) => void;
+}
+
+const { currentYear, stats, onYearSelect }: Props = $props();
+
+let containerEl: HTMLDivElement;
+
+const years = $derived(() => {
+	const result: number[] = [];
+	for (let y = stats.minYear; y <= stats.maxYear; y++) {
+		result.push(y);
+	}
+	return result;
+});
+
+function getYearClass(year: number): string {
+	const isCurrent = year === currentYear;
+	let baseClass =
+		"cursor-pointer rounded-lg flex flex-col items-center justify-center py-3 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";
+
+	if (isCurrent) {
+		baseClass +=
+			" border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/5";
+	} else {
+		baseClass += " text-neutral-700 dark:text-neutral-300";
 	}
 
-	const { currentYear, stats, onYearSelect }: Props = $props();
+	return baseClass;
+}
 
-	let containerEl: HTMLDivElement;
-
-	const years = $derived(() => {
-		const result: number[] = [];
-		for (let y = stats.minYear; y <= stats.maxYear; y++) {
-			result.push(y);
+function scrollToCurrentYear() {
+	setTimeout(() => {
+		const el = containerEl?.querySelector(`[data-year="${currentYear}"]`);
+		if (el) {
+			el.scrollIntoView({ block: "center", behavior: "smooth" });
 		}
-		return result;
-	});
+	}, 50);
+}
 
-	function getYearClass(year: number): string {
-		const isCurrent = year === currentYear;
-		let baseClass =
-			"cursor-pointer rounded-lg flex flex-col items-center justify-center py-3 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";
-
-		if (isCurrent) {
-			baseClass +=
-				" border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/5";
-		} else {
-			baseClass += " text-neutral-700 dark:text-neutral-300";
-		}
-
-		return baseClass;
-	}
-
-	function scrollToCurrentYear() {
-		setTimeout(() => {
-			const el = containerEl?.querySelector(
-				`[data-year="${currentYear}"]`,
-			);
-			if (el) {
-				el.scrollIntoView({ block: "center", behavior: "smooth" });
-			}
-		}, 50);
-	}
-
-	onMount(() => {
-		scrollToCurrentYear();
-	});
+onMount(() => {
+	scrollToCurrentYear();
+});
 </script>
 
 <div

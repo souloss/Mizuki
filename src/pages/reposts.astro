@@ -1,22 +1,26 @@
 ---
-import I18nKey from "@i18n/i18nKey"
-import { i18n } from "@i18n/translation"
-import MainGridLayout from "@layouts/MainGridLayout.astro"
-import { formatDateToYYYYMMDD } from "@utils/date-utils"
-import { getPostUrl } from "@utils/url-utils"
-import { getCollection } from "astro:content"
-import { Icon } from "astro-icon/components"
+import { getCollection } from "astro:content";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { formatDateToYYYYMMDD } from "@utils/date-utils";
+import { getPostUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
 
-import { siteConfig } from "@/config"
+import { siteConfig } from "@/config";
 
 if (!siteConfig.featurePages.reposts) {
-	return Astro.redirect("/404/")
+	return Astro.redirect("/404/");
 }
 
-const allPosts = await getCollection("posts", ({ data }) => !data.draft && data.repost)
+const allPosts = await getCollection(
+	"posts",
+	({ data }) => !data.draft && data.repost,
+);
 const repostPosts = allPosts.sort(
-	(a, b) => new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
-)
+	(a, b) =>
+		new Date(b.data.published).getTime() - new Date(a.data.published).getTime(),
+);
 ---
 
 <MainGridLayout

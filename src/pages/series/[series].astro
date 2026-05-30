@@ -1,25 +1,27 @@
 ---
-import I18nKey from "@i18n/i18nKey"
-import { i18n } from "@i18n/translation"
-import MainGridLayout from "@layouts/MainGridLayout.astro"
-import { formatDateToYYYYMMDD } from "@utils/date-utils"
-import { getSeriesData } from "@utils/series-utils"
-import { getPostUrl } from "@utils/url-utils"
-import { Icon } from "astro-icon/components"
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { formatDateToYYYYMMDD } from "@utils/date-utils";
+import { getSeriesData } from "@utils/series-utils";
+import { getPostUrl } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
 
 export async function getStaticPaths() {
-	const { getAllSeries } = await import("@utils/series-utils")
-	const allSeries = await getAllSeries()
+	const { getAllSeries } = await import("@utils/series-utils");
+	const allSeries = await getAllSeries();
 	return allSeries.map((series) => ({
 		params: { series: series.name },
 		props: { seriesName: series.name },
-	}))
+	}));
 }
 
-const { seriesName } = Astro.props
-const seriesInfo = await getSeriesData(seriesName)
+const { seriesName } = Astro.props;
+const seriesInfo = await getSeriesData(seriesName);
 
-if (!seriesInfo) {return Astro.redirect("/series/")}
+if (!seriesInfo) {
+	return Astro.redirect("/series/");
+}
 ---
 
 <MainGridLayout

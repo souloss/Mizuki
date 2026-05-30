@@ -26,10 +26,14 @@ const getImageSources = async () => {
 		}
 	}
 
-	const toArray = (src: string | string[] | undefined): string[] => 
-		Array.isArray(src) ? src : (typeof src === "string" ? [src] : []);
+	const toArray = (src: string | string[] | undefined): string[] =>
+		Array.isArray(src) ? src : typeof src === "string" ? [src] : [];
 
-	if (typeof srcConfig === "object" && srcConfig !== null && !Array.isArray(srcConfig)) {
+	if (
+		typeof srcConfig === "object" &&
+		srcConfig !== null &&
+		!Array.isArray(srcConfig)
+	) {
 		const desktop = toArray(srcConfig.desktop);
 		const mobile = toArray(srcConfig.mobile);
 		return {
@@ -47,10 +51,13 @@ const imageSources = await getImageSources();
 const hasDesktopImages = imageSources.desktop.length > 0;
 const hasMobileImages = imageSources.mobile.length > 0;
 
-if (!hasDesktopImages && !hasMobileImages) {return null;}
+if (!hasDesktopImages && !hasMobileImages) {
+	return null;
+}
 
 // 轮播配置
-const isCarouselEnabled = config.carousel?.enable && 
+const isCarouselEnabled =
+	config.carousel?.enable &&
 	(imageSources.desktop.length > 1 || imageSources.mobile.length > 1);
 const carouselInterval = config.carousel?.interval || 5;
 
@@ -61,25 +68,28 @@ const opacity = config.opacity || 0.8;
 const blurAmount = config.blur || 0;
 const positionClass = (() => {
 	switch (position) {
-		case "top": return "object-top";
-		case "bottom": return "object-bottom";
-		default: return "object-center";
+		case "top":
+			return "object-top";
+		case "bottom":
+			return "object-bottom";
+		default:
+			return "object-center";
 	}
 })();
 
 const renderGroups = [
 	{
-		key: 'desktop',
+		key: "desktop",
 		images: imageSources.desktop,
 		containerClass: "hidden md:block",
-		hasImages: hasDesktopImages
+		hasImages: hasDesktopImages,
 	},
 	{
-		key: 'mobile',
+		key: "mobile",
 		images: imageSources.mobile,
 		containerClass: "block md:hidden",
-		hasImages: hasMobileImages
-	}
+		hasImages: hasMobileImages,
+	},
 ];
 
 // 渐变过渡配置

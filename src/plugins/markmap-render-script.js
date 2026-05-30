@@ -14,11 +14,11 @@
 	// 存储 Markmap 实例，key 为容器 id
 	const markmapInstances = new Map();
 
-	function waitForMarkmap(timeout = 15000) {
+	function _waitForMarkmap(timeout = 15000) {
 		return new Promise((resolve, reject) => {
 			const startTime = Date.now();
 			function check() {
-				if (window.markmap && window.markmap.Transformer && window.markmap.Markmap) {
+				if (window.markmap?.Transformer && window.markmap.Markmap) {
 					resolve(window.markmap);
 				} else if (Date.now() - startTime > timeout) {
 					reject(new Error("Markmap library failed to load within timeout"));
@@ -31,7 +31,7 @@
 	}
 
 	async function loadMarkmap() {
-		if (window.markmap && window.markmap.Transformer && window.markmap.Markmap) {
+		if (window.markmap?.Transformer && window.markmap.Markmap) {
 			return Promise.resolve();
 		}
 
@@ -53,12 +53,14 @@
 						fallbackView.onload = () => {
 							resolve();
 						};
-						fallbackView.onerror = () => reject(new Error("Failed to load markmap-view from both CDNs"));
+						fallbackView.onerror = () =>
+							reject(new Error("Failed to load markmap-view from both CDNs"));
 						document.head.appendChild(fallbackView);
 					};
 					document.head.appendChild(viewScript);
 				};
-				libScript.onerror = () => reject(new Error("Failed to load markmap-lib from primary CDN"));
+				libScript.onerror = () =>
+					reject(new Error("Failed to load markmap-lib from primary CDN"));
 				document.head.appendChild(libScript);
 			};
 			d3Script.onerror = () => {
@@ -73,13 +75,18 @@
 						viewScript.onload = () => {
 							resolve();
 						};
-						viewScript.onerror = () => reject(new Error("Failed to load markmap-view from fallback CDN"));
+						viewScript.onerror = () =>
+							reject(
+								new Error("Failed to load markmap-view from fallback CDN"),
+							);
 						document.head.appendChild(viewScript);
 					};
-					libScript.onerror = () => reject(new Error("Failed to load markmap-lib from fallback CDN"));
+					libScript.onerror = () =>
+						reject(new Error("Failed to load markmap-lib from fallback CDN"));
 					document.head.appendChild(libScript);
 				};
-				fallbackD3.onerror = () => reject(new Error("Failed to load d3 from both CDNs"));
+				fallbackD3.onerror = () =>
+					reject(new Error("Failed to load d3 from both CDNs"));
 				document.head.appendChild(fallbackD3);
 			};
 			document.head.appendChild(d3Script);
@@ -93,11 +100,13 @@
 
 		return new Promise((resolve) => {
 			const script = document.createElement("script");
-			script.src = "https://unpkg.com/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
+			script.src =
+				"https://unpkg.com/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
 			script.onload = () => resolve();
 			script.onerror = () => {
 				const fallbackScript = document.createElement("script");
-				fallbackScript.src = "https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
+				fallbackScript.src =
+					"https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
 				fallbackScript.onload = () => resolve();
 				fallbackScript.onerror = () => {
 					// svg-pan-zoom 仅全屏模式使用，加载失败不阻塞
@@ -110,7 +119,9 @@
 	}
 
 	function applyThemeToMarkmap(svgElement, isDark) {
-		if (!svgElement) {return;}
+		if (!svgElement) {
+			return;
+		}
 		if (isDark) {
 			svgElement.style.filter = "brightness(0.9) contrast(1.1)";
 		} else {
@@ -128,7 +139,9 @@
 			const container = document.getElementById(containerId);
 			if (container) {
 				const controls = container.querySelector(".markmap-controls");
-				if (controls) {controls.remove();}
+				if (controls) {
+					controls.remove();
+				}
 				container.removeAttribute("data-markmap-init");
 			}
 		});
@@ -144,13 +157,19 @@
 			}
 
 			const wrapper = container.querySelector(".markmap-wrapper");
-			if (!wrapper) {return;}
+			if (!wrapper) {
+				return;
+			}
 
 			const wrapperId = wrapper.id;
-			if (!wrapperId) {return;}
+			if (!wrapperId) {
+				return;
+			}
 
 			const mmInstance = markmapInstances.get(wrapperId);
-			if (!mmInstance) {return;}
+			if (!mmInstance) {
+				return;
+			}
 
 			container.setAttribute("data-markmap-init", "true");
 
@@ -199,7 +218,9 @@
 
 	function openFullscreen(container) {
 		const svgElement = container.querySelector(".markmap svg");
-		if (!svgElement) {return;}
+		if (!svgElement) {
+			return;
+		}
 
 		const isDark = document.documentElement.classList.contains("dark");
 
@@ -210,7 +231,8 @@
 		content.className = "markmap-fs-content";
 
 		const clonedSvg = svgElement.cloneNode(true);
-		clonedSvg.style.cssText = "width:100%;height:100%;max-width:none;max-height:none;filter:none;";
+		clonedSvg.style.cssText =
+			"width:100%;height:100%;max-width:none;max-height:none;filter:none;";
 		content.appendChild(clonedSvg);
 
 		const fsControls = document.createElement("div");
@@ -319,7 +341,7 @@
 				}
 
 				applyThemeToMarkmap(clonedSvg, isDark);
-			} catch (e) {
+			} catch (_e) {
 				// svg-pan-zoom 初始化失败时，全屏仍可查看，只是没有缩放控制
 			}
 		});
@@ -330,7 +352,7 @@
 			return;
 		}
 
-		if (!window.markmap || !window.markmap.Transformer || !window.markmap.Markmap) {
+		if (!window.markmap?.Transformer || !window.markmap.Markmap) {
 			return;
 		}
 
@@ -339,7 +361,9 @@
 		destroyAllControls();
 
 		try {
-			const containers = document.querySelectorAll(".markmap-diagram-container");
+			const containers = document.querySelectorAll(
+				".markmap-diagram-container",
+			);
 			if (containers.length === 0) {
 				isRendering = false;
 				return;
@@ -354,34 +378,48 @@
 
 			for (const container of containers) {
 				const wrapper = container.querySelector(".markmap-wrapper");
-				if (!wrapper) {continue;}
+				if (!wrapper) {
+					continue;
+				}
 
 				const markmapDiv = wrapper.querySelector(".markmap");
-				if (!markmapDiv) {continue;}
+				if (!markmapDiv) {
+					continue;
+				}
 
 				let code = markmapDiv.getAttribute("data-markmap-code") || "";
 				if (!code) {
 					code = markmapDiv.textContent?.trim() || "";
 				}
-				if (!code) {continue;}
+				if (!code) {
+					continue;
+				}
 
-				markmapDiv.innerHTML = '<div class="markmap-loading">Rendering mindmap...</div>';
+				markmapDiv.innerHTML =
+					'<div class="markmap-loading">Rendering mindmap...</div>';
 
 				try {
 					const { root } = transformer.transform(code);
 
-					const svgElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+					const svgElement = document.createElementNS(
+						"http://www.w3.org/2000/svg",
+						"svg",
+					);
 					svgElement.style.width = "100%";
 					svgElement.style.height = "400px";
 					markmapDiv.innerHTML = "";
 					markmapDiv.appendChild(svgElement);
 
-					const mmInstance = Markmap.create(svgElement, {
-						autoFit: true,
-						fitRatio: 0.95,
-						duration: 0,
-						maxWidth: 0,
-					}, root);
+					const mmInstance = Markmap.create(
+						svgElement,
+						{
+							autoFit: true,
+							fitRatio: 0.95,
+							duration: 0,
+							maxWidth: 0,
+						},
+						root,
+					);
 
 					// 存储 Markmap 实例，key 为 wrapper 的 id
 					const wrapperId = wrapper.id;
@@ -393,7 +431,7 @@
 					if (renderedSvg) {
 						applyThemeToMarkmap(renderedSvg, isDark);
 					}
-				} catch (error) {
+				} catch (_error) {
 					markmapDiv.innerHTML = `
 						<div class="markmap-error">
 							<p>Failed to render mindmap.</p>
@@ -409,7 +447,7 @@
 			await new Promise((resolve) => setTimeout(resolve, 300));
 			initControls();
 			retryCount = 0;
-		} catch (error) {
+		} catch (_error) {
 			if (retryCount < MAX_RETRIES) {
 				retryCount++;
 				setTimeout(() => renderMarkmaps(), RETRY_DELAY * retryCount);
@@ -422,10 +460,15 @@
 	function setupMutationObserver() {
 		const observer = new MutationObserver((mutations) => {
 			for (const mutation of mutations) {
-				if (mutation.type === "attributes" && mutation.attributeName === "class") {
+				if (
+					mutation.type === "attributes" &&
+					mutation.attributeName === "class"
+				) {
 					const isDark = document.documentElement.classList.contains("dark");
 					const svgElements = document.querySelectorAll(".markmap svg");
-					svgElements.forEach((svg) => applyThemeToMarkmap(svg, isDark));
+					for (const svg of svgElements) {
+						applyThemeToMarkmap(svg, isDark);
+					}
 					break;
 				}
 			}
@@ -458,7 +501,7 @@
 			// svg-pan-zoom 仅全屏模式使用，不阻塞主渲染流程
 			loadSvgPanZoom();
 			await renderMarkmaps();
-		} catch (error) {
+		} catch (_error) {
 			// 初始化失败
 		}
 	}

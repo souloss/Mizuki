@@ -110,9 +110,7 @@ export function getAnimeList(
 			const skipLoad = isDev && !shouldFetchOnDev;
 
 			if (skipLoad) {
-				console.log(
-					`[Dev] Skipping ${mode} data load (fetchOnDev is off).`,
-				);
+				console.log(`[Dev] Skipping ${mode} data load (fetchOnDev is off).`);
 				animeList = [];
 			} else {
 				animeList = loadAnimeData(currentConfig.filename);
@@ -132,7 +130,8 @@ export function getStatusMap(): Record<
 	return {
 		watching: {
 			text: i18n(I18nKey.animeStatusWatching),
-			class: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+			class:
+				"bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
 			icon: "▶",
 		},
 		completed: {
@@ -142,12 +141,14 @@ export function getStatusMap(): Record<
 		},
 		planned: {
 			text: i18n(I18nKey.animeStatusPlanned),
-			class: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
+			class:
+				"bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
 			icon: "❤",
 		},
 		onhold: {
 			text: i18n(I18nKey.animeStatusOnHold),
-			class: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+			class:
+				"bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
 			icon: "⏸",
 		},
 		dropped: {

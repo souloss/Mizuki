@@ -1,42 +1,42 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	import Key from "../../../../i18n/i18nKey";
-	import { i18n } from "../../../../i18n/translation";
+import Key from "../../../../i18n/i18nKey";
+import { i18n } from "../../../../i18n/translation";
 
-	interface Props {
-		cover: string;
-		isPlaying: boolean;
-		isLoading: boolean;
-		size?: "mini" | "expanded" | "orb";
-		onclick?: () => void;
-		interactive?: boolean;
+interface Props {
+	cover: string;
+	isPlaying: boolean;
+	isLoading: boolean;
+	size?: "mini" | "expanded" | "orb";
+	onclick?: () => void;
+	interactive?: boolean;
+}
+
+const {
+	cover,
+	isPlaying,
+	isLoading,
+	size = "mini",
+	onclick,
+	interactive = false,
+}: Props = $props();
+
+function getAssetPath(path: string): string {
+	if (path.startsWith("http://") || path.startsWith("https://")) {
+		return path;
 	}
-
-	const {
-		cover,
-		isPlaying,
-		isLoading,
-		size = "mini",
-		onclick,
-		interactive = false,
-	}: Props = $props();
-
-	function getAssetPath(path: string): string {
-		if (path.startsWith("http://") || path.startsWith("https://")) {
-			return path;
-		}
-		if (path.startsWith("/")) {
-			return path;
-		}
-		return `/${path}`;
+	if (path.startsWith("/")) {
+		return path;
 	}
+	return `/${path}`;
+}
 
-	const containerClasses = {
-		mini: "cover-container relative w-12 h-12 rounded-full overflow-hidden",
-		expanded:
-			"cover-container relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0",
-	};
+const containerClasses = {
+	mini: "cover-container relative w-12 h-12 rounded-full overflow-hidden",
+	expanded:
+		"cover-container relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0",
+};
 </script>
 
 {#if size === "orb"}

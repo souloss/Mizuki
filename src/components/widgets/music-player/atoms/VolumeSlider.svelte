@@ -1,23 +1,23 @@
 <script lang="ts">
-	import type { Action } from "svelte/action";
+import type { Action } from "svelte/action";
 
-	interface Props {
-		volume: number;
-		isVolumeDragging: boolean;
-		volumeBarRef: Action<HTMLElement, undefined>;
-		onpointerdown: (event: PointerEvent) => void;
-		onkeydown: (event: KeyboardEvent) => void;
-		ariaLabel: string;
-	}
+interface Props {
+	volume: number;
+	isVolumeDragging: boolean;
+	volumeBarRef: Action<HTMLElement, undefined>;
+	onpointerdown: (event: PointerEvent) => void;
+	onkeydown: (event: KeyboardEvent) => void;
+	ariaLabel: string;
+}
 
-	const {
-		volume,
-		isVolumeDragging,
-		volumeBarRef,
-		onpointerdown,
-		onkeydown,
-		ariaLabel,
-	}: Props = $props();
+const {
+	volume,
+	isVolumeDragging,
+	volumeBarRef,
+	onpointerdown,
+	onkeydown,
+	ariaLabel,
+}: Props = $props();
 </script>
 
 <div

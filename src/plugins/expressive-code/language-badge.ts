@@ -15,7 +15,7 @@ export function pluginLanguageBadge() {
 				}
 			},
 		},
-		baseStyles: ({}) => `
+		baseStyles: () => `
       .frame[data-language]:not(.has-title):not(.is-terminal) {
         position: relative;
         

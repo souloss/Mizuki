@@ -1,6 +1,5 @@
-import { glob } from "astro/loaders";
-import { z } from "astro/zod";
 import { defineCollection } from "astro:content";
+import { z } from "astro/zod";
 
 import { devGlob } from "./loaders/glob-dev-trim.mjs";
 
@@ -50,19 +49,29 @@ const postsCollection = defineCollection({
 		redirect: z.string().optional(),
 
 		/* Repost fields - 转载 */
-		repost: z.object({
-			originalAuthor: z.string(),
-			originalUrl: z.string().url(),
-			originalTitle: z.string().optional(),
-			originalSite: z.string().optional(),
-			redirect: z.string().optional(),
-		}).optional(),
+		repost: z
+			.object({
+				originalAuthor: z.string(),
+				originalUrl: z.string().url(),
+				originalTitle: z.string().optional(),
+				originalSite: z.string().optional(),
+				redirect: z.string().optional(),
+			})
+			.optional(),
 
 		/* Copyright license */
-		copyright: z.enum([
-			"CC BY", "CC BY-SA", "CC BY-ND", "CC BY-NC",
-			"CC BY-NC-SA", "CC BY-NC-ND", "CC0", "ARR",
-		]).optional(),
+		copyright: z
+			.enum([
+				"CC BY",
+				"CC BY-SA",
+				"CC BY-ND",
+				"CC BY-NC",
+				"CC BY-NC-SA",
+				"CC BY-NC-ND",
+				"CC0",
+				"ARR",
+			])
+			.optional(),
 
 		/* For internal use */
 		prevTitle: z.string().default(""),
@@ -113,7 +122,18 @@ const docsCollection = defineCollection({
 		badge: z
 			.object({
 				type: z
-					.enum(["info", "warning", "danger", "tip", "new", "recommended", "not-recommended", "v2", "v3", "v4"])
+					.enum([
+						"info",
+						"warning",
+						"danger",
+						"tip",
+						"new",
+						"recommended",
+						"not-recommended",
+						"v2",
+						"v3",
+						"v4",
+					])
 					.default("info"),
 				text: z.string(),
 			})

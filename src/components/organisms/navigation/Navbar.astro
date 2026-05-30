@@ -1,17 +1,17 @@
 ---
-import { Icon } from "astro-icon/components"
+import { Icon } from "astro-icon/components";
 
-import { navBarConfig, siteConfig } from "../../../config"
-import { LinkPresets } from "../../../constants/link-presets"
-import { LinkPreset, type NavBarLink } from "../../../types/config"
-import { url } from "../../../utils/url-utils"
-import ThemeSwitch from "../../control/ThemeSwitch.svelte"
-import MobileTOC from "../../features/toc/MobileTOC.svelte"
-import DropdownMenu from "./DropdownMenu.astro"
-import NavMenuPanel from "./NavMenuPanel.astro"
-import Search from "./Search.svelte"
+import { navBarConfig, siteConfig } from "../../../config";
+import { LinkPresets } from "../../../constants/link-presets";
+import { LinkPreset, type NavBarLink } from "../../../types/config";
+import { url } from "../../../utils/url-utils";
+import ThemeSwitch from "../../control/ThemeSwitch.svelte";
+import MobileTOC from "../../features/toc/MobileTOC.svelte";
+import DropdownMenu from "./DropdownMenu.astro";
+import NavMenuPanel from "./NavMenuPanel.astro";
+import Search from "./Search.svelte";
 
-const className = Astro.props.class
+const className = Astro.props.class;
 
 // 获取导航栏透明模式配置
 const navbarTransparentMode =
@@ -34,13 +34,18 @@ const featurePageUrlMap: Record<string, string> = {
 
 function isFeaturePageDisabled(url: string): boolean {
 	const key = featurePageUrlMap[url];
-	if (key && !siteConfig.featurePages[key as keyof typeof siteConfig.featurePages]) {
+	if (
+		key &&
+		!siteConfig.featurePages[key as keyof typeof siteConfig.featurePages]
+	) {
 		return true;
 	}
 	return false;
 }
 
-function filterLinksByFeaturePages(items: (NavBarLink | LinkPreset)[]): NavBarLink[] {
+function filterLinksByFeaturePages(
+	items: (NavBarLink | LinkPreset)[],
+): NavBarLink[] {
 	return items
 		.map((item: NavBarLink | LinkPreset): NavBarLink | null => {
 			if (typeof item === "number") {
@@ -68,17 +73,29 @@ function filterLinksByFeaturePages(items: (NavBarLink | LinkPreset)[]): NavBarLi
 const links: NavBarLink[] = filterLinksByFeaturePages(navBarConfig.links);
 
 const rawLogo = siteConfig.navbarTitle?.logo;
-const logoSrc = rawLogo?.match(/^(http|https|\/\/)/) ? rawLogo : rawLogo ? url(rawLogo) : "";
+const logoSrc = rawLogo?.match(/^(http|https|\/\/)/)
+	? rawLogo
+	: rawLogo
+		? url(rawLogo)
+		: "";
 
 const rawIcon = siteConfig.navbarTitle?.icon;
-const iconSrc = rawIcon?.match(/^(http|https|\/\/)/) ? rawIcon : rawIcon ? url(rawIcon) : "";
+const iconSrc = rawIcon?.match(/^(http|https|\/\/)/)
+	? rawIcon
+	: rawIcon
+		? url(rawIcon)
+		: "";
 
 const isLogoExternal = rawLogo?.match(/^(http|https|\/\/)/);
 const isIconExternal = rawIcon?.match(/^(http|https|\/\/)/);
 const hasLogoPngFallback = rawLogo?.endsWith(".png") && !isLogoExternal;
 const hasIconPngFallback = rawIcon?.endsWith(".png") && !isIconExternal;
-const logoWebpSrc = hasLogoPngFallback ? logoSrc.replace(/\.png$/i, ".webp") : logoSrc;
-const iconWebpSrc = hasIconPngFallback ? iconSrc.replace(/\.png$/i, ".webp") : iconSrc;
+const logoWebpSrc = hasLogoPngFallback
+	? logoSrc.replace(/\.png$/i, ".webp")
+	: logoSrc;
+const iconWebpSrc = hasIconPngFallback
+	? iconSrc.replace(/\.png$/i, ".webp")
+	: iconSrc;
 ---
 <div id="navbar" class="z-50 onload-animation group" data-transparent-mode={navbarTransparentMode} data-is-home={isHomePage}>
     <div class="absolute h-8 left-0 right-0 -top-8 bg-[var(--card-bg)] transition"></div> <!-- used for onload animation -->

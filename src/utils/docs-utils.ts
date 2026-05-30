@@ -1,7 +1,12 @@
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
 
-import type { DocHomeAction, DocHomeConfig, DocHomeFeature, DocSidebarSection } from "@/types/config";
+import type {
+	DocHomeAction,
+	DocHomeConfig,
+	DocHomeFeature,
+	DocSidebarSection,
+} from "@/types/config";
 
 // ── Types ───────────────────────────────────────────────────────────────
 
@@ -75,8 +80,12 @@ const ICON_KEYWORD_MAP: Record<string, string> = {
 };
 
 function normalizeIcon(icon?: string): string | undefined {
-	if (!icon) {return undefined;}
-	if (icon === "material-symbols:cloud-upload-rounded") {return "material-symbols:cloud";}
+	if (!icon) {
+		return undefined;
+	}
+	if (icon === "material-symbols:cloud-upload-rounded") {
+		return "material-symbols:cloud";
+	}
 	if (
 		icon.startsWith("material-symbols:") ||
 		icon.startsWith("mdi:") ||
@@ -87,7 +96,9 @@ function normalizeIcon(icon?: string): string | undefined {
 	}
 	const lower = icon.toLowerCase();
 	for (const [keyword, mapped] of Object.entries(ICON_KEYWORD_MAP)) {
-		if (lower.includes(keyword)) {return mapped;}
+		if (lower.includes(keyword)) {
+			return mapped;
+		}
 	}
 	return ICON_FALLBACK;
 }
@@ -107,8 +118,13 @@ const badgeStyleMap: Record<string, string> = {
 	v4: "info",
 };
 
-function mapBadge(raw?: { type?: string; text: string }): { type: string; text: string } | undefined {
-	if (!raw) {return undefined;}
+function mapBadge(raw?: {
+	type?: string;
+	text: string;
+}): { type: string; text: string } | undefined {
+	if (!raw) {
+		return undefined;
+	}
 	return {
 		type: badgeStyleMap[raw.type ?? "info"] ?? "info",
 		text: raw.text,
@@ -130,7 +146,9 @@ interface TreeNode {
 }
 
 function sortTree(nodes: TreeNode[]): TreeNode[] {
-	return nodes.sort((a, b) => a.order - b.order).map((n) => ({ ...n, children: sortTree(n.children) }));
+	return nodes
+		.sort((a, b) => a.order - b.order)
+		.map((n) => ({ ...n, children: sortTree(n.children) }));
 }
 
 function treeToSidebarSections(nodes: TreeNode[]): DocSidebarSection[] {
@@ -159,9 +177,10 @@ interface DocSidebarItemCompatible {
 }
 
 function treeToSidebarItem(node: TreeNode): DocSidebarItemCompatible {
-	const children = node.children.length > 0
-		? sortTree(node.children).map((child) => treeToSidebarItem(child))
-		: undefined;
+	const children =
+		node.children.length > 0
+			? sortTree(node.children).map((child) => treeToSidebarItem(child))
+			: undefined;
 
 	const url = node.url ?? "";
 
@@ -206,7 +225,12 @@ function buildAutoSidebar(
 			const dir = dirParts[i];
 			const key = [docSlug, ...dirParts.slice(0, i + 1)].join("/");
 			if (!nodeMap.has(key)) {
-				const node: TreeNode = { title: dir, order: 0, children: [], isIndex: false };
+				const node: TreeNode = {
+					title: dir,
+					order: 0,
+					children: [],
+					isIndex: false,
+				};
 				nodeMap.set(key, node);
 				parentNode.children.push(node);
 			}
@@ -214,9 +238,7 @@ function buildAutoSidebar(
 		}
 
 		if (isIndex) {
-			const fullUrl = permalink
-				? docUrlFromPermalink(docSlug, permalink)
-				: "";
+			const fullUrl = permalink ? docUrlFromPermalink(docSlug, permalink) : "";
 			parentNode.title = title;
 			parentNode.order = order;
 			parentNode.icon = icon;
@@ -228,7 +250,10 @@ function buildAutoSidebar(
 		} else {
 			const fullUrl = permalink
 				? docUrlFromPermalink(docSlug, permalink)
-				: docUrlFromPermalink(docSlug, normalizeSlashPath(stripDocSlugAndLang(entry.id, docSlug)));
+				: docUrlFromPermalink(
+						docSlug,
+						normalizeSlashPath(stripDocSlugAndLang(entry.id, docSlug)),
+					);
 			const node: TreeNode = {
 				title,
 				order,
@@ -249,8 +274,12 @@ function buildAutoSidebar(
 
 // ── Sidebar data retrieval ──────────────────────────────────────────────
 
-export async function getDocSidebarData(docSlug: string): Promise<DocSidebarSection[]> {
-	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+export async function getDocSidebarData(
+	docSlug: string,
+): Promise<DocSidebarSection[]> {
+	const allDocs = await getCollection("docs", ({ id }) =>
+		id.startsWith(`${docSlug}/`),
+	);
 	return buildAutoSidebar(allDocs, docSlug);
 }
 
@@ -263,11 +292,17 @@ export function markCurrentPage(
 	const normalized = normalizeSlashPath(currentUrl);
 	let found = false;
 
-	function markItems(items: DocSidebarItemCompatible[]): DocSidebarItemCompatible[] {
+	function markItems(
+		items: DocSidebarItemCompatible[],
+	): DocSidebarItemCompatible[] {
 		return items.map((item) => {
-			if (found) {return item;}
+			if (found) {
+				return item;
+			}
 			const isCurrent = normalizeSlashPath(item.url) === normalized;
-			if (isCurrent) {found = true;}
+			if (isCurrent) {
+				found = true;
+			}
 			return {
 				...item,
 				isCurrent,
@@ -284,15 +319,21 @@ export function markCurrentPage(
 
 // ── Home page config ───────────────────────────────────────────────────
 
-export async function getDocHomeConfig(docSlug: string): Promise<DocHomeConfig | undefined> {
-	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+export async function getDocHomeConfig(
+	docSlug: string,
+): Promise<DocHomeConfig | undefined> {
+	const allDocs = await getCollection("docs", ({ id }) =>
+		id.startsWith(`${docSlug}/`),
+	);
 
 	const rootIndex = allDocs.find((entry) => {
 		const parts = entry.id.split("/");
 		return parts.length === 2 && parts[1] === "_index";
 	});
 
-	if (!rootIndex) {return undefined;}
+	if (!rootIndex) {
+		return undefined;
+	}
 
 	const fm = rootIndex.data;
 
@@ -317,19 +358,26 @@ export async function getDocProjectSlugs(): Promise<string[]> {
 	const slugs = new Set<string>();
 	for (const doc of allDocs) {
 		const slug = doc.data.docSlug || inferDocSlugFromId(doc.id);
-		if (slug) {slugs.add(slug);}
+		if (slug) {
+			slugs.add(slug);
+		}
 	}
 	return [...slugs];
 }
 
-export async function getDocProjectMeta(docSlug: string): Promise<DocProjectMeta> {
-	const allDocs = await getCollection("docs", ({ id }) => id.startsWith(docSlug + "/"));
+export async function getDocProjectMeta(
+	docSlug: string,
+): Promise<DocProjectMeta> {
+	const allDocs = await getCollection("docs", ({ id }) =>
+		id.startsWith(`${docSlug}/`),
+	);
 	const rootIndex = allDocs.find((entry) => {
 		const parts = entry.id.split("/");
 		return parts.length === 2 && parts[1] === "_index";
 	});
 
-	const title = rootIndex?.data.title ?? docSlug.charAt(0).toUpperCase() + docSlug.slice(1);
+	const title =
+		rootIndex?.data.title ?? docSlug.charAt(0).toUpperCase() + docSlug.slice(1);
 	const description = rootIndex?.data.description ?? "";
 	const defaultLang = await getDocDefaultLang(docSlug);
 	const availableLangs = await getDocAvailableLangs(docSlug);
@@ -342,7 +390,9 @@ export async function getDocProjectMeta(docSlug: string): Promise<DocProjectMeta
 	const sections = new Set<string>();
 	for (const page of allDocs) {
 		const parts = page.id.split("/");
-		if (parts.length > 2) {sections.add(parts[1]);}
+		if (parts.length > 2) {
+			sections.add(parts[1]);
+		}
 	}
 
 	return {
@@ -360,7 +410,9 @@ export async function getDocProjectMeta(docSlug: string): Promise<DocProjectMeta
 
 export async function getDocDefaultLang(docSlug: string): Promise<string> {
 	const pages = await getDocPages(docSlug);
-	if (pages.length === 0) {return "";}
+	if (pages.length === 0) {
+		return "";
+	}
 
 	const langCounts: Record<string, number> = {};
 	for (const page of pages) {
@@ -373,15 +425,22 @@ export async function getDocDefaultLang(docSlug: string): Promise<string> {
 
 export async function getDocAvailableLangs(docSlug: string): Promise<string[]> {
 	const pages = await getDocPages(docSlug);
-	const langs = new Set(pages.map((page) => (page.data.lang || "")).filter(Boolean));
+	const langs = new Set(
+		pages.map((page) => page.data.lang || "").filter(Boolean),
+	);
 	return Array.from(langs);
 }
 
 // ── Path utilities ─────────────────────────────────────────────────────
 
 function normalizeSlashPath(path: string): string {
-	const normalized = path.replace(/\\/g, "/").replace(/\/+/g, "/").toLowerCase();
-	if (normalized === "/") {return "/";}
+	const normalized = path
+		.replace(/\\/g, "/")
+		.replace(/\/+/g, "/")
+		.toLowerCase();
+	if (normalized === "/") {
+		return "/";
+	}
 	return `/${normalized.replace(/^\/+|\/+$/g, "")}/`;
 }
 
@@ -389,13 +448,21 @@ function stripExt(path: string): string {
 	return path;
 }
 
-function stripDocSlugAndLang(id: string, docSlug: string, lang?: string): string {
+function stripDocSlugAndLang(
+	id: string,
+	docSlug: string,
+	lang?: string,
+): string {
 	let path = stripExt(id).replace(/\\/g, "/");
-	if (path === docSlug) {return "index";}
+	if (path === docSlug) {
+		return "index";
+	}
 	if (path.startsWith(`${docSlug}/`)) {
 		path = path.slice(docSlug.length + 1);
 	}
-	if (lang && path === lang) {return "index";}
+	if (lang && path === lang) {
+		return "index";
+	}
 	if (lang && path.startsWith(`${lang}/`)) {
 		path = path.slice(lang.length + 1);
 	}
@@ -404,7 +471,12 @@ function stripDocSlugAndLang(id: string, docSlug: string, lang?: string): string
 
 const DOCS_BASE = "/docs";
 
-function docUrlFromPermalink(docSlug: string, permalink: string, lang?: string, defaultLang?: string): string {
+function docUrlFromPermalink(
+	docSlug: string,
+	permalink: string,
+	lang?: string,
+	defaultLang?: string,
+): string {
 	const langPart = lang && lang !== (defaultLang || "") ? `/${lang}` : "";
 	return normalizeSlashPath(`${DOCS_BASE}/${docSlug}${langPart}${permalink}`);
 }
@@ -429,7 +501,9 @@ export function getDocPageUrl(
 
 // ── Get all pages for a doc slug ────────────────────────────────────────
 
-export async function getDocPages(docSlug: string): Promise<CollectionEntry<"docs">[]> {
+export async function getDocPages(
+	docSlug: string,
+): Promise<CollectionEntry<"docs">[]> {
 	return getCollection("docs", (entry) => {
 		const entryDocSlug = entry.data.docSlug || inferDocSlugFromId(entry.id);
 		return entryDocSlug === docSlug;
@@ -463,13 +537,23 @@ export async function getDocPrevNextLinks(
 
 	const currentUrl = getDocPageUrl(docSlug, currentPageId, lang, defaultLang);
 	const normalized = normalizeSlashPath(currentUrl);
-	const idx = items.findIndex((item) => normalizeSlashPath(item.url) === normalized);
+	const idx = items.findIndex(
+		(item) => normalizeSlashPath(item.url) === normalized,
+	);
 
-	if (idx === -1) {return {};}
+	if (idx === -1) {
+		return {};
+	}
 
 	return {
-		prev: idx > 0 ? { title: items[idx - 1].title, url: items[idx - 1].url } : undefined,
-		next: idx < items.length - 1 ? { title: items[idx + 1].title, url: items[idx + 1].url } : undefined,
+		prev:
+			idx > 0
+				? { title: items[idx - 1].title, url: items[idx - 1].url }
+				: undefined,
+		next:
+			idx < items.length - 1
+				? { title: items[idx + 1].title, url: items[idx + 1].url }
+				: undefined,
 	};
 }
 
@@ -482,12 +566,20 @@ export async function getDocPageWithFallback(
 	defaultLang: string,
 ): Promise<{ entry: CollectionEntry<"docs">; isFallback: boolean }> {
 	const requested = await getDocPages(docSlug);
-	const match = requested.find((entry) => stripDocSlugAndLang(entry.id, docSlug, lang) === pagePath);
-	if (match) {return { entry: match, isFallback: false };}
+	const match = requested.find(
+		(entry) => stripDocSlugAndLang(entry.id, docSlug, lang) === pagePath,
+	);
+	if (match) {
+		return { entry: match, isFallback: false };
+	}
 
 	const defaults = await getDocPages(docSlug);
-	const fallback = defaults.find((entry) => stripDocSlugAndLang(entry.id, docSlug, defaultLang) === pagePath);
-	if (fallback) {return { entry: fallback, isFallback: true };}
+	const fallback = defaults.find(
+		(entry) => stripDocSlugAndLang(entry.id, docSlug, defaultLang) === pagePath,
+	);
+	if (fallback) {
+		return { entry: fallback, isFallback: true };
+	}
 
 	throw new Error(`Doc page not found: ${docSlug}/${pagePath}`);
 }

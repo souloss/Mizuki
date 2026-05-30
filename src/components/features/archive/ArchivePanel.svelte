@@ -1,115 +1,120 @@
 <script lang="ts">
-	import I18nKey from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
 
-	const { sortedPosts = [] }: { sortedPosts?: Post[] } = $props();
+const { sortedPosts = [] }: { sortedPosts?: Post[] } = $props();
 
-	interface Post {
-		id: string;
-		url?: string;
-		data: {
-			title: string;
-			tags: string[];
-			category?: string;
-			published: Date;
-			alias?: string;
-			permalink?: string;
-		};
-	}
+interface Post {
+	id: string;
+	url?: string;
+	data: {
+		title: string;
+		tags: string[];
+		category?: string;
+		published: Date;
+		alias?: string;
+		permalink?: string;
+	};
+}
 
-	interface Group {
-		year: number;
-		posts: Post[];
-	}
+interface Group {
+	year: number;
+	posts: Post[];
+}
 
-	let groups: Group[] = $state([]);
+let groups: Group[] = $state([]);
 
-	function formatDate(date: Date) {
-		const month = (date.getMonth() + 1).toString().padStart(2, "0");
-		const day = date.getDate().toString().padStart(2, "0");
-		return `${month}-${day}`;
-	}
+function formatDate(date: Date) {
+	const month = (date.getMonth() + 1).toString().padStart(2, "0");
+	const day = date.getDate().toString().padStart(2, "0");
+	return `${month}-${day}`;
+}
 
-	function formatTag(tagList: string[]) {
-		return tagList.map((t) => `#${t}`).join(" ");
-	}
+function formatTag(tagList: string[]) {
+	return tagList.map((t) => `#${t}`).join(" ");
+}
 
-	function filterAndGroupPosts(
-		posts: Post[],
-		filterTags: string[],
-		filterCategories: string[],
-		filterUncategorized: string | null,
-	): Group[] {
-		let filteredPosts = posts;
+function filterAndGroupPosts(
+	posts: Post[],
+	filterTags: string[],
+	filterCategories: string[],
+	filterUncategorized: string | null,
+): Group[] {
+	let filteredPosts = posts;
 
-		if (filterTags.length > 0) {
-			filteredPosts = filteredPosts.filter(
-				(post) =>
-					Array.isArray(post.data.tags) &&
-					post.data.tags.some((tag) => filterTags.includes(tag)),
-			);
-		}
-
-		if (filterCategories.length > 0) {
-			filteredPosts = filteredPosts.filter(
-				(post) =>
-					post.data.category &&
-					filterCategories.includes(post.data.category),
-			);
-		}
-
-		if (filterUncategorized) {
-			filteredPosts = filteredPosts.filter((post) => !post.data.category);
-		}
-
-		filteredPosts = filteredPosts
-			.slice()
-			.sort(
-				(a, b) =>
-					b.data.published.getTime() - a.data.published.getTime(),
-			);
-
-		const grouped = filteredPosts.reduce(
-			(acc, post) => {
-				const year = post.data.published.getFullYear();
-				if (!acc[year]) {
-					acc[year] = [];
-				}
-				acc[year].push(post);
-				return acc;
-			},
-			{} as Record<number, Post[]>,
+	if (filterTags.length > 0) {
+		filteredPosts = filteredPosts.filter(
+			(post) =>
+				Array.isArray(post.data.tags) &&
+				post.data.tags.some((tag) => filterTags.includes(tag)),
 		);
-
-		const groupedPostsArray = Object.keys(grouped).map((yearStr) => ({
-			year: Number.parseInt(yearStr, 10),
-			posts: grouped[Number.parseInt(yearStr, 10)],
-		}));
-
-		groupedPostsArray.sort((a, b) => b.year - a.year);
-
-		return groupedPostsArray;
 	}
 
-	// Read URL filter params
-	let filterTags: string[] = $state([]);
-	let filterCategories: string[] = $state([]);
-	let filterUncategorized: string | null = $state(null);
+	if (filterCategories.length > 0) {
+		filteredPosts = filteredPosts.filter(
+			(post) =>
+				post.data.category && filterCategories.includes(post.data.category),
+		);
+	}
 
-	$effect(() => {
-		if (typeof window !== "undefined") {
-			const params = new URLSearchParams(window.location.search);
-			filterTags = params.has("tag") ? params.getAll("tag") : [];
-			filterCategories = params.has("category") ? params.getAll("category") : [];
-			filterUncategorized = params.get("uncategorized");
-		}
+	if (filterUncategorized) {
+		filteredPosts = filteredPosts.filter((post) => !post.data.category);
+	}
 
-		if (filterTags.length > 0 || filterCategories.length > 0 || filterUncategorized) {
-			groups = filterAndGroupPosts(sortedPosts, filterTags, filterCategories, filterUncategorized);
-		} else {
-			groups = filterAndGroupPosts(sortedPosts, [], [], null);
-		}
-	});
+	filteredPosts = filteredPosts
+		.slice()
+		.sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+
+	const grouped = filteredPosts.reduce(
+		(acc, post) => {
+			const year = post.data.published.getFullYear();
+			if (!acc[year]) {
+				acc[year] = [];
+			}
+			acc[year].push(post);
+			return acc;
+		},
+		{} as Record<number, Post[]>,
+	);
+
+	const groupedPostsArray = Object.keys(grouped).map((yearStr) => ({
+		year: Number.parseInt(yearStr, 10),
+		posts: grouped[Number.parseInt(yearStr, 10)],
+	}));
+
+	groupedPostsArray.sort((a, b) => b.year - a.year);
+
+	return groupedPostsArray;
+}
+
+// Read URL filter params
+let filterTags: string[] = $state([]);
+let filterCategories: string[] = $state([]);
+let filterUncategorized: string | null = $state(null);
+
+$effect(() => {
+	if (typeof window !== "undefined") {
+		const params = new URLSearchParams(window.location.search);
+		filterTags = params.has("tag") ? params.getAll("tag") : [];
+		filterCategories = params.has("category") ? params.getAll("category") : [];
+		filterUncategorized = params.get("uncategorized");
+	}
+
+	if (
+		filterTags.length > 0 ||
+		filterCategories.length > 0 ||
+		filterUncategorized
+	) {
+		groups = filterAndGroupPosts(
+			sortedPosts,
+			filterTags,
+			filterCategories,
+			filterUncategorized,
+		);
+	} else {
+		groups = filterAndGroupPosts(sortedPosts, [], [], null);
+	}
+});
 </script>
 
 <div class="card-base px-8 py-6">

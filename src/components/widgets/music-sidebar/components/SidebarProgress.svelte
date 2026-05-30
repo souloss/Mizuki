@@ -1,37 +1,35 @@
 <script lang="ts">
-	interface Props {
-		currentTime: number;
-		duration: number;
-		onSeek: (time: number) => void;
+interface Props {
+	currentTime: number;
+	duration: number;
+	onSeek: (time: number) => void;
+}
+
+const { currentTime, duration, onSeek }: Props = $props();
+
+const progressPercent = $derived(
+	duration > 0 ? Math.max(0, Math.min(100, (currentTime / duration) * 100)) : 0,
+);
+
+function handleClick(event: MouseEvent) {
+	const el = event.currentTarget as HTMLElement | null;
+	if (!el || duration <= 0) {
+		return;
 	}
+	const rect = el.getBoundingClientRect();
+	const percent = (event.clientX - rect.left) / rect.width;
+	const clamped = Math.max(0, Math.min(1, percent));
+	const time = clamped * duration;
+	onSeek(time);
+}
 
-	const { currentTime, duration, onSeek }: Props = $props();
-
-	const progressPercent = $derived(
-		duration > 0
-			? Math.max(0, Math.min(100, (currentTime / duration) * 100))
-			: 0,
-	);
-
-	function handleClick(event: MouseEvent) {
-		const el = event.currentTarget as HTMLElement | null;
-		if (!el || duration <= 0) {
-			return;
-		}
-		const rect = el.getBoundingClientRect();
-		const percent = (event.clientX - rect.left) / rect.width;
-		const clamped = Math.max(0, Math.min(1, percent));
-		const time = clamped * duration;
+function handleKeyDown(event: KeyboardEvent) {
+	if (event.key === "Enter" || event.key === " ") {
+		event.preventDefault();
+		const time = duration * 0.5;
 		onSeek(time);
 	}
-
-	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === "Enter" || event.key === " ") {
-			event.preventDefault();
-			const time = duration * 0.5;
-			onSeek(time);
-		}
-	}
+}
 </script>
 
 <div class="sidebar-progress-wrapper">

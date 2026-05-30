@@ -137,8 +137,8 @@ function scanPhotos(folderPath: string, albumId: string): Photo[] {
 		const baseName = path.basename(file, path.extname(file));
 		const ext = path.extname(file).toLowerCase();
 		if (ext === ".jpg" || ext === ".jpeg" || ext === ".png") {
-			if (imageFiles.includes(baseName + ".webp")) {
-				fileWebpMap.set(file, baseName + ".webp");
+			if (imageFiles.includes(`${baseName}.webp`)) {
+				fileWebpMap.set(file, `${baseName}.webp`);
 			}
 		}
 	}
@@ -174,9 +174,7 @@ function processExternalPhotos(
 
 	externalPhotos.forEach((photo, index) => {
 		if (!photo.src) {
-			console.warn(
-				`相册 ${albumId} 的第 ${index + 1} 张照片缺少 src 字段`,
-			);
+			console.warn(`相册 ${albumId} 的第 ${index + 1} 张照片缺少 src 字段`);
 			return;
 		}
 

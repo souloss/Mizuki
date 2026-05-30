@@ -58,7 +58,7 @@ export function generateTOCItems(config: TOCConfig): TOCItem[] {
 			return;
 		}
 
-		const level = parseInt(heading.tagName.charAt(1), 10);
+		const level = Number.parseInt(heading.tagName.charAt(1), 10);
 
 		// 根据 depth 配置过滤标题
 		if (level > config.depth) {
@@ -71,10 +71,7 @@ export function generateTOCItems(config: TOCConfig): TOCItem[] {
 		// 只为 H1 标题生成 badge
 		if (level === 1) {
 			h1Count++;
-			if (
-				config.useJapaneseBadge &&
-				h1Count - 1 < japaneseHiragana.length
-			) {
+			if (config.useJapaneseBadge && h1Count - 1 < japaneseHiragana.length) {
 				badge = japaneseHiragana[h1Count - 1];
 			} else {
 				badge = h1Count.toString();
@@ -95,18 +92,13 @@ export function generatePostItems(): PostItem[] {
 	const items: PostItem[] = [];
 
 	postCards.forEach((card) => {
-		const titleLink = card.querySelector(
-			'a[href*="/posts/"].transition.group',
-		);
-		const categoryLink = card.querySelector(
-			'a[href*="/categories/"].link-lg',
-		);
+		const titleLink = card.querySelector('a[href*="/posts/"].transition.group');
+		const categoryLink = card.querySelector('a[href*="/categories/"].link-lg');
 		const pinnedIcon = titleLink?.querySelector('svg[data-icon="mdi:pin"]');
 
 		if (titleLink) {
 			const href = titleLink.getAttribute("href");
-			const title =
-				titleLink.textContent?.replace(/\s+/g, " ").trim() || "";
+			const title = titleLink.textContent?.replace(/\s+/g, " ").trim() || "";
 			const category = categoryLink?.textContent?.trim() || "";
 			const pinned = !!pinnedIcon;
 

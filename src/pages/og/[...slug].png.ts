@@ -1,8 +1,7 @@
-import * as fs from "node:fs";
-
-import type { APIContext, GetStaticPaths } from "astro";
 import type { CollectionEntry } from "astro:content";
 import { getCollection } from "astro:content";
+import * as fs from "node:fs";
+import type { APIContext, GetStaticPaths } from "astro";
 import satori from "satori";
 import sharp from "sharp";
 
@@ -111,8 +110,7 @@ export async function GET({
 	const { post } = props;
 
 	// Try to fetch fonts from Google Fonts (woff2) at runtime.
-	const { regular: fontRegular, bold: fontBold } =
-		await fetchNotoSansSCFonts();
+	const { regular: fontRegular, bold: fontBold } = await fetchNotoSansSCFonts();
 
 	// Avatar + icon: still read from disk (small assets)
 	const avatarBuffer = fs.readFileSync(`./src/${profileConfig.avatar}`);
@@ -213,8 +211,7 @@ export async function GET({
 												style: {
 													width: "10px",
 													height: "68px",
-													backgroundColor:
-														primaryColor,
+													backgroundColor: primaryColor,
 													borderRadius: "6px",
 													marginTop: "14px",
 												},

@@ -57,10 +57,7 @@ export function buildComponentProps(
 	};
 
 	// TOC 组件需要传入 headings
-	if (
-		(component.type === "toc" || component.type === "card-toc") &&
-		headings
-	) {
+	if ((component.type === "toc" || component.type === "card-toc") && headings) {
 		props.headings = headings;
 	}
 

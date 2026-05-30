@@ -1,552 +1,537 @@
 <script lang="ts">
-	import {
-		WALLPAPER_BANNER,
-		WALLPAPER_FULLSCREEN,
-		WALLPAPER_NONE,
-		WALLPAPER_OVERLAY,
-	} from "@constants/constants";
-	import I18nKey from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
-	import Icon from "@iconify/svelte";
-	import type { WALLPAPER_MODE } from "@types/config";
-	import {
-		getDefaultBannerCarouselEnabled,
-		getDefaultBannerTitleEnabled,
-		getDefaultFont,
-		getDefaultGradientEnabled,
-		getDefaultHue,
-		getDefaultOverlayBlur,
-		getDefaultOverlayCardOpacity,
-		getDefaultOverlayOpacity,
-		getDefaultSakuraEnabled,
-		getDefaultStickyNavbar,
-		getDefaultWavesEnabled,
-		getFont,
-		getHue,
-		getStoredBannerCarouselEnabled,
-		getStoredBannerTitleEnabled,
-		getStoredFont,
-		getStoredGradientEnabled,
-		getStoredOverlayBlur,
-		getStoredOverlayCardOpacity,
-		getStoredOverlayOpacity,
-		getStoredSakuraEnabled,
-		getStoredStickyNavbar,
-		getStoredWallpaperMode,
-		getStoredWavesEnabled,
-		setBannerCarouselEnabled,
-		setBannerTitleEnabled,
-		setFont,
-		setGradientEnabled,
-		setHue,
-		setOverlayBlur,
-		setOverlayCardOpacity,
-		setOverlayOpacity,
-		setSakuraEnabled,
-		setStickyNavbar,
-		setWallpaperMode,
-		setWavesEnabled,
-	} from "@utils/setting-utils";
-	import { onMount } from "svelte";
+import {
+	WALLPAPER_BANNER,
+	WALLPAPER_FULLSCREEN,
+	WALLPAPER_NONE,
+	WALLPAPER_OVERLAY,
+} from "@constants/constants";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import Icon from "@iconify/svelte";
+import type { WALLPAPER_MODE } from "@types/config";
+import {
+	getDefaultBannerCarouselEnabled,
+	getDefaultBannerTitleEnabled,
+	getDefaultFont,
+	getDefaultGradientEnabled,
+	getDefaultHue,
+	getDefaultOverlayBlur,
+	getDefaultOverlayCardOpacity,
+	getDefaultOverlayOpacity,
+	getDefaultSakuraEnabled,
+	getDefaultStickyNavbar,
+	getDefaultWavesEnabled,
+	getFont,
+	getHue,
+	getStoredBannerCarouselEnabled,
+	getStoredBannerTitleEnabled,
+	getStoredFont,
+	getStoredGradientEnabled,
+	getStoredOverlayBlur,
+	getStoredOverlayCardOpacity,
+	getStoredOverlayOpacity,
+	getStoredSakuraEnabled,
+	getStoredStickyNavbar,
+	getStoredWallpaperMode,
+	getStoredWavesEnabled,
+	setBannerCarouselEnabled,
+	setBannerTitleEnabled,
+	setFont,
+	setGradientEnabled,
+	setHue,
+	setOverlayBlur,
+	setOverlayCardOpacity,
+	setOverlayOpacity,
+	setSakuraEnabled,
+	setStickyNavbar,
+	setWallpaperMode,
+	setWavesEnabled,
+} from "@utils/setting-utils";
+import { onMount } from "svelte";
 
-	import {
-		backgroundWallpaperConfig,
-		effectsConfig,
-		fontConfig,
-		siteConfig,
-	} from "@/config";
+import {
+	backgroundWallpaperConfig,
+	effectsConfig,
+	fontConfig,
+	siteConfig,
+} from "@/config";
 
-	type OverlaySliderItem = {
-		key: "opacity" | "blur" | "cardOpacity";
-		enabled: boolean;
-		label: string;
-		displayValue: string;
-		ariaLabel: string;
-		min: number;
-		max: number;
-		step: number;
-		value: number;
-		onValueChange: (value: number) => void;
-	};
+type OverlaySliderItem = {
+	key: "opacity" | "blur" | "cardOpacity";
+	enabled: boolean;
+	label: string;
+	displayValue: string;
+	ariaLabel: string;
+	min: number;
+	max: number;
+	step: number;
+	value: number;
+	onValueChange: (value: number) => void;
+};
 
-	let hue = $state(getHue());
-	const defaultHue = getDefaultHue();
-	let wallpaperMode: WALLPAPER_MODE = $state(
-		backgroundWallpaperConfig.mode?.defaultMode,
-	);
-	const defaultWallpaperMode = backgroundWallpaperConfig.mode?.defaultMode;
-	let currentLayout: "list" | "grid" = $state("list");
-	const defaultLayout = siteConfig.postListLayout.defaultMode;
-	const mobileDefaultLayout =
-		siteConfig.postListLayout.mobileDefaultMode || defaultLayout;
-	let mounted = $state(false);
-	let isSmallScreen = $state(
-		typeof window !== "undefined" ? window.innerWidth < 1200 : false,
-	);
-	let isMobileWidth = $state(
-		typeof window !== "undefined" ? window.innerWidth < 780 : false,
-	);
-	let isSwitching = $state(false);
-	let wavesEnabled = $state(true);
-	const defaultWavesEnabled = getDefaultWavesEnabled();
-	let gradientEnabled = $state(true);
-	const defaultGradientEnabled = getDefaultGradientEnabled();
-	let bannerTitleEnabled = $state(true);
-	const defaultBannerTitleEnabled = getDefaultBannerTitleEnabled();
-	let bannerCarouselEnabled = $state(true);
-	const defaultBannerCarouselEnabled = getDefaultBannerCarouselEnabled();
-	let sakuraEnabled = $state(true);
-	const defaultSakuraEnabled = getDefaultSakuraEnabled();
-	let overlayOpacity = $state(getDefaultOverlayOpacity());
-	const defaultOverlayOpacity = getDefaultOverlayOpacity();
-	let overlayBlur = $state(getDefaultOverlayBlur());
-	const defaultOverlayBlur = getDefaultOverlayBlur();
-	let overlayCardOpacity = $state(getDefaultOverlayCardOpacity());
-	const defaultOverlayCardOpacity = getDefaultOverlayCardOpacity();
-	let currentFont = $state(getDefaultFont());
-	const defaultFont = getDefaultFont();
-	let stickyNavbarEnabled = $state(getDefaultStickyNavbar());
-	const defaultStickyNavbar = getDefaultStickyNavbar();
+let hue = $state(getHue());
+const defaultHue = getDefaultHue();
+let wallpaperMode: WALLPAPER_MODE = $state(
+	backgroundWallpaperConfig.mode?.defaultMode,
+);
+const defaultWallpaperMode = backgroundWallpaperConfig.mode?.defaultMode;
+let currentLayout: "list" | "grid" = $state("list");
+const defaultLayout = siteConfig.postListLayout.defaultMode;
+const mobileDefaultLayout =
+	siteConfig.postListLayout.mobileDefaultMode || defaultLayout;
+let mounted = $state(false);
+let isSmallScreen = $state(
+	typeof window !== "undefined" ? window.innerWidth < 1200 : false,
+);
+let isMobileWidth = $state(
+	typeof window !== "undefined" ? window.innerWidth < 780 : false,
+);
+let isSwitching = $state(false);
+let wavesEnabled = $state(true);
+const defaultWavesEnabled = getDefaultWavesEnabled();
+let gradientEnabled = $state(true);
+const defaultGradientEnabled = getDefaultGradientEnabled();
+let bannerTitleEnabled = $state(true);
+const defaultBannerTitleEnabled = getDefaultBannerTitleEnabled();
+let bannerCarouselEnabled = $state(true);
+const defaultBannerCarouselEnabled = getDefaultBannerCarouselEnabled();
+let sakuraEnabled = $state(true);
+const defaultSakuraEnabled = getDefaultSakuraEnabled();
+let overlayOpacity = $state(getDefaultOverlayOpacity());
+const defaultOverlayOpacity = getDefaultOverlayOpacity();
+let overlayBlur = $state(getDefaultOverlayBlur());
+const defaultOverlayBlur = getDefaultOverlayBlur();
+let overlayCardOpacity = $state(getDefaultOverlayCardOpacity());
+const defaultOverlayCardOpacity = getDefaultOverlayCardOpacity();
+let currentFont = $state(getDefaultFont());
+const defaultFont = getDefaultFont();
+let stickyNavbarEnabled = $state(getDefaultStickyNavbar());
+const defaultStickyNavbar = getDefaultStickyNavbar();
 
-	const isWallpaperSwitchable =
-		backgroundWallpaperConfig.mode?.switchable ?? true;
-	const allowLayoutSwitch = siteConfig.postListLayout.allowSwitch;
-	const isFontSwitchable = fontConfig?.switchable ?? true;
-	const effectiveDefaultLayout = $derived(
-		isMobileWidth ? mobileDefaultLayout : defaultLayout,
-	);
-	const showThemeColor = !siteConfig.themeColor.fixed;
-	// 是否允许用户切换水波纹动画（只看 switchable 配置）
-	const isWavesSwitchable = siteConfig.banner.waves?.switchable ?? false;
-	// 是否允许用户切换渐变过渡（只看 switchable 配置）
-	const isGradientSwitchable =
-		siteConfig.banner.gradient?.switchable ?? false;
-	// 检查是否启用横幅标题配置
-	const isBannerTitleEnabled =
-		siteConfig.banner.bannerHomeText?.enable ?? false;
-	// 是否允许用户切换横幅标题
-	const isBannerTitleSwitchable =
-		isBannerTitleEnabled &&
-		(siteConfig.banner.bannerHomeText?.switchable ?? false);
-	// 是否允许用户切换横幅轮播
-	const isBannerCarouselSwitchable =
-		siteConfig.banner.carousel?.switchable ?? false;
-	// 是否允许用户切换樱花特效
-	const isSakuraSwitchable = effectsConfig.sakura?.switchable ?? false;
-	// 是否有任何横幅设置可显示（后续添加新设置时在此处添加条件）
-	const hasBannerSettings =
-		isWavesSwitchable ||
-		isGradientSwitchable ||
-		isBannerTitleSwitchable ||
-		isBannerCarouselSwitchable;
-	const overlaySwitchableConfig =
-		backgroundWallpaperConfig.overlay?.switchable ?? false;
-	const isOverlaySettingsSwitchable =
-		typeof overlaySwitchableConfig === "boolean"
-			? overlaySwitchableConfig
-			: true;
-	const isOverlayOpacitySwitchable =
-		typeof overlaySwitchableConfig === "boolean"
-			? overlaySwitchableConfig
-			: (overlaySwitchableConfig.opacity ?? false);
-	const isOverlayBlurSwitchable =
-		typeof overlaySwitchableConfig === "boolean"
-			? overlaySwitchableConfig
-			: (overlaySwitchableConfig.blur ?? false);
-	const isOverlayCardOpacitySwitchable =
-		typeof overlaySwitchableConfig === "boolean"
-			? overlaySwitchableConfig
-			: (overlaySwitchableConfig.cardOpacity ?? false);
-	const hasOverlaySettings =
-		isOverlaySettingsSwitchable &&
-		(isOverlayOpacitySwitchable ||
-			isOverlayBlurSwitchable ||
-			isOverlayCardOpacitySwitchable);
-	const overlaySettingsIsDefault = $derived(
-		(!isOverlayOpacitySwitchable ||
-			overlayOpacity === defaultOverlayOpacity) &&
-			(!isOverlayBlurSwitchable || overlayBlur === defaultOverlayBlur) &&
-			(!isOverlayCardOpacitySwitchable ||
-				overlayCardOpacity === defaultOverlayCardOpacity),
-	);
-	// 横幅设置是否全部为默认值（用于控制恢复默认按钮的显隐）
-	const bannerSettingsIsDefault = $derived(
-		(!isBannerTitleSwitchable ||
-			bannerTitleEnabled === defaultBannerTitleEnabled) &&
-			(!isWavesSwitchable || wavesEnabled === defaultWavesEnabled) &&
-			(!isGradientSwitchable ||
-				gradientEnabled === defaultGradientEnabled) &&
-			(!isBannerCarouselSwitchable ||
-				bannerCarouselEnabled === defaultBannerCarouselEnabled),
-	);
-	const hasAnyContent =
-		showThemeColor ||
-		isWallpaperSwitchable ||
-		allowLayoutSwitch ||
-		hasBannerSettings ||
-		hasOverlaySettings ||
-		isSakuraSwitchable ||
-		isFontSwitchable;
+const isWallpaperSwitchable =
+	backgroundWallpaperConfig.mode?.switchable ?? true;
+const allowLayoutSwitch = siteConfig.postListLayout.allowSwitch;
+const isFontSwitchable = fontConfig?.switchable ?? true;
+const effectiveDefaultLayout = $derived(
+	isMobileWidth ? mobileDefaultLayout : defaultLayout,
+);
+const showThemeColor = !siteConfig.themeColor.fixed;
+// 是否允许用户切换水波纹动画（只看 switchable 配置）
+const isWavesSwitchable = siteConfig.banner.waves?.switchable ?? false;
+// 是否允许用户切换渐变过渡（只看 switchable 配置）
+const isGradientSwitchable = siteConfig.banner.gradient?.switchable ?? false;
+// 检查是否启用横幅标题配置
+const isBannerTitleEnabled = siteConfig.banner.bannerHomeText?.enable ?? false;
+// 是否允许用户切换横幅标题
+const isBannerTitleSwitchable =
+	isBannerTitleEnabled &&
+	(siteConfig.banner.bannerHomeText?.switchable ?? false);
+// 是否允许用户切换横幅轮播
+const isBannerCarouselSwitchable =
+	siteConfig.banner.carousel?.switchable ?? false;
+// 是否允许用户切换樱花特效
+const isSakuraSwitchable = effectsConfig.sakura?.switchable ?? false;
+// 是否有任何横幅设置可显示（后续添加新设置时在此处添加条件）
+const hasBannerSettings =
+	isWavesSwitchable ||
+	isGradientSwitchable ||
+	isBannerTitleSwitchable ||
+	isBannerCarouselSwitchable;
+const overlaySwitchableConfig =
+	backgroundWallpaperConfig.overlay?.switchable ?? false;
+const isOverlaySettingsSwitchable =
+	typeof overlaySwitchableConfig === "boolean" ? overlaySwitchableConfig : true;
+const isOverlayOpacitySwitchable =
+	typeof overlaySwitchableConfig === "boolean"
+		? overlaySwitchableConfig
+		: (overlaySwitchableConfig.opacity ?? false);
+const isOverlayBlurSwitchable =
+	typeof overlaySwitchableConfig === "boolean"
+		? overlaySwitchableConfig
+		: (overlaySwitchableConfig.blur ?? false);
+const isOverlayCardOpacitySwitchable =
+	typeof overlaySwitchableConfig === "boolean"
+		? overlaySwitchableConfig
+		: (overlaySwitchableConfig.cardOpacity ?? false);
+const hasOverlaySettings =
+	isOverlaySettingsSwitchable &&
+	(isOverlayOpacitySwitchable ||
+		isOverlayBlurSwitchable ||
+		isOverlayCardOpacitySwitchable);
+const overlaySettingsIsDefault = $derived(
+	(!isOverlayOpacitySwitchable || overlayOpacity === defaultOverlayOpacity) &&
+		(!isOverlayBlurSwitchable || overlayBlur === defaultOverlayBlur) &&
+		(!isOverlayCardOpacitySwitchable ||
+			overlayCardOpacity === defaultOverlayCardOpacity),
+);
+// 横幅设置是否全部为默认值（用于控制恢复默认按钮的显隐）
+const bannerSettingsIsDefault = $derived(
+	(!isBannerTitleSwitchable ||
+		bannerTitleEnabled === defaultBannerTitleEnabled) &&
+		(!isWavesSwitchable || wavesEnabled === defaultWavesEnabled) &&
+		(!isGradientSwitchable || gradientEnabled === defaultGradientEnabled) &&
+		(!isBannerCarouselSwitchable ||
+			bannerCarouselEnabled === defaultBannerCarouselEnabled),
+);
+const hasAnyContent =
+	showThemeColor ||
+	isWallpaperSwitchable ||
+	allowLayoutSwitch ||
+	hasBannerSettings ||
+	hasOverlaySettings ||
+	isSakuraSwitchable ||
+	isFontSwitchable;
 
-	const overlaySliderItems = $derived<OverlaySliderItem[]>([
-		{
-			key: "opacity",
-			enabled: isOverlayOpacitySwitchable,
-			label: i18n(I18nKey.overlayOpacity),
-			displayValue: `${Math.round(overlayOpacity * 100)}%`,
-			ariaLabel: i18n(I18nKey.overlayOpacity),
-			min: 20,
-			max: 100,
-			step: 1,
-			value: Math.round(overlayOpacity * 100),
-			onValueChange: (value: number) => {
-				overlayOpacity = value / 100;
-			},
+const overlaySliderItems = $derived<OverlaySliderItem[]>([
+	{
+		key: "opacity",
+		enabled: isOverlayOpacitySwitchable,
+		label: i18n(I18nKey.overlayOpacity),
+		displayValue: `${Math.round(overlayOpacity * 100)}%`,
+		ariaLabel: i18n(I18nKey.overlayOpacity),
+		min: 20,
+		max: 100,
+		step: 1,
+		value: Math.round(overlayOpacity * 100),
+		onValueChange: (value: number) => {
+			overlayOpacity = value / 100;
 		},
-		{
-			key: "blur",
-			enabled: isOverlayBlurSwitchable,
-			label: i18n(I18nKey.overlayBlur),
-			displayValue: `${overlayBlur.toFixed(1)}px`,
-			ariaLabel: i18n(I18nKey.overlayBlur),
-			min: 0,
-			max: 20,
-			step: 0.5,
-			value: overlayBlur,
-			onValueChange: (value: number) => {
-				overlayBlur = value;
-			},
+	},
+	{
+		key: "blur",
+		enabled: isOverlayBlurSwitchable,
+		label: i18n(I18nKey.overlayBlur),
+		displayValue: `${overlayBlur.toFixed(1)}px`,
+		ariaLabel: i18n(I18nKey.overlayBlur),
+		min: 0,
+		max: 20,
+		step: 0.5,
+		value: overlayBlur,
+		onValueChange: (value: number) => {
+			overlayBlur = value;
 		},
-		{
-			key: "cardOpacity",
-			enabled: isOverlayCardOpacitySwitchable,
-			label: i18n(I18nKey.overlayCardOpacity),
-			displayValue: `${Math.round(overlayCardOpacity * 100)}%`,
-			ariaLabel: i18n(I18nKey.overlayCardOpacity),
-			min: 20,
-			max: 100,
-			step: 1,
-			value: Math.round(overlayCardOpacity * 100),
-			onValueChange: (value: number) => {
-				overlayCardOpacity = value / 100;
-			},
+	},
+	{
+		key: "cardOpacity",
+		enabled: isOverlayCardOpacitySwitchable,
+		label: i18n(I18nKey.overlayCardOpacity),
+		displayValue: `${Math.round(overlayCardOpacity * 100)}%`,
+		ariaLabel: i18n(I18nKey.overlayCardOpacity),
+		min: 20,
+		max: 100,
+		step: 1,
+		value: Math.round(overlayCardOpacity * 100),
+		onValueChange: (value: number) => {
+			overlayCardOpacity = value / 100;
 		},
-	]);
+	},
+]);
 
-	function resetHue() {
-		hue = getDefaultHue();
-		requestAnimationFrame(refreshAllRangeProgress);
+function resetHue() {
+	hue = getDefaultHue();
+	requestAnimationFrame(refreshAllRangeProgress);
+}
+
+function resetWallpaperMode() {
+	wallpaperMode = defaultWallpaperMode;
+	setWallpaperMode(defaultWallpaperMode);
+}
+
+function resetLayout() {
+	currentLayout = effectiveDefaultLayout;
+	localStorage.removeItem("postListLayout");
+
+	// 触发自定义事件，通知页面布局已改变
+	const event = new CustomEvent("layoutChange", {
+		detail: { layout: effectiveDefaultLayout },
+	});
+	window.dispatchEvent(event);
+}
+
+function resetFont() {
+	currentFont = defaultFont;
+	setFont(defaultFont);
+}
+
+function resetWavesEnabled() {
+	wavesEnabled = defaultWavesEnabled;
+	setWavesEnabled(defaultWavesEnabled);
+}
+
+function resetGradientEnabled() {
+	gradientEnabled = defaultGradientEnabled;
+	setGradientEnabled(defaultGradientEnabled);
+}
+
+function resetBannerSettings() {
+	if (
+		isBannerTitleSwitchable &&
+		bannerTitleEnabled !== defaultBannerTitleEnabled
+	) {
+		bannerTitleEnabled = defaultBannerTitleEnabled;
+		setBannerTitleEnabled(defaultBannerTitleEnabled);
 	}
-
-	function resetWallpaperMode() {
-		wallpaperMode = defaultWallpaperMode;
-		setWallpaperMode(defaultWallpaperMode);
-	}
-
-	function resetLayout() {
-		currentLayout = effectiveDefaultLayout;
-		localStorage.removeItem("postListLayout");
-
-		// 触发自定义事件，通知页面布局已改变
-		const event = new CustomEvent("layoutChange", {
-			detail: { layout: effectiveDefaultLayout },
-		});
-		window.dispatchEvent(event);
-	}
-
-	function resetFont() {
-		currentFont = defaultFont;
-		setFont(defaultFont);
-	}
-
-	function resetWavesEnabled() {
+	if (isWavesSwitchable && wavesEnabled !== defaultWavesEnabled) {
 		wavesEnabled = defaultWavesEnabled;
 		setWavesEnabled(defaultWavesEnabled);
 	}
-
-	function resetGradientEnabled() {
+	if (isGradientSwitchable && gradientEnabled !== defaultGradientEnabled) {
 		gradientEnabled = defaultGradientEnabled;
 		setGradientEnabled(defaultGradientEnabled);
 	}
+	if (
+		isBannerCarouselSwitchable &&
+		bannerCarouselEnabled !== defaultBannerCarouselEnabled
+	) {
+		bannerCarouselEnabled = defaultBannerCarouselEnabled;
+		setBannerCarouselEnabled(defaultBannerCarouselEnabled);
+	}
+}
 
-	function resetBannerSettings() {
-		if (
-			isBannerTitleSwitchable &&
-			bannerTitleEnabled !== defaultBannerTitleEnabled
-		) {
-			bannerTitleEnabled = defaultBannerTitleEnabled;
-			setBannerTitleEnabled(defaultBannerTitleEnabled);
-		}
-		if (isWavesSwitchable && wavesEnabled !== defaultWavesEnabled) {
-			wavesEnabled = defaultWavesEnabled;
-			setWavesEnabled(defaultWavesEnabled);
-		}
-		if (
-			isGradientSwitchable &&
-			gradientEnabled !== defaultGradientEnabled
-		) {
-			gradientEnabled = defaultGradientEnabled;
-			setGradientEnabled(defaultGradientEnabled);
-		}
-		if (
-			isBannerCarouselSwitchable &&
-			bannerCarouselEnabled !== defaultBannerCarouselEnabled
-		) {
-			bannerCarouselEnabled = defaultBannerCarouselEnabled;
-			setBannerCarouselEnabled(defaultBannerCarouselEnabled);
-		}
+function resetOverlaySettings() {
+	if (isOverlayOpacitySwitchable && overlayOpacity !== defaultOverlayOpacity) {
+		overlayOpacity = defaultOverlayOpacity;
+		setOverlayOpacity(defaultOverlayOpacity);
+	}
+	if (isOverlayBlurSwitchable && overlayBlur !== defaultOverlayBlur) {
+		overlayBlur = defaultOverlayBlur;
+		setOverlayBlur(defaultOverlayBlur);
+	}
+	if (
+		isOverlayCardOpacitySwitchable &&
+		overlayCardOpacity !== defaultOverlayCardOpacity
+	) {
+		overlayCardOpacity = defaultOverlayCardOpacity;
+		setOverlayCardOpacity(defaultOverlayCardOpacity);
 	}
 
-	function resetOverlaySettings() {
-		if (
-			isOverlayOpacitySwitchable &&
-			overlayOpacity !== defaultOverlayOpacity
-		) {
-			overlayOpacity = defaultOverlayOpacity;
-			setOverlayOpacity(defaultOverlayOpacity);
-		}
-		if (isOverlayBlurSwitchable && overlayBlur !== defaultOverlayBlur) {
-			overlayBlur = defaultOverlayBlur;
-			setOverlayBlur(defaultOverlayBlur);
-		}
-		if (
-			isOverlayCardOpacitySwitchable &&
-			overlayCardOpacity !== defaultOverlayCardOpacity
-		) {
-			overlayCardOpacity = defaultOverlayCardOpacity;
-			setOverlayCardOpacity(defaultOverlayCardOpacity);
-		}
+	requestAnimationFrame(refreshAllRangeProgress);
+}
 
+function toggleWavesEnabled() {
+	wavesEnabled = !wavesEnabled;
+	setWavesEnabled(wavesEnabled);
+}
+
+function toggleGradientEnabled() {
+	gradientEnabled = !gradientEnabled;
+	setGradientEnabled(gradientEnabled);
+}
+
+function toggleBannerTitleEnabled() {
+	bannerTitleEnabled = !bannerTitleEnabled;
+	setBannerTitleEnabled(bannerTitleEnabled);
+}
+
+function toggleBannerCarouselEnabled() {
+	bannerCarouselEnabled = !bannerCarouselEnabled;
+	setBannerCarouselEnabled(bannerCarouselEnabled);
+}
+
+function toggleSakuraEnabled() {
+	sakuraEnabled = !sakuraEnabled;
+	setSakuraEnabled(sakuraEnabled);
+}
+
+function toggleStickyNavbar() {
+	stickyNavbarEnabled = !stickyNavbarEnabled;
+	setStickyNavbar(stickyNavbarEnabled);
+}
+
+function switchWallpaperMode(newMode: WALLPAPER_MODE) {
+	wallpaperMode = newMode;
+	setWallpaperMode(newMode);
+	window.scrollTo({ top: 0 });
+
+	if (newMode === WALLPAPER_OVERLAY) {
 		requestAnimationFrame(refreshAllRangeProgress);
 	}
+}
 
-	function toggleWavesEnabled() {
-		wavesEnabled = !wavesEnabled;
-		setWavesEnabled(wavesEnabled);
-	}
-
-	function toggleGradientEnabled() {
-		gradientEnabled = !gradientEnabled;
-		setGradientEnabled(gradientEnabled);
-	}
-
-	function toggleBannerTitleEnabled() {
-		bannerTitleEnabled = !bannerTitleEnabled;
-		setBannerTitleEnabled(bannerTitleEnabled);
-	}
-
-	function toggleBannerCarouselEnabled() {
-		bannerCarouselEnabled = !bannerCarouselEnabled;
-		setBannerCarouselEnabled(bannerCarouselEnabled);
-	}
-
-	function toggleSakuraEnabled() {
-		sakuraEnabled = !sakuraEnabled;
-		setSakuraEnabled(sakuraEnabled);
-	}
-
-	function toggleStickyNavbar() {
-		stickyNavbarEnabled = !stickyNavbarEnabled;
-		setStickyNavbar(stickyNavbarEnabled);
-	}
-
-	function switchWallpaperMode(newMode: WALLPAPER_MODE) {
-		wallpaperMode = newMode;
-		setWallpaperMode(newMode);
-		window.scrollTo({ top: 0 });
-
-		if (newMode === WALLPAPER_OVERLAY) {
-			requestAnimationFrame(refreshAllRangeProgress);
-		}
-	}
-
-	function checkScreenSize() {
-		isSmallScreen = window.innerWidth < 1200;
-		isMobileWidth = window.innerWidth < 780;
-		// 低于380px强制网格模式
-		if (window.innerWidth < 380 && currentLayout === "list") {
-			currentLayout = "grid";
-			const event = new CustomEvent("layoutChange", {
-				detail: { layout: "grid" },
-			});
-			window.dispatchEvent(event);
-		}
-	}
-
-	function updateRangeProgress(input: HTMLInputElement) {
-		const min = Number(input.min || 0);
-		const max = Number(input.max || 100);
-		const value = Number(input.value || 0);
-		const progress = ((value - min) * 100) / (max - min || 1);
-		input.style.setProperty(
-			"--range-progress",
-			`${Math.min(100, Math.max(0, progress))}%`,
-		);
-	}
-
-	function refreshAllRangeProgress() {
-		const panel = document.getElementById("display-setting");
-		if (!panel) {
-			return;
-		}
-
-		const rangeInputs = Array.from(
-			panel.querySelectorAll('input[type="range"]'),
-		) as HTMLInputElement[];
-		rangeInputs.forEach(updateRangeProgress);
-	}
-
-	function switchLayout() {
-		if (!mounted || isSwitching) {
-			return;
-		}
-
-		isSwitching = true;
-		currentLayout = currentLayout === "list" ? "grid" : "list";
-		localStorage.setItem("postListLayout", currentLayout);
-
-		// 触发自定义事件，通知页面布局已改变
+function checkScreenSize() {
+	isSmallScreen = window.innerWidth < 1200;
+	isMobileWidth = window.innerWidth < 780;
+	// 低于380px强制网格模式
+	if (window.innerWidth < 380 && currentLayout === "list") {
+		currentLayout = "grid";
 		const event = new CustomEvent("layoutChange", {
-			detail: { layout: currentLayout },
+			detail: { layout: "grid" },
 		});
 		window.dispatchEvent(event);
+	}
+}
 
-		// 动画完成后重置状态
-		setTimeout(() => {
-			isSwitching = false;
-		}, 500);
+function updateRangeProgress(input: HTMLInputElement) {
+	const min = Number(input.min || 0);
+	const max = Number(input.max || 100);
+	const value = Number(input.value || 0);
+	const progress = ((value - min) * 100) / (max - min || 1);
+	input.style.setProperty(
+		"--range-progress",
+		`${Math.min(100, Math.max(0, progress))}%`,
+	);
+}
+
+function refreshAllRangeProgress() {
+	const panel = document.getElementById("display-setting");
+	if (!panel) {
+		return;
 	}
 
-	function switchFont(newFont: string) {
-		currentFont = newFont;
-		setFont(newFont);
+	const rangeInputs = Array.from(
+		panel.querySelectorAll('input[type="range"]'),
+	) as HTMLInputElement[];
+	rangeInputs.forEach(updateRangeProgress);
+}
+
+function switchLayout() {
+	if (!mounted || isSwitching) {
+		return;
 	}
 
-	onMount(() => {
-		mounted = true;
-		checkScreenSize();
+	isSwitching = true;
+	currentLayout = currentLayout === "list" ? "grid" : "list";
+	localStorage.setItem("postListLayout", currentLayout);
 
-		// 从localStorage读取保存的壁纸模式
-		wallpaperMode = getStoredWallpaperMode();
+	// 触发自定义事件，通知页面布局已改变
+	const event = new CustomEvent("layoutChange", {
+		detail: { layout: currentLayout },
+	});
+	window.dispatchEvent(event);
 
-		// 从localStorage读取水波纹动画状态
-		wavesEnabled = getStoredWavesEnabled();
+	// 动画完成后重置状态
+	setTimeout(() => {
+		isSwitching = false;
+	}, 500);
+}
 
-		// 从localStorage读取渐变过渡状态
-		gradientEnabled = getStoredGradientEnabled();
+function switchFont(newFont: string) {
+	currentFont = newFont;
+	setFont(newFont);
+}
 
-		// 从localStorage读取横幅标题状态
-		bannerTitleEnabled = getStoredBannerTitleEnabled();
+onMount(() => {
+	mounted = true;
+	checkScreenSize();
 
-		// 从localStorage读取横幅轮播状态
-		bannerCarouselEnabled = getStoredBannerCarouselEnabled();
+	// 从localStorage读取保存的壁纸模式
+	wallpaperMode = getStoredWallpaperMode();
 
-		// 从localStorage读取樱花特效状态
-		sakuraEnabled = getStoredSakuraEnabled();
+	// 从localStorage读取水波纹动画状态
+	wavesEnabled = getStoredWavesEnabled();
 
-		// 从localStorage读取全屏透明设置状态
-		overlayOpacity = getStoredOverlayOpacity();
-		overlayBlur = getStoredOverlayBlur();
-		overlayCardOpacity = getStoredOverlayCardOpacity();
+	// 从localStorage读取渐变过渡状态
+	gradientEnabled = getStoredGradientEnabled();
 
-		// 从localStorage读取用户偏好布局
-		const savedLayout = localStorage.getItem("postListLayout");
-		if (savedLayout && (savedLayout === "list" || savedLayout === "grid")) {
-			currentLayout = savedLayout;
-		} else {
-			currentLayout =
-				window.innerWidth < 780 ? mobileDefaultLayout : defaultLayout;
+	// 从localStorage读取横幅标题状态
+	bannerTitleEnabled = getStoredBannerTitleEnabled();
+
+	// 从localStorage读取横幅轮播状态
+	bannerCarouselEnabled = getStoredBannerCarouselEnabled();
+
+	// 从localStorage读取樱花特效状态
+	sakuraEnabled = getStoredSakuraEnabled();
+
+	// 从localStorage读取全屏透明设置状态
+	overlayOpacity = getStoredOverlayOpacity();
+	overlayBlur = getStoredOverlayBlur();
+	overlayCardOpacity = getStoredOverlayCardOpacity();
+
+	// 从localStorage读取用户偏好布局
+	const savedLayout = localStorage.getItem("postListLayout");
+	if (savedLayout && (savedLayout === "list" || savedLayout === "grid")) {
+		currentLayout = savedLayout;
+	} else {
+		currentLayout =
+			window.innerWidth < 780 ? mobileDefaultLayout : defaultLayout;
+	}
+
+	// 从localStorage读取用户偏好字体
+	currentFont = getStoredFont();
+
+	// 从localStorage读取固定导航栏设置
+	stickyNavbarEnabled = getStoredStickyNavbar();
+
+	// 监听窗口大小变化
+	window.addEventListener("resize", checkScreenSize);
+
+	return () => {
+		window.removeEventListener("resize", checkScreenSize);
+	};
+});
+
+// 监听布局变化事件
+onMount(() => {
+	const handleCustomEvent = (event: Event) => {
+		const customEvent = event as CustomEvent<{
+			layout: "list" | "grid";
+		}>;
+		currentLayout = customEvent.detail.layout;
+	};
+
+	window.addEventListener("layoutChange", handleCustomEvent);
+
+	return () => {
+		window.removeEventListener("layoutChange", handleCustomEvent);
+	};
+});
+
+onMount(() => {
+	const panel = document.getElementById("display-setting");
+	if (!panel) {
+		return;
+	}
+
+	const handleRangeInput = (event: Event) => {
+		const target = event.target;
+		if (target instanceof HTMLInputElement && target.type === "range") {
+			updateRangeProgress(target);
 		}
+	};
 
-		// 从localStorage读取用户偏好字体
-		currentFont = getStoredFont();
+	refreshAllRangeProgress();
+	panel.addEventListener("input", handleRangeInput);
 
-		// 从localStorage读取固定导航栏设置
-		stickyNavbarEnabled = getStoredStickyNavbar();
+	return () => {
+		panel.removeEventListener("input", handleRangeInput);
+	};
+});
 
-		// 监听窗口大小变化
-		window.addEventListener("resize", checkScreenSize);
+onMount(() => {
+	const handleWallpaperModeChange = (event: Event) => {
+		const customEvent = event as CustomEvent<{ mode: WALLPAPER_MODE }>;
+		wallpaperMode = customEvent.detail.mode;
+	};
 
-		return () => {
-			window.removeEventListener("resize", checkScreenSize);
-		};
-	});
+	window.addEventListener("wallpaper-mode-change", handleWallpaperModeChange);
 
-	// 监听布局变化事件
-	onMount(() => {
-		const handleCustomEvent = (event: Event) => {
-			const customEvent = event as CustomEvent<{
-				layout: "list" | "grid";
-			}>;
-			currentLayout = customEvent.detail.layout;
-		};
-
-		window.addEventListener("layoutChange", handleCustomEvent);
-
-		return () => {
-			window.removeEventListener("layoutChange", handleCustomEvent);
-		};
-	});
-
-	onMount(() => {
-		const panel = document.getElementById("display-setting");
-		if (!panel) {
-			return;
-		}
-
-		const handleRangeInput = (event: Event) => {
-			const target = event.target;
-			if (target instanceof HTMLInputElement && target.type === "range") {
-				updateRangeProgress(target);
-			}
-		};
-
-		refreshAllRangeProgress();
-		panel.addEventListener("input", handleRangeInput);
-
-		return () => {
-			panel.removeEventListener("input", handleRangeInput);
-		};
-	});
-
-	onMount(() => {
-		const handleWallpaperModeChange = (event: Event) => {
-			const customEvent = event as CustomEvent<{ mode: WALLPAPER_MODE }>;
-			wallpaperMode = customEvent.detail.mode;
-		};
-
-		window.addEventListener(
+	return () => {
+		window.removeEventListener(
 			"wallpaper-mode-change",
 			handleWallpaperModeChange,
 		);
+	};
+});
 
-		return () => {
-			window.removeEventListener(
-				"wallpaper-mode-change",
-				handleWallpaperModeChange,
-			);
-		};
-	});
+$effect(() => {
+	if (hue || hue === 0) {
+		setHue(hue);
+	}
+});
 
-	$effect(() => {
-		if (hue || hue === 0) {
-			setHue(hue);
+$effect(() => {
+	if (wallpaperMode === WALLPAPER_OVERLAY) {
+		if (isOverlayOpacitySwitchable) {
+			setOverlayOpacity(overlayOpacity);
 		}
-	});
-
-	$effect(() => {
-		if (wallpaperMode === WALLPAPER_OVERLAY) {
-			if (isOverlayOpacitySwitchable) {
-				setOverlayOpacity(overlayOpacity);
-			}
-			if (isOverlayBlurSwitchable) {
-				setOverlayBlur(overlayBlur);
-			}
-			if (isOverlayCardOpacitySwitchable) {
-				setOverlayCardOpacity(overlayCardOpacity);
-			}
+		if (isOverlayBlurSwitchable) {
+			setOverlayBlur(overlayBlur);
 		}
-	});
+		if (isOverlayCardOpacitySwitchable) {
+			setOverlayCardOpacity(overlayCardOpacity);
+		}
+	}
+});
 </script>
 
 {#if hasAnyContent}

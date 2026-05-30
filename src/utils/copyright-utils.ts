@@ -1,4 +1,4 @@
-import type I18nKey from "@i18n/i18nKey"
+import type I18nKey from "@i18n/i18nKey";
 
 export type CopyrightType =
 	| "CC BY"
@@ -8,13 +8,13 @@ export type CopyrightType =
 	| "CC BY-NC-SA"
 	| "CC BY-NC-ND"
 	| "CC0"
-	| "ARR"
+	| "ARR";
 
 export interface CopyrightInfo {
-	name: string
-	url: string
-	icon: string
-	descriptionKey: I18nKey
+	name: string;
+	url: string;
+	icon: string;
+	descriptionKey: I18nKey;
 }
 
 export const COPYRIGHT_MAP: Record<CopyrightType, CopyrightInfo> = {
@@ -66,8 +66,8 @@ export const COPYRIGHT_MAP: Record<CopyrightType, CopyrightInfo> = {
 		icon: "material-symbols:copyright",
 		descriptionKey: "copyrightNotice" as I18nKey,
 	},
-}
+};
 
 export function getCopyrightInfo(copyright: CopyrightType): CopyrightInfo {
-	return COPYRIGHT_MAP[copyright]
+	return COPYRIGHT_MAP[copyright];
 }

@@ -1,35 +1,35 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	interface Props {
-		monthNames: string[];
-		yearSuffix: string;
-		currentYear: number;
-		currentMonth: number;
-		currentView: "day" | "month" | "year";
-		isBackToTodayVisible: boolean;
-		onPrevMonth: () => void;
-		onNextMonth: () => void;
-		onBackToToday: () => void;
-		onTitleClick: () => void;
-	}
+interface Props {
+	monthNames: string[];
+	yearSuffix: string;
+	currentYear: number;
+	currentMonth: number;
+	currentView: "day" | "month" | "year";
+	isBackToTodayVisible: boolean;
+	onPrevMonth: () => void;
+	onNextMonth: () => void;
+	onBackToToday: () => void;
+	onTitleClick: () => void;
+}
 
-	const {
-		monthNames,
-		yearSuffix,
-		currentYear,
-		currentMonth,
-		currentView,
-		isBackToTodayVisible,
-		onPrevMonth,
-		onNextMonth,
-		onBackToToday,
-		onTitleClick,
-	}: Props = $props();
+const {
+	monthNames,
+	yearSuffix,
+	currentYear,
+	currentMonth,
+	currentView,
+	isBackToTodayVisible,
+	onPrevMonth,
+	onNextMonth,
+	onBackToToday,
+	onTitleClick,
+}: Props = $props();
 
-	const title = $derived(
-		`${currentYear}${yearSuffix} ${monthNames[currentMonth]}`,
-	);
+const title = $derived(
+	`${currentYear}${yearSuffix} ${monthNames[currentMonth]}`,
+);
 </script>
 
 <div class="flex justify-between items-center mb-2 mt-2">

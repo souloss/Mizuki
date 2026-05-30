@@ -194,8 +194,7 @@ export const ja: Translation = {
 	[Key.rssHowToUse]:
 		"このサイトの購読はFeedly、Inoreaderまたはその他のRSSリーダーの使用をおすすめします。",
 	[Key.rssCopied]: "RSSのリンクをクリップボードにコピーしました!",
-	[Key.rssCopyFailed]:
-		"コピーに失敗しました。リンクを手動で追加してください。",
+	[Key.rssCopyFailed]: "コピーに失敗しました。リンクを手動で追加してください。",
 
 	// Atomページ
 	[Key.atom]: "Atomフィード",
@@ -276,8 +275,7 @@ export const ja: Translation = {
 
 	// パスワード保護
 	[Key.passwordProtected]: "パスワードで保護されています",
-	[Key.passwordProtectedTitle]:
-		"このコンテンツはパスワードで保護されています",
+	[Key.passwordProtectedTitle]: "このコンテンツはパスワードで保護されています",
 	[Key.passwordProtectedDescription]:
 		"保護されたコンテンツを表示するにはパスワードを入力してください。",
 	[Key.postEncrypted]: "暗号化済み",
@@ -402,7 +400,6 @@ export const ja: Translation = {
 	[Key.copyrightLink]: "リンク",
 	[Key.copyOgImage]: "OG画像をコピー",
 
-
 	// メッセージボード
 	[Key.messageBoard]: "メッセージボード",
 	[Key.messageBoardDesc]: "ここに感想やフィードバックをお残しください",
@@ -445,7 +442,8 @@ export const ja: Translation = {
 	[Key.docs]: "ドキュメント",
 	[Key.docsSearchPlaceholder]: "ドキュメントを検索...",
 	[Key.docsTableOfContents]: "目次",
-	[Key.docsFallbackNotice]: "このページは選択した言語では利用できません。デフォルト言語版を表示しています。",
+	[Key.docsFallbackNotice]:
+		"このページは選択した言語では利用できません。デフォルト言語版を表示しています。",
 	[Key.docsToggleSidebar]: "サイドバーを切り替え",
 	[Key.docsPrevPage]: "前のページ",
 	[Key.docsNextPage]: "次のページ",
@@ -512,7 +510,8 @@ export const ja: Translation = {
 	// スポンサーページ
 	[Key.sponsor]: "スポンサー",
 	[Key.sponsorTitle]: "サポートとスポンサー",
-	[Key.sponsorDescription]: "このプロジェクトが役立ったら、継続的な開発をサポートしてください",
+	[Key.sponsorDescription]:
+		"このプロジェクトが役立ったら、継続的な開発をサポートしてください",
 	[Key.sponsorMessage]: "あなたのサポートが開発の最大の原動力です！",
 	[Key.sponsorSupportAndShare]: "サポートと共有",
 	[Key.sponsorSupport]: "作者をサポート",
@@ -529,7 +528,8 @@ export const ja: Translation = {
 	[Key.sponsorNoSponsors]: "スポンサーはまだいません",
 	[Key.sponsorApplyInfo]: "スポンサーになる",
 	[Key.sponsorButton]: "サポート＆シェア",
-	[Key.sponsorButtonText]: "この記事が役に立ったら、著者をサポートするかシェアしてください",
+	[Key.sponsorButtonText]:
+		"この記事が役に立ったら、著者をサポートするかシェアしてください",
 
 	// ゲストブック
 	[Key.guestbook]: "ゲストブック",
@@ -543,14 +543,17 @@ export const ja: Translation = {
 	[Key.guestbookSubmit]: "送信",
 	[Key.guestbookSubmitting]: "送信中...",
 	[Key.guestbookSubmitSuccess]: "メッセージが送信されました！",
-	[Key.guestbookSubmitError]: "メッセージの送信に失敗しました。再試行してください。",
+	[Key.guestbookSubmitError]:
+		"メッセージの送信に失敗しました。再試行してください。",
 	[Key.guestbookMessages]: "すべてのメッセージ",
-	[Key.guestbookNoMessages]: "メッセージはまだありません。最初のメッセージを残してください！",
+	[Key.guestbookNoMessages]:
+		"メッセージはまだありません。最初のメッセージを残してください！",
 	[Key.guestbookReplied]: "返信済み",
 	[Key.guestbookReply]: "返信",
 	[Key.guestbookCommentHint]: "メッセージを残す...",
 	[Key.commentNotConfigured]: "コメントシステムは未設定です",
-	[Key.commentNotConfiguredHint]: "設定ファイルでコメントシステムが有効化されていません。有効化すると、訪問者がメッセージを残せるようになります。",
+	[Key.commentNotConfiguredHint]:
+		"設定ファイルでコメントシステムが有効化されていません。有効化すると、訪問者がメッセージを残せるようになります。",
 
 	// サポートと共有（記事下部）
 	[Key.supportAndShare]: "サポートと共有",

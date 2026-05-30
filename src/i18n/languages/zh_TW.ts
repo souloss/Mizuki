@@ -85,10 +85,8 @@ export const zh_TW: Translation = {
 	[Key.animeEmptyBangumi]: "請檢查 Bangumi 設定或網路連線",
 	[Key.animeEmptyBilibili]: "請檢查 Bilibili 設定或網路連線",
 	[Key.animeEmptyLocal]: "請在 src/data/anime.ts 檔案中新增番劇資訊",
-	[Key.animeConfigBilibili]:
-		"請在 src/config.ts 檔案中設定您的 Bilibili vmid",
-	[Key.animeConfigBangumi]:
-		"請在 src/config.ts 檔案中設定您的 Bangumi userId",
+	[Key.animeConfigBilibili]: "請在 src/config.ts 檔案中設定您的 Bilibili vmid",
+	[Key.animeConfigBangumi]: "請在 src/config.ts 檔案中設定您的 Bangumi userId",
 
 	// 短文頁面
 	[Key.talkingSubtitle]: "隨時隨地，分享生活",
@@ -183,8 +181,7 @@ export const zh_TW: Translation = {
 	[Key.rssBenefit2]: "在一個地方管理多個網站的訂閱",
 	[Key.rssBenefit3]: "避免錯過重要更新和文章",
 	[Key.rssBenefit4]: "享受無廣告的純淨閱讀經驗",
-	[Key.rssHowToUse]:
-		"推薦使用 Feedly、Inoreader 或其他 RSS 閱讀器來訂閱本站。",
+	[Key.rssHowToUse]: "推薦使用 Feedly、Inoreader 或其他 RSS 閱讀器來訂閱本站。",
 	[Key.rssCopied]: "RSS 鏈接已複製到剪貼板！",
 	[Key.rssCopyFailed]: "複製失敗，請手動複製鏈接",
 
@@ -336,8 +333,7 @@ export const zh_TW: Translation = {
 	[Key.savePoster]: "儲存海報",
 	[Key.scanToRead]: "來源網站",
 	[Key.shareOnSocial]: "分享",
-	[Key.shareOnSocialDescription]:
-		"如果這篇文章對你有幫助，歡迎分享給更多人！",
+	[Key.shareOnSocialDescription]: "如果這篇文章對你有幫助，歡迎分享給更多人！",
 	[Key.shareCopy]: "複製連結",
 	[Key.shareOnX]: "X",
 	[Key.shareOnTelegram]: "Telegram",
@@ -387,7 +383,6 @@ export const zh_TW: Translation = {
 	[Key.copyrightPublishedAt]: "發佈於",
 	[Key.copyrightLink]: "連結",
 	[Key.copyOgImage]: "複製分享圖",
-
 
 	// 留言板
 	[Key.messageBoard]: "留言板",
@@ -515,7 +510,8 @@ export const zh_TW: Translation = {
 	[Key.sponsorNoSponsors]: "暫無贊助記錄",
 	[Key.sponsorApplyInfo]: "成為贊助者",
 	[Key.sponsorButton]: "贊助＆分享",
-	[Key.sponsorButtonText]: "如果這篇文章對你有幫助，可以考慮贊助作者或分享給更多人",
+	[Key.sponsorButtonText]:
+		"如果這篇文章對你有幫助，可以考慮贊助作者或分享給更多人",
 
 	// 留言板
 	[Key.guestbook]: "留言板",
@@ -536,7 +532,8 @@ export const zh_TW: Translation = {
 	[Key.guestbookReply]: "回覆",
 	[Key.guestbookCommentHint]: "留下你的留言...",
 	[Key.commentNotConfigured]: "評論系統暫未配置",
-	[Key.commentNotConfiguredHint]: "您還未在配置文件中啟用評論系統，啟用後訪客才可在此留言",
+	[Key.commentNotConfiguredHint]:
+		"您還未在配置文件中啟用評論系統，啟用後訪客才可在此留言",
 
 	// 支持與分享（文章底部）
 	[Key.supportAndShare]: "支持與分享",

@@ -22,7 +22,7 @@ export function extractHeadingsFromDOM(
 	return Array.from(headings).map((h) => ({
 		id: h.id,
 		text: (h.textContent || "").replace(/#+\s*$/, ""),
-		level: parseInt(h.tagName[1], 10),
+		level: Number.parseInt(h.tagName[1], 10),
 	}));
 }
 

@@ -1,13 +1,13 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	interface Props {
-		volume: number;
-		isMuted: boolean;
-		onclick: () => void;
-	}
+interface Props {
+	volume: number;
+	isMuted: boolean;
+	onclick: () => void;
+}
 
-	const { volume, isMuted, onclick }: Props = $props();
+const { volume, isMuted, onclick }: Props = $props();
 </script>
 
 <button class="btn-plain w-8 h-8 rounded-lg" {onclick}>

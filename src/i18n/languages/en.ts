@@ -209,8 +209,7 @@ export const en: Translation = {
 		"Atom (Atom Syndication Format) is an XML-based standard for describing feeds and their items. With Atom, you can:",
 	[Key.atomBenefit1]:
 		"Get latest website content in time without manually visiting",
-	[Key.atomBenefit2]:
-		"Manage subscriptions to multiple websites in one place",
+	[Key.atomBenefit2]: "Manage subscriptions to multiple websites in one place",
 	[Key.atomBenefit3]: "Avoid missing important updates and articles",
 	[Key.atomBenefit4]: "Enjoy an ad-free, clean reading experience",
 	[Key.atomHowToUse]:
@@ -292,8 +291,7 @@ export const en: Translation = {
 	[Key.passwordUnlockButton]: "Unlock",
 	[Key.copyFailed]: "Copy failed:",
 	[Key.syntaxHighlightFailed]: "Syntax highlighting failed:",
-	[Key.autoSyntaxHighlightFailed]:
-		"Automatic syntax highlighting also failed:",
+	[Key.autoSyntaxHighlightFailed]: "Automatic syntax highlighting also failed:",
 	[Key.decryptionError]: "An error occurred during decryption:",
 	[Key.passwordHint]: "Hint",
 
@@ -387,7 +385,8 @@ export const en: Translation = {
 	[Key.allReposts]: "All Reposts",
 	[Key.repostFrom]: "Repost from",
 	[Key.originalArticle]: "Original article",
-	[Key.repostNotice]: "This is a repost. The original content belongs to the original author.",
+	[Key.repostNotice]:
+		"This is a repost. The original content belongs to the original author.",
 	[Key.repostOriginalSite]: "Original site",
 	[Key.repostLicense]: "License",
 
@@ -398,7 +397,6 @@ export const en: Translation = {
 	[Key.copyrightPublishedAt]: "Published",
 	[Key.copyrightLink]: "Link",
 	[Key.copyOgImage]: "Copy share image",
-
 
 	// Message Board
 	[Key.messageBoard]: "Message Board",
@@ -442,7 +440,8 @@ export const en: Translation = {
 	[Key.docs]: "Docs",
 	[Key.docsSearchPlaceholder]: "Search docs...",
 	[Key.docsTableOfContents]: "Table of Contents",
-	[Key.docsFallbackNotice]: "This page is not available in the selected language. Showing the default language version.",
+	[Key.docsFallbackNotice]:
+		"This page is not available in the selected language. Showing the default language version.",
 	[Key.docsToggleSidebar]: "Toggle sidebar",
 	[Key.docsPrevPage]: "Previous",
 	[Key.docsNextPage]: "Next",
@@ -509,7 +508,8 @@ export const en: Translation = {
 	// Sponsor Page
 	[Key.sponsor]: "Sponsor",
 	[Key.sponsorTitle]: "Support & Sponsor",
-	[Key.sponsorDescription]: "If this project has helped you, consider supporting me to keep creating",
+	[Key.sponsorDescription]:
+		"If this project has helped you, consider supporting me to keep creating",
 	[Key.sponsorMessage]: "Your support is my greatest motivation!",
 	[Key.sponsorSupportAndShare]: "Support & Share",
 	[Key.sponsorSupport]: "Support the Author",
@@ -526,7 +526,8 @@ export const en: Translation = {
 	[Key.sponsorNoSponsors]: "No sponsors yet",
 	[Key.sponsorApplyInfo]: "Become a Sponsor",
 	[Key.sponsorButton]: "Support & Share",
-	[Key.sponsorButtonText]: "If this article helped you, consider supporting the author or sharing it",
+	[Key.sponsorButtonText]:
+		"If this article helped you, consider supporting the author or sharing it",
 
 	// Guestbook
 	[Key.guestbook]: "Guestbook",
@@ -547,7 +548,8 @@ export const en: Translation = {
 	[Key.guestbookReply]: "Reply",
 	[Key.guestbookCommentHint]: "Leave a message...",
 	[Key.commentNotConfigured]: "Comment system is not configured",
-	[Key.commentNotConfiguredHint]: "The comment system has not been enabled in the configuration file. Visitors will be able to leave messages once it is enabled.",
+	[Key.commentNotConfiguredHint]:
+		"The comment system has not been enabled in the configuration file. Visitors will be able to leave messages once it is enabled.",
 
 	// Support & Share (at the bottom of articles)
 	[Key.supportAndShare]: "Support & Share",

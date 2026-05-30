@@ -45,13 +45,19 @@
 	 * @param {HTMLElement} container .plantuml-diagram-container
 	 */
 	function bindErrorHandler(img, container) {
-		if (img.dataset.errorBound === "true") {return;}
+		if (img.dataset.errorBound === "true") {
+			return;
+		}
 		img.dataset.errorBound = "true";
 		img.addEventListener("error", () => {
-			if (container.dataset.errorShown === "true") {return;}
+			if (container.dataset.errorShown === "true") {
+				return;
+			}
 			container.dataset.errorShown = "true";
 			const wrapper = container.querySelector(".plantuml-wrapper");
-			if (!wrapper) {return;}
+			if (!wrapper) {
+				return;
+			}
 			wrapper.innerHTML = "";
 			const errorBox = document.createElement("div");
 			errorBox.className = "plantuml-error";
@@ -95,7 +101,9 @@
 	 * @param {HTMLElement} container .plantuml-diagram-container
 	 */
 	function bindLoadHandler(img, container) {
-		if (img.dataset.loadBound === "true") {return;}
+		if (img.dataset.loadBound === "true") {
+			return;
+		}
 		img.dataset.loadBound = "true";
 		const onLoad = () => initInteraction(container);
 		if (img.complete && img.naturalWidth > 0) {
@@ -112,9 +120,13 @@
 	 * @param {HTMLElement} container .plantuml-diagram-container
 	 */
 	function initInteraction(container) {
-		if (container.dataset.interactionInit === "true") {return;}
+		if (container.dataset.interactionInit === "true") {
+			return;
+		}
 		const img = container.querySelector(".plantuml-image");
-		if (!img) {return;}
+		if (!img) {
+			return;
+		}
 		container.dataset.interactionInit = "true";
 
 		const state = { scale: 1, translateX: 0, translateY: 0 };
@@ -136,7 +148,9 @@
 		const zoomBy = (factor, originX, originY) => {
 			const prev = state.scale;
 			const next = clampScale(prev * factor);
-			if (next === prev) {return;}
+			if (next === prev) {
+				return;
+			}
 			if (typeof originX === "number" && typeof originY === "number") {
 				const rect = img.getBoundingClientRect();
 				const cx = rect.left + rect.width / 2;
@@ -209,8 +223,12 @@
 		let startTy = 0;
 
 		const onPointerDown = (event) => {
-			if (event.button !== 0 && event.pointerType !== "touch") {return;}
-			if (event.target.closest(".plantuml-controls")) {return;}
+			if (event.button !== 0 && event.pointerType !== "touch") {
+				return;
+			}
+			if (event.target.closest(".plantuml-controls")) {
+				return;
+			}
 			isDragging = true;
 			startX = event.clientX;
 			startY = event.clientY;
@@ -220,13 +238,17 @@
 			container.style.cursor = "grabbing";
 		};
 		const onPointerMove = (event) => {
-			if (!isDragging) {return;}
+			if (!isDragging) {
+				return;
+			}
 			state.translateX = startTx + (event.clientX - startX);
 			state.translateY = startTy + (event.clientY - startY);
 			applyTransform();
 		};
 		const onPointerUp = (event) => {
-			if (!isDragging) {return;}
+			if (!isDragging) {
+				return;
+			}
 			isDragging = false;
 			container.releasePointerCapture?.(event.pointerId);
 			container.style.cursor = "";
@@ -238,7 +260,9 @@
 
 		// 双击放大/重置
 		container.addEventListener("dblclick", (event) => {
-			if (event.target.closest(".plantuml-controls")) {return;}
+			if (event.target.closest(".plantuml-controls")) {
+				return;
+			}
 			if (state.scale !== 1) {
 				reset();
 			} else {
@@ -255,7 +279,9 @@
 	 */
 	function openFullscreen(container) {
 		const sourceImg = container.querySelector(".plantuml-image");
-		if (!sourceImg) {return;}
+		if (!sourceImg) {
+			return;
+		}
 
 		const overlay = document.createElement("div");
 		overlay.className = "plantuml-fullscreen-overlay";
@@ -280,7 +306,9 @@
 		const zoom = (factor, originX, originY) => {
 			const prev = state.scale;
 			const next = Math.min(MAX_SCALE, Math.max(MIN_SCALE, prev * factor));
-			if (next === prev) {return;}
+			if (next === prev) {
+				return;
+			}
 			if (typeof originX === "number" && typeof originY === "number") {
 				const rect = img.getBoundingClientRect();
 				const cx = rect.left + rect.width / 2;
@@ -354,7 +382,9 @@
 		let stx = 0;
 		let sty = 0;
 		content.addEventListener("pointerdown", (event) => {
-			if (event.target.closest(".plantuml-fs-controls")) {return;}
+			if (event.target.closest(".plantuml-fs-controls")) {
+				return;
+			}
 			dragging = true;
 			sx = event.clientX;
 			sy = event.clientY;
@@ -363,13 +393,17 @@
 			content.setPointerCapture?.(event.pointerId);
 		});
 		content.addEventListener("pointermove", (event) => {
-			if (!dragging) {return;}
+			if (!dragging) {
+				return;
+			}
 			state.tx = stx + (event.clientX - sx);
 			state.ty = sty + (event.clientY - sy);
 			apply();
 		});
 		const endDrag = (event) => {
-			if (!dragging) {return;}
+			if (!dragging) {
+				return;
+			}
 			dragging = false;
 			content.releasePointerCapture?.(event.pointerId);
 		};
@@ -407,7 +441,9 @@
 		const containers = document.querySelectorAll(".plantuml-diagram-container");
 		containers.forEach((container) => {
 			const img = container.querySelector(".plantuml-image");
-			if (!img) {return;}
+			if (!img) {
+				return;
+			}
 			bindErrorHandler(img, container);
 			bindLoadHandler(img, container);
 		});

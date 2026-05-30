@@ -1,231 +1,230 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
-	import { onMount } from "svelte";
+import Icon from "@iconify/svelte";
+import { onMount } from "svelte";
 
-	import I18nKey from "../../../i18n/i18nKey";
-	import { i18n } from "../../../i18n/translation";
-	import { navigateToPage } from "../../../utils/navigation-utils";
-	import { panelManager } from "../../../utils/panel-manager.js";
-	import {
-		checkIsHomePage,
-		generatePostItems,
-		generateTOCItems,
-		getTOCConfig,
-		type PostItem,
-		scrollToHeading as scrollToHeadingUtil,
-		type TOCItem,
-	} from "./hooks/useMobileTOC";
+import I18nKey from "../../../i18n/i18nKey";
+import { i18n } from "../../../i18n/translation";
+import { navigateToPage } from "../../../utils/navigation-utils";
+import { panelManager } from "../../../utils/panel-manager.js";
+import {
+	checkIsHomePage,
+	generatePostItems,
+	generateTOCItems,
+	getTOCConfig,
+	type PostItem,
+	scrollToHeading as scrollToHeadingUtil,
+	type TOCItem,
+} from "./hooks/useMobileTOC";
 
-	let tocItems: TOCItem[] = $state([]);
-	let postItems: PostItem[] = $state([]);
-	let activeId = $state("");
-	let isHomePage = $state(false);
+let tocItems: TOCItem[] = $state([]);
+let postItems: PostItem[] = $state([]);
+let activeId = $state("");
+let isHomePage = $state(false);
 
-	let observer: IntersectionObserver | undefined;
-	let swupListenersRegistered = $state(false);
+let observer: IntersectionObserver | undefined;
+let swupListenersRegistered = $state(false);
 
-	const togglePanel = async () => {
-		await panelManager.togglePanel("mobile-toc-panel");
-	};
+const togglePanel = async () => {
+	await panelManager.togglePanel("mobile-toc-panel");
+};
 
-	const setPanelVisibility = async (show: boolean): Promise<void> => {
-		await panelManager.togglePanel("mobile-toc-panel", show);
-	};
+const setPanelVisibility = async (show: boolean): Promise<void> => {
+	await panelManager.togglePanel("mobile-toc-panel", show);
+};
 
-	const scrollToHeading = (id: string) => {
-		setPanelVisibility(false);
-		scrollToHeadingUtil(id);
-	};
+const scrollToHeading = (id: string) => {
+	setPanelVisibility(false);
+	scrollToHeadingUtil(id);
+};
 
-	const navigateToPost = (url: string) => {
-		setPanelVisibility(false);
-		navigateToPage(url);
-	};
+const navigateToPost = (url: string) => {
+	setPanelVisibility(false);
+	navigateToPage(url);
+};
 
-	const updateActiveHeading = () => {
-		const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-		const scrollTop = window.scrollY;
-		const offset = 100;
+const updateActiveHeading = () => {
+	const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+	const scrollTop = window.scrollY;
+	const offset = 100;
 
-		let currentActiveId = "";
-		headings.forEach((heading) => {
-			if (heading.id) {
-				const elementTop = (heading as HTMLElement).offsetTop - offset;
-				if (scrollTop >= elementTop) {
-					currentActiveId = heading.id;
-				}
-			}
-		});
-
-		activeId = currentActiveId;
-	};
-
-	const setupIntersectionObserver = () => {
-		const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
-
-		if (observer) {
-			observer.disconnect();
-		}
-
-		observer = new IntersectionObserver(
-			(entries) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						activeId = entry.target.id;
-					}
-				});
-			},
-			{
-				rootMargin: "-80px 0px -80% 0px",
-				threshold: 0,
-			},
-		);
-
-		headings.forEach((heading) => {
-			if (heading.id) {
-				observer?.observe(heading);
-			}
-		});
-	};
-
-	const setupSwupListeners = () => {
-		if (
-			typeof window !== "undefined" &&
-			(
-				window as unknown as {
-					swup?: {
-						hooks: {
-							on: (event: string, cb: () => void) => void;
-							off: (event: string) => void;
-						};
-					};
-				}
-			).swup &&
-			!swupListenersRegistered
-		) {
-			const swup = (
-				window as unknown as {
-					swup: {
-						hooks: { on: (event: string, cb: () => void) => void };
-					};
-				}
-			).swup;
-
-			swup.hooks.on("page:view", () => {
-				setTimeout(() => init(), 200);
-			});
-
-			swupListenersRegistered = true;
-		} else if (!swupListenersRegistered) {
-			window.addEventListener("popstate", () => {
-				setTimeout(init, 200);
-			});
-			swupListenersRegistered = true;
-		}
-	};
-
-	const checkSwupAvailability = () => {
-		if (typeof window !== "undefined") {
-			const w = window as unknown as {
-				swup?: {
-					hooks: {
-						on: (event: string, cb: () => void) => void;
-						off: (event: string) => void;
-					};
-				};
-			};
-			if (w.swup) {
-				setupSwupListeners();
-			} else {
-				const checkSwup = () => {
-					if (w.swup) {
-						setupSwupListeners();
-						document.removeEventListener("swup:enable", checkSwup);
-					}
-				};
-
-				document.addEventListener("swup:enable", checkSwup);
-				setTimeout(() => {
-					if (w.swup) {
-						setupSwupListeners();
-						document.removeEventListener("swup:enable", checkSwup);
-					}
-				}, 1000);
+	let currentActiveId = "";
+	headings.forEach((heading) => {
+		if (heading.id) {
+			const elementTop = (heading as HTMLElement).offsetTop - offset;
+			if (scrollTop >= elementTop) {
+				currentActiveId = heading.id;
 			}
 		}
-	};
-
-	const init = () => {
-		isHomePage = checkIsHomePage();
-		checkSwupAvailability();
-
-		if (isHomePage) {
-			tocItems = [];
-			postItems = generatePostItems();
-		} else {
-			const config = getTOCConfig();
-			tocItems = generateTOCItems(config);
-			postItems = [];
-			setupIntersectionObserver();
-			updateActiveHeading();
-		}
-	};
-
-	onMount(() => {
-		setTimeout(init, 100);
-		window.addEventListener("scroll", updateActiveHeading, {
-			passive: true,
-		});
-
-		return () => {
-			observer?.disconnect();
-			window.removeEventListener("scroll", updateActiveHeading);
-
-			const w = window as unknown as {
-				swup?: {
-					hooks: {
-						on: (event: string, cb: () => void) => void;
-						off: (event: string) => void;
-					};
-				};
-			};
-			if (w.swup) {
-				w.swup.hooks.off("page:view");
-			}
-
-			swupListenersRegistered = false;
-		};
 	});
 
-	if (typeof window !== "undefined") {
-		(window as unknown as { mobileTOCInit?: () => void }).mobileTOCInit =
-			init;
+	activeId = currentActiveId;
+};
+
+const setupIntersectionObserver = () => {
+	const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+	if (observer) {
+		observer.disconnect();
 	}
 
-	const getLevelPadding = (level: number): string => {
-		const base = "12px";
-		const levelPadding: Record<number, string> = {
-			1: "12px",
-			2: "28px",
-			3: "36px",
-			4: "44px",
-			5: "52px",
-			6: "52px",
-		};
-		return levelPadding[level] || base;
-	};
+	observer = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					activeId = entry.target.id;
+				}
+			});
+		},
+		{
+			rootMargin: "-80px 0px -80% 0px",
+			threshold: 0,
+		},
+	);
 
-	const getActivePadding = (level: number): string => {
-		const activePadding: Record<number, string> = {
-			1: "9px",
-			2: "25px",
-			3: "33px",
-			4: "41px",
-			5: "49px",
-			6: "49px",
+	headings.forEach((heading) => {
+		if (heading.id) {
+			observer?.observe(heading);
+		}
+	});
+};
+
+const setupSwupListeners = () => {
+	if (
+		typeof window !== "undefined" &&
+		(
+			window as unknown as {
+				swup?: {
+					hooks: {
+						on: (event: string, cb: () => void) => void;
+						off: (event: string) => void;
+					};
+				};
+			}
+		).swup &&
+		!swupListenersRegistered
+	) {
+		const swup = (
+			window as unknown as {
+				swup: {
+					hooks: { on: (event: string, cb: () => void) => void };
+				};
+			}
+		).swup;
+
+		swup.hooks.on("page:view", () => {
+			setTimeout(() => init(), 200);
+		});
+
+		swupListenersRegistered = true;
+	} else if (!swupListenersRegistered) {
+		window.addEventListener("popstate", () => {
+			setTimeout(init, 200);
+		});
+		swupListenersRegistered = true;
+	}
+};
+
+const checkSwupAvailability = () => {
+	if (typeof window !== "undefined") {
+		const w = window as unknown as {
+			swup?: {
+				hooks: {
+					on: (event: string, cb: () => void) => void;
+					off: (event: string) => void;
+				};
+			};
 		};
-		return activePadding[level] || "9px";
+		if (w.swup) {
+			setupSwupListeners();
+		} else {
+			const checkSwup = () => {
+				if (w.swup) {
+					setupSwupListeners();
+					document.removeEventListener("swup:enable", checkSwup);
+				}
+			};
+
+			document.addEventListener("swup:enable", checkSwup);
+			setTimeout(() => {
+				if (w.swup) {
+					setupSwupListeners();
+					document.removeEventListener("swup:enable", checkSwup);
+				}
+			}, 1000);
+		}
+	}
+};
+
+const init = () => {
+	isHomePage = checkIsHomePage();
+	checkSwupAvailability();
+
+	if (isHomePage) {
+		tocItems = [];
+		postItems = generatePostItems();
+	} else {
+		const config = getTOCConfig();
+		tocItems = generateTOCItems(config);
+		postItems = [];
+		setupIntersectionObserver();
+		updateActiveHeading();
+	}
+};
+
+onMount(() => {
+	setTimeout(init, 100);
+	window.addEventListener("scroll", updateActiveHeading, {
+		passive: true,
+	});
+
+	return () => {
+		observer?.disconnect();
+		window.removeEventListener("scroll", updateActiveHeading);
+
+		const w = window as unknown as {
+			swup?: {
+				hooks: {
+					on: (event: string, cb: () => void) => void;
+					off: (event: string) => void;
+				};
+			};
+		};
+		if (w.swup) {
+			w.swup.hooks.off("page:view");
+		}
+
+		swupListenersRegistered = false;
 	};
+});
+
+if (typeof window !== "undefined") {
+	(window as unknown as { mobileTOCInit?: () => void }).mobileTOCInit = init;
+}
+
+const getLevelPadding = (level: number): string => {
+	const base = "12px";
+	const levelPadding: Record<number, string> = {
+		1: "12px",
+		2: "28px",
+		3: "36px",
+		4: "44px",
+		5: "52px",
+		6: "52px",
+	};
+	return levelPadding[level] || base;
+};
+
+const getActivePadding = (level: number): string => {
+	const activePadding: Record<number, string> = {
+		1: "9px",
+		2: "25px",
+		3: "33px",
+		4: "41px",
+		5: "49px",
+		6: "49px",
+	};
+	return activePadding[level] || "9px";
+};
 </script>
 
 <button

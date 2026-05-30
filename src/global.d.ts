@@ -1,5 +1,3 @@
-export {};
-
 declare global {
 	interface HTMLElementTagNameMap {
 		"table-of-contents": HTMLElement & {
@@ -18,7 +16,10 @@ declare global {
 			before: (event: string, handler: (...args: unknown[]) => void) => void;
 		};
 		options: {
-			ignoreVisit: (url: string, opts: { el?: Element; event?: Event }) => boolean;
+			ignoreVisit: (
+				url: string,
+				opts: { el?: Element; event?: Event },
+			) => boolean;
 			containers: string[];
 			[key: string]: unknown;
 		};
@@ -59,16 +60,16 @@ declare global {
 		};
 
 		loadPagefind?: () => Promise<void>;
-			pagefindMizuki?: {
-				search: (query: string) => Promise<{
-					results: {
-						data: () => Promise<SearchResult>;
-					}[];
-				}>;
-				options: (opts?: Record<string, unknown>) => Promise<void>;
-			};
-			loadPagefindMizuki?: () => Promise<void>;
-			_walineModule?: any;
+		pagefindMizuki?: {
+			search: (query: string) => Promise<{
+				results: {
+					data: () => Promise<SearchResult>;
+				}[];
+			}>;
+			options: (opts?: Record<string, unknown>) => Promise<void>;
+		};
+		loadPagefindMizuki?: () => Promise<void>;
+		_walineModule?: any;
 		toggleFloatingTOC?: () => void;
 		mobileTOCInit?: () => void;
 		initSemifullScrollDetection?: () => void;

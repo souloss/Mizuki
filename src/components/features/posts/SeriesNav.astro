@@ -1,26 +1,30 @@
 ---
-import I18nKey from "@i18n/i18nKey"
-import { i18n } from "@i18n/translation"
-import { getSeriesData, getSeriesNavigation } from "@utils/series-utils"
-import { getPostUrl, removeFileExtension } from "@utils/url-utils"
-import { Icon } from "astro-icon/components"
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { getSeriesData, getSeriesNavigation } from "@utils/series-utils";
+import { getPostUrl, removeFileExtension } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
 
 interface Props {
-	seriesName: string
-	currentSlug: string
+	seriesName: string;
+	currentSlug: string;
 }
 
-const { seriesName, currentSlug } = Astro.props
+const { seriesName, currentSlug } = Astro.props;
 
-const seriesInfo = await getSeriesData(seriesName)
-if (!seriesInfo || seriesInfo.posts.length < 2) {return}
+const seriesInfo = await getSeriesData(seriesName);
+if (!seriesInfo || seriesInfo.posts.length < 2) {
+	return;
+}
 
-const nav = getSeriesNavigation(seriesInfo, currentSlug)
-if (!nav) {return}
+const nav = getSeriesNavigation(seriesInfo, currentSlug);
+if (!nav) {
+	return;
+}
 
-const progressPct = (nav.currentIndex / nav.total) * 100
-const orderStr = String(nav.currentIndex).padStart(2, "0")
-const totalStr = String(nav.total).padStart(2, "0")
+const progressPct = (nav.currentIndex / nav.total) * 100;
+const orderStr = String(nav.currentIndex).padStart(2, "0");
+const totalStr = String(nav.total).padStart(2, "0");
 ---
 
 <nav

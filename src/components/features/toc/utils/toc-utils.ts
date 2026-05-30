@@ -10,9 +10,7 @@ import { getKatakanaBadge } from "./japanese-katakana";
  * @param containerSelector - 容器选择器
  * @returns 标题数据数组
  */
-export function extractHeadings(
-	containerSelector?: string,
-): HeadingData[] {
+export function extractHeadings(containerSelector?: string): HeadingData[] {
 	// Try the provided selector first, then fall back to common content containers
 	const selectors = containerSelector
 		? [containerSelector]
@@ -20,7 +18,9 @@ export function extractHeadings(
 	let container: Element | null = null;
 	for (const sel of selectors) {
 		container = document.querySelector(sel);
-		if (container) {break;}
+		if (container) {
+			break;
+		}
 	}
 	if (!container) {
 		return [];
@@ -32,7 +32,7 @@ export function extractHeadings(
 	return Array.from(headings).map((h) => ({
 		id: h.id,
 		text: (h.textContent || "").replace(/#+\s*$/, ""),
-		level: parseInt(h.tagName[1]),
+		level: Number.parseInt(h.tagName[1], 10),
 	}));
 }
 

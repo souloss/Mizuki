@@ -63,17 +63,10 @@
 			const startTime = Date.now();
 
 			function check() {
-				if (
-					window.mermaid &&
-					typeof window.mermaid.initialize === "function"
-				) {
+				if (window.mermaid && typeof window.mermaid.initialize === "function") {
 					resolve(window.mermaid);
 				} else if (Date.now() - startTime > timeout) {
-					reject(
-						new Error(
-							"Mermaid library failed to load within timeout",
-						),
-					);
+					reject(new Error("Mermaid library failed to load within timeout"));
 				} else {
 					setTimeout(check, 100);
 				}
@@ -100,10 +93,7 @@
 					if (wasDark !== isDark) {
 						if (hasThemeChanged()) {
 							clearTimeout(themeChangeTimer);
-							themeChangeTimer = setTimeout(
-								() => reRenderAllDiagrams(),
-								300,
-							);
+							themeChangeTimer = setTimeout(() => reRenderAllDiagrams(), 300);
 						}
 					}
 				}
@@ -209,9 +199,7 @@
 
 	// 渲染单个容器中的图表
 	async function renderDiagramInContainer(container) {
-		const mermaidEl = container.querySelector(
-			".mermaid[data-mermaid-code]",
-		);
+		const mermaidEl = container.querySelector(".mermaid[data-mermaid-code]");
 		if (!mermaidEl || renderedElements.has(mermaidEl)) {
 			return;
 		}
@@ -280,8 +268,7 @@
 					svgElement.style.height = "auto";
 
 					if (isDark) {
-						svgElement.style.filter =
-							"brightness(0.9) contrast(1.1)";
+						svgElement.style.filter = "brightness(0.9) contrast(1.1)";
 					} else {
 						svgElement.style.filter = "none";
 					}
@@ -291,10 +278,7 @@
 				break;
 			} catch (error) {
 				attempts++;
-				console.warn(
-					`Mermaid rendering attempt ${attempts} failed:`,
-					error,
-				);
+				console.warn(`Mermaid rendering attempt ${attempts} failed:`, error);
 
 				if (attempts >= maxAttempts) {
 					console.error(
@@ -310,20 +294,15 @@
 						</div>
 					`;
 					// 移除骨架屏即使渲染失败
-					const container = element.closest(
-						".mermaid-diagram-container",
-					);
+					const container = element.closest(".mermaid-diagram-container");
 					if (container) {
-						const skeleton =
-							container.querySelector(".mermaid-skeleton");
+						const skeleton = container.querySelector(".mermaid-skeleton");
 						if (skeleton) {
 							skeleton.remove();
 						}
 					}
 				} else {
-					await new Promise((resolve) =>
-						setTimeout(resolve, 500 * attempts),
-					);
+					await new Promise((resolve) => setTimeout(resolve, 500 * attempts));
 				}
 			}
 		}

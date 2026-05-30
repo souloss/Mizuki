@@ -80,10 +80,8 @@ export const zh_CN: Translation = {
 	[Key.animeEmptyBangumi]: "请检查 Bangumi 配置或网络连接",
 	[Key.animeEmptyBilibili]: "请检查 Bilibili 配置或网络连接",
 	[Key.animeEmptyLocal]: "请在 src/data/anime.ts 文件中添加番剧信息",
-	[Key.animeConfigBilibili]:
-		"请在 src/config.ts 文件中设置您的 Bilibili vmid",
-	[Key.animeConfigBangumi]:
-		"请在 src/config.ts 文件中设置您的 Bangumi userId",
+	[Key.animeConfigBilibili]: "请在 src/config.ts 文件中设置您的 Bilibili vmid",
+	[Key.animeConfigBangumi]: "请在 src/config.ts 文件中设置您的 Bangumi userId",
 
 	// 短文页面
 	[Key.talkingSubtitle]: "随时随地，分享生活",
@@ -264,8 +262,7 @@ export const zh_CN: Translation = {
 	[Key.rssBenefit2]: "在一个地方管理多个网站的订阅",
 	[Key.rssBenefit3]: "避免错过重要更新和文章",
 	[Key.rssBenefit4]: "享受无广告的纯净阅读体验",
-	[Key.rssHowToUse]:
-		"推荐使用 Feedly、Inoreader 或其他 RSS 阅读器来订阅本站。",
+	[Key.rssHowToUse]: "推荐使用 Feedly、Inoreader 或其他 RSS 阅读器来订阅本站。",
 	[Key.rssCopied]: "RSS 链接已复制到剪贴板！",
 	[Key.rssCopyFailed]: "复制失败，请手动复制链接",
 
@@ -334,8 +331,7 @@ export const zh_CN: Translation = {
 	[Key.savePoster]: "保存海报",
 	[Key.scanToRead]: "来源网站",
 	[Key.shareOnSocial]: "分享",
-	[Key.shareOnSocialDescription]:
-		"如果这篇文章对你有帮助，欢迎分享给更多人！",
+	[Key.shareOnSocialDescription]: "如果这篇文章对你有帮助，欢迎分享给更多人！",
 	[Key.shareCopy]: "复制链接",
 	[Key.shareOnX]: "X",
 	[Key.shareOnTelegram]: "Telegram",
@@ -385,7 +381,6 @@ export const zh_CN: Translation = {
 	[Key.copyrightPublishedAt]: "发布于",
 	[Key.copyrightLink]: "链接",
 	[Key.copyOgImage]: "复制分享图",
-
 
 	// 留言板
 	[Key.messageBoard]: "留言板",
@@ -534,7 +529,8 @@ export const zh_CN: Translation = {
 	[Key.guestbookReply]: "回复",
 	[Key.guestbookCommentHint]: "留下你的留言...",
 	[Key.commentNotConfigured]: "评论系统暂未配置",
-	[Key.commentNotConfiguredHint]: "您还未在配置文件中启用评论系统，启用后访客才可在此留言",
+	[Key.commentNotConfiguredHint]:
+		"您还未在配置文件中启用评论系统，启用后访客才可在此留言",
 
 	// 支持与分享（文章底部）
 	[Key.supportAndShare]: "支持与分享",

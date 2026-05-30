@@ -28,7 +28,8 @@ export const friendsData: FriendItem[] = [
 	{
 		id: 2,
 		title: "Mizuki Docs",
-		imgurl: "https://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
+		imgurl:
+			"https://q.qlogo.cn/headimg_dl?dst_uin=3231515355&spec=640&img_type=jpg",
 		desc: "Mizuki User Manual",
 		siteurl: "https://docs.mizuki.mysqil.com",
 		tags: ["Docs"],
@@ -115,7 +116,9 @@ export function getEnabledFriendsList(): FriendItem[] {
 
 // 获取按权重排序的友情链接数据（权重降序）
 export function getWeightedFriendsList(): FriendItem[] {
-	return getEnabledFriendsList().sort((a, b) => (b.weight || 0) - (a.weight || 0));
+	return getEnabledFriendsList().sort(
+		(a, b) => (b.weight || 0) - (a.weight || 0),
+	);
 }
 
 // 获取随机排序的友情链接数据

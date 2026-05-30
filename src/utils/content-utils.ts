@@ -1,8 +1,8 @@
+import { type CollectionEntry, getCollection } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { initPostIdMap } from "@utils/permalink-utils";
 import { getCategoryUrl, getPostUrl } from "@utils/url-utils";
-import { type CollectionEntry, getCollection } from "astro:content";
 
 // // Retrieve posts and sort them by publication date
 async function getRawSortedPosts() {
@@ -206,7 +206,9 @@ function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
  * 稀有标签（出现频率低）获得更高权重，常见标签权重更低
  * IDF(tag) = log(N / (1 + df(tag)))，N = 总文章数，df = 包含该标签的文章数
  */
-function computeTagIDF(allPosts: { data: { tags?: string[] } }[]): Map<string, number> {
+function computeTagIDF(
+	allPosts: { data: { tags?: string[] } }[],
+): Map<string, number> {
 	const tagDF = new Map<string, number>();
 	const N = allPosts.length;
 
@@ -290,7 +292,9 @@ export async function getRelatedPosts(
 		(p) => p.id !== currentPost.id && !p.data.password,
 	);
 
-	if (candidates.length === 0) {return [];}
+	if (candidates.length === 0) {
+		return [];
+	}
 
 	const currentTags = currentPost.data.tags || [];
 	const currentTokens = tokenize(currentPost.data.title);
@@ -303,7 +307,11 @@ export async function getRelatedPosts(
 
 	// 权重总和（用于归一化）
 	const totalWeight =
-		w.tagSimilarity + w.titleSimilarity + w.descriptionSimilarity + w.categoryMatch + w.freshness;
+		w.tagSimilarity +
+		w.titleSimilarity +
+		w.descriptionSimilarity +
+		w.categoryMatch +
+		w.freshness;
 
 	const scored = candidates.map((post) => {
 		const postTags = post.data.tags || [];
@@ -327,23 +335,27 @@ export async function getRelatedPosts(
 		// 分类匹配
 		const postCategory = post.data.category || "";
 		const catScore =
-			currentCategory && postCategory && currentCategory === postCategory ? 1 : 0;
+			currentCategory && postCategory && currentCategory === postCategory
+				? 1
+				: 0;
 
 		// 时间新鲜度（指数衰减，半衰期可配）
 		const daysSincePublished =
 			(now - new Date(post.data.published).getTime()) / (1000 * 60 * 60 * 24);
-		const freshnessScore = Math.exp((-Math.LN2 * daysSincePublished) / halfLife);
+		const freshnessScore = Math.exp(
+			(-Math.LN2 * daysSincePublished) / halfLife,
+		);
 
 		// 加权总分（归一化到 [0, 1]）
 		const totalScore =
 			totalWeight === 0
 				? 0
 				: (tagScore * w.tagSimilarity +
-					titleScore * w.titleSimilarity +
-					descScore * w.descriptionSimilarity +
-					catScore * w.categoryMatch +
-					freshnessScore * w.freshness) /
-				totalWeight;
+						titleScore * w.titleSimilarity +
+						descScore * w.descriptionSimilarity +
+						catScore * w.categoryMatch +
+						freshnessScore * w.freshness) /
+					totalWeight;
 
 		return { post, totalScore, tagScore };
 	});
@@ -358,12 +370,16 @@ export async function getRelatedPosts(
 	const result: PostForList[] = [];
 
 	for (const s of withTagMatch) {
-		if (result.length >= maxCount) {break;}
+		if (result.length >= maxCount) {
+			break;
+		}
 		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 
 	for (const s of withoutTagMatch) {
-		if (result.length >= maxCount) {break;}
+		if (result.length >= maxCount) {
+			break;
+		}
 		result.push({ id: s.post.id, data: s.post.data, url: getPostUrl(s.post) });
 	}
 

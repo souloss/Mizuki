@@ -12,17 +12,20 @@
 import { glob } from "astro/loaders";
 
 const isDev = () => {
-  // Use dual env check for reliable dev-mode detection in Astro 6 content loaders.
-  // ASTRO_BUILDING is not available during content loader execution in Astro 6
-  // (it's undefined even during `astro build`). NODE_ENV is reliably set:
-  // - "production" during `astro build` (set by Astro CLI)
-  // - undefined or "development" during `astro dev`
-  // Check both to be safe — if either indicates production, treat as production.
-  const astroBuilding = process.env.ASTRO_BUILDING === "true";
-  const nodeEnvProd = process.env.NODE_ENV === "production";
-  return !astroBuilding && !nodeEnvProd;
+	// Use dual env check for reliable dev-mode detection in Astro 6 content loaders.
+	// ASTRO_BUILDING is not available during content loader execution in Astro 6
+	// (it's undefined even during `astro build`). NODE_ENV is reliably set:
+	// - "production" during `astro build` (set by Astro CLI)
+	// - undefined or "development" during `astro dev`
+	// Check both to be safe — if either indicates production, treat as production.
+	const astroBuilding = process.env.ASTRO_BUILDING === "true";
+	const nodeEnvProd = process.env.NODE_ENV === "production";
+	return !astroBuilding && !nodeEnvProd;
 };
-const DEV_MAX_RENDERED = parseInt(process.env.DEV_MAX_RENDERED_POSTS || "20", 10);
+const DEV_MAX_RENDERED = Number.parseInt(
+	process.env.DEV_MAX_RENDERED_POSTS || "20",
+	10,
+);
 const DEV_PLACEHOLDER_HTML = "<p>Content preview not available in dev mode</p>";
 
 export function devGlob(globOptions) {
@@ -63,9 +66,15 @@ export function devGlob(globOptions) {
 			postsEntries.sort((a, b) => {
 				const da = a[1]?.data?.published;
 				const db = b[1]?.data?.published;
-				if (!da && !db) { return 0; }
-				if (!da) { return 1; }
-				if (!db) { return -1; }
+				if (!da && !db) {
+					return 0;
+				}
+				if (!da) {
+					return 1;
+				}
+				if (!db) {
+					return -1;
+				}
 				return new Date(db) - new Date(da);
 			});
 
@@ -107,7 +116,9 @@ export function devGlob(globOptions) {
 				}
 			}
 
-			console.log(`[dev-glob] Trimmed ${trimmed}/${entries.length} entries (kept ${Math.min(DEV_MAX_RENDERED, postsEntries.length)} recent posts with full HTML)`);
+			console.log(
+				`[dev-glob] Trimmed ${trimmed}/${entries.length} entries (kept ${Math.min(DEV_MAX_RENDERED, postsEntries.length)} recent posts with full HTML)`,
+			);
 		},
 	};
 }

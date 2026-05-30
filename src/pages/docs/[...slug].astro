@@ -1,4 +1,6 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import { getCollection, render } from "astro:content";
 import DocsHome from "@components/features/docs/DocsHome.astro";
 import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
@@ -14,29 +16,42 @@ import {
 	getDocSidebarData,
 } from "@utils/docs-utils";
 import type { MarkdownHeading } from "astro";
-import type { CollectionEntry } from "astro:content";
-import { getCollection, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
 import type { DocHomeConfig } from "@/types/config";
 
 function formatDocDate(value: unknown): string {
-	if (!value) {return "";}
-	if (value instanceof Date) {return value.toISOString().slice(0, 10);}
-	if (typeof value === "string") {return value.split(/[ T]/)[0]?.replace(/\//g, "-") || value;}
+	if (!value) {
+		return "";
+	}
+	if (value instanceof Date) {
+		return value.toISOString().slice(0, 10);
+	}
+	if (typeof value === "string") {
+		return value.split(/[ T]/)[0]?.replace(/\//g, "-") || value;
+	}
 	return "";
 }
 
 function getEntryTitle(entry: any): string {
-	if (entry.data.title) {return entry.data.title;}
-	const basename = entry.id.replace(/\.(md|mdx)$/i, "").split("/").pop() || "Untitled";
+	if (entry.data.title) {
+		return entry.data.title;
+	}
+	const basename =
+		entry.id
+			.replace(/\.(md|mdx)$/i, "")
+			.split("/")
+			.pop() || "Untitled";
 	return basename
 		.split(/[-_]/g)
 		.map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
 		.join(" ");
 }
 
-function hasTopLevelMarkdownH1(entry: CollectionEntry<"docs"> | undefined, renderedHeadings: MarkdownHeading[]): boolean {
+function hasTopLevelMarkdownH1(
+	entry: CollectionEntry<"docs"> | undefined,
+	renderedHeadings: MarkdownHeading[],
+): boolean {
 	const body = (entry as { body?: string } | undefined)?.body;
 	if (typeof body !== "string") {
 		return renderedHeadings.some((heading) => heading.depth === 1);
@@ -51,7 +66,9 @@ function hasTopLevelMarkdownH1(entry: CollectionEntry<"docs"> | undefined, rende
 			inFence = !inFence;
 			continue;
 		}
-		if (inFence) {continue;}
+		if (inFence) {
+			continue;
+		}
 
 		if (/^:{3,}\s*$/.test(trimmed)) {
 			directiveDepth = Math.max(0, directiveDepth - 1);
@@ -71,7 +88,10 @@ function hasTopLevelMarkdownH1(entry: CollectionEntry<"docs"> | undefined, rende
 
 export async function getStaticPaths() {
 	const docSlugs = await getDocProjectSlugs();
-	const paths: Array<{ params: { slug: string }; props: Record<string, unknown> }> = [];
+	const paths: Array<{
+		params: { slug: string };
+		props: Record<string, unknown>;
+	}> = [];
 
 	for (const docSlug of docSlugs) {
 		const defaultLang = await getDocDefaultLang(docSlug);
@@ -96,22 +116,38 @@ export async function getStaticPaths() {
 		}
 
 		const pages = await getCollection("docs", (entry) => {
-			const entryDocSlug = entry.data.docSlug || entry.id.replace(/\\/g, "/").split("/")[0];
+			const entryDocSlug =
+				entry.data.docSlug || entry.id.replace(/\\/g, "/").split("/")[0];
 			return entryDocSlug === docSlug;
 		});
 
 		for (const page of pages) {
 			// Skip _index.md pages — they are not rendered as standalone pages
-			if (page.id.endsWith("/_index") || page.id === docSlug + "/_index") {continue;}
+			if (page.id.endsWith("/_index") || page.id === `${docSlug}/_index`) {
+				continue;
+			}
 			// Skip homepage entries — handled above
-			if (page.data.isHomepage) {continue;}
+			if (page.data.isHomepage) {
+				continue;
+			}
 
 			const pageLang = page.data.lang || "";
-			const url = getDocPageUrl(docSlug, page.id, pageLang, defaultLang, page.data.permalink);
+			const url = getDocPageUrl(
+				docSlug,
+				page.id,
+				pageLang,
+				defaultLang,
+				page.data.permalink,
+			);
 			const slug = url.replace(/^\/docs\/?/, "").replace(/\/$/, "");
 			const { Content, headings, remarkPluginFrontmatter } = await render(page);
 			const sidebarData = await getDocSidebarData(docSlug);
-			const prevNextLinks = await getDocPrevNextLinks(docSlug, page.id, pageLang || defaultLang, defaultLang);
+			const prevNextLinks = await getDocPrevNextLinks(
+				docSlug,
+				page.id,
+				pageLang || defaultLang,
+				defaultLang,
+			);
 
 			paths.push({
 				params: { slug },
@@ -170,11 +206,20 @@ const {
 
 const docEntry = entry as CollectionEntry<"docs"> | undefined;
 const ContentComponent = Content;
-const title = isHome && homeConfig ? homeConfig.name : (docEntry ? getEntryTitle(docEntry) : docSlug);
-const description = isHome && homeConfig ? homeConfig.description : (docEntry?.data.description ?? "");
+const title =
+	isHome && homeConfig
+		? homeConfig.name
+		: docEntry
+			? getEntryTitle(docEntry)
+			: docSlug;
+const description =
+	isHome && homeConfig
+		? homeConfig.description
+		: (docEntry?.data.description ?? "");
 const currentPageId = isHome || !docEntry ? "" : docEntry.id;
 const hasContentH1 = !isHome && hasTopLevelMarkdownH1(docEntry, headings);
-const createTime = !isHome && docEntry ? formatDocDate(docEntry.data.createTime) : "";
+const createTime =
+	!isHome && docEntry ? formatDocDate(docEntry.data.createTime) : "";
 ---
 
 <DocsLayout

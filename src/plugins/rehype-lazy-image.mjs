@@ -8,18 +8,11 @@ import { visit } from "unist-util-visit";
 export function rehypeLazyImage() {
 	return (tree) => {
 		visit(tree, "element", (node) => {
-			if (
-				node.tagName === "img" &&
-				node.properties &&
-				node.properties.src
-			) {
+			if (node.tagName === "img" && node.properties && node.properties.src) {
 				const src = node.properties.src;
 
 				// Skip images that are already processed or are inline/base64
-				if (
-					src.startsWith("data:") ||
-					node.properties.dataLazySrc
-				) {
+				if (src.startsWith("data:") || node.properties.dataLazySrc) {
 					return;
 				}
 

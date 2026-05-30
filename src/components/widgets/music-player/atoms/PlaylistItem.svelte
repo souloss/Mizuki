@@ -1,35 +1,35 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	import type { Song } from "../types";
+import type { Song } from "../types";
 
-	interface Props {
-		song: Song;
-		index: number;
-		isCurrent: boolean;
-		isPlaying: boolean;
-		onclick: () => void;
-		lazy?: boolean;
+interface Props {
+	song: Song;
+	index: number;
+	isCurrent: boolean;
+	isPlaying: boolean;
+	onclick: () => void;
+	lazy?: boolean;
+}
+
+const {
+	song,
+	index,
+	isCurrent,
+	isPlaying,
+	onclick,
+	lazy = true,
+}: Props = $props();
+
+function getAssetPath(path: string): string {
+	if (path.startsWith("http://") || path.startsWith("https://")) {
+		return path;
 	}
-
-	const {
-		song,
-		index,
-		isCurrent,
-		isPlaying,
-		onclick,
-		lazy = true,
-	}: Props = $props();
-
-	function getAssetPath(path: string): string {
-		if (path.startsWith("http://") || path.startsWith("https://")) {
-			return path;
-		}
-		if (path.startsWith("/")) {
-			return path;
-		}
-		return `/${path}`;
+	if (path.startsWith("/")) {
+		return path;
 	}
+	return `/${path}`;
+}
 </script>
 
 <div

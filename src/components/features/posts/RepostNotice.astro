@@ -1,16 +1,16 @@
 ---
-import I18nKey from "@i18n/i18nKey"
-import { i18n } from "@i18n/translation"
-import { Icon } from "astro-icon/components"
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import { Icon } from "astro-icon/components";
 
 interface Props {
-	originalAuthor: string
-	originalUrl: string
-	originalTitle?: string
-	originalSite?: string
+	originalAuthor: string;
+	originalUrl: string;
+	originalTitle?: string;
+	originalSite?: string;
 }
 
-const { originalAuthor, originalUrl, originalSite } = Astro.props
+const { originalAuthor, originalUrl, originalSite } = Astro.props;
 ---
 
 <div class="repost-notice my-4 rounded-xl border border-[var(--primary)]/20 bg-[var(--primary)]/5 p-4 sm:p-5 onload-animation">

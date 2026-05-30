@@ -1,14 +1,22 @@
 ---
+import { getEntry, render } from "astro:content";
 import Comment from "@components/comment/index.astro";
 import FriendsCircle from "@components/features/friends/FriendsCircle.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
-import { getEntry, render } from "astro:content";
 import { Icon } from "astro-icon/components";
 
-import { commentConfig, friendsConfig, profileConfig, siteConfig } from "@/config";
+import {
+	commentConfig,
+	friendsConfig,
+	profileConfig,
+	siteConfig,
+} from "@/config";
 import { getFriendsListByConfig } from "@/data/friends";
-import { getFriendsCircleLastUpdated, getFriendsCircleList } from "@/data/friends-circle";
+import {
+	getFriendsCircleLastUpdated,
+	getFriendsCircleList,
+} from "@/data/friends-circle";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
@@ -16,46 +24,62 @@ import MainGridLayout from "@/layouts/MainGridLayout.astro";
 export const prerender = true;
 
 if (!siteConfig.featurePages.friends) {
-  return Astro.redirect("/404/");
+	return Astro.redirect("/404/");
 }
 
 const friendsPost = await getEntry("spec", "friends");
-const { Content } = friendsPost ? await render(friendsPost) : { Content: () => {} };
+const { Content } = friendsPost
+	? await render(friendsPost)
+	: { Content: () => {} };
 
-const isCommentEnabled = commentConfig?.enable && friendsConfig.showComment !== false;
+const isCommentEnabled =
+	commentConfig?.enable && friendsConfig.showComment !== false;
 const title = friendsConfig.title || i18n(I18nKey.friendsTitle);
-const description = friendsConfig.description || i18n(I18nKey.friendsDescription);
+const description =
+	friendsConfig.description || i18n(I18nKey.friendsDescription);
 const randomize = friendsConfig.randomizeSort ?? true;
 const friendsList = getFriendsListByConfig(randomize);
-const friendsCircleList = friendsConfig.showFriendsCircle !== false ? getFriendsCircleList() : [];
-const friendsCircleLastUpdated = friendsConfig.showFriendsCircle !== false ? getFriendsCircleLastUpdated() : "";
+const friendsCircleList =
+	friendsConfig.showFriendsCircle !== false ? getFriendsCircleList() : [];
+const friendsCircleLastUpdated =
+	friendsConfig.showFriendsCircle !== false
+		? getFriendsCircleLastUpdated()
+		: "";
 
 // 收集所有标签
 const allTags = [...new Set(friendsList.flatMap((f) => f.tags || []))];
 
 // 本站信息
 const mySiteInfo = {
-  name: siteConfig.title || "Mizuki Blog",
-  url: siteConfig.siteURL || "https://mizuki.mysqil.com/",
-  avatar: (profileConfig.avatar || "/favicon.png").startsWith("/") ? (profileConfig.avatar || "/favicon.png") : `/${profileConfig.avatar || "favicon.png"}`,
-  desc: profileConfig.bio || "一个使用 Mizuki 主题的 Astro 博客",
+	name: siteConfig.title || "Mizuki Blog",
+	url: siteConfig.siteURL || "https://mizuki.mysqil.com/",
+	avatar: (profileConfig.avatar || "/favicon.png").startsWith("/")
+		? profileConfig.avatar || "/favicon.png"
+		: `/${profileConfig.avatar || "favicon.png"}`,
+	desc: profileConfig.bio || "一个使用 Mizuki 主题的 Astro 博客",
 };
 
 // 注意事项
 const notes = [
-  { title: "互换原则", content: "请先将本站添加到您的友链页面，确认后会添加您的友链" },
-  { title: "链接维护", content: "友链网站长期无法访问或内容违规，将会被移除" },
-  { title: "内容要求", content: "内容积极向上，不含有任何违法违规内容" },
-  { title: "站点要求", content: "支持 HTTPS，以原创内容为主，能够正常访问且有持续更新" },
-  { title: "RSS 订阅", content: "提供 RSS 地址可让你的最新文章出现在朋友圈中" },
+	{
+		title: "互换原则",
+		content: "请先将本站添加到您的友链页面，确认后会添加您的友链",
+	},
+	{ title: "链接维护", content: "友链网站长期无法访问或内容违规，将会被移除" },
+	{ title: "内容要求", content: "内容积极向上，不含有任何违法违规内容" },
+	{
+		title: "站点要求",
+		content: "支持 HTTPS，以原创内容为主，能够正常访问且有持续更新",
+	},
+	{ title: "RSS 订阅", content: "提供 RSS 地址可让你的最新文章出现在朋友圈中" },
 ];
 
 // 站点信息字段（可复制）
 const siteInfoFields = [
-  { label: "站点名称", value: mySiteInfo.name },
-  { label: "站点描述", value: mySiteInfo.desc },
-  { label: "站点链接", value: mySiteInfo.url },
-  { label: "头像链接", value: mySiteInfo.avatar },
+	{ label: "站点名称", value: mySiteInfo.name },
+	{ label: "站点描述", value: mySiteInfo.desc },
+	{ label: "站点链接", value: mySiteInfo.url },
+	{ label: "头像链接", value: mySiteInfo.avatar },
 ];
 ---
 

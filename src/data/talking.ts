@@ -40,7 +40,9 @@ export const getAllTags = () => {
 	const tags = new Set<string>();
 	talkingData.forEach((item) => {
 		if (item.tags) {
-			item.tags.forEach((tag) => tags.add(tag));
+			for (const tag of item.tags) {
+				tags.add(tag);
+			}
 		}
 	});
 	return Array.from(tags).sort();

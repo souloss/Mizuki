@@ -1,74 +1,71 @@
 <script lang="ts">
-	import { onDestroy, onMount } from "svelte";
+import { onDestroy, onMount } from "svelte";
 
-	import type { MusicPlayerState } from "@/stores/musicPlayerStore";
-	import { musicPlayerStore } from "@/stores/musicPlayerStore";
+import type { MusicPlayerState } from "@/stores/musicPlayerStore";
+import { musicPlayerStore } from "@/stores/musicPlayerStore";
 
-	import type { Song } from "../music-player/types";
-	import SidebarControls from "./components/SidebarControls.svelte";
-	import SidebarCover from "./components/SidebarCover.svelte";
-	import SidebarPlaylist from "./components/SidebarPlaylist.svelte";
-	import SidebarProgress from "./components/SidebarProgress.svelte";
-	import SidebarTrackInfo from "./components/SidebarTrackInfo.svelte";
+import type { Song } from "../music-player/types";
+import SidebarControls from "./components/SidebarControls.svelte";
+import SidebarCover from "./components/SidebarCover.svelte";
+import SidebarPlaylist from "./components/SidebarPlaylist.svelte";
+import SidebarProgress from "./components/SidebarProgress.svelte";
+import SidebarTrackInfo from "./components/SidebarTrackInfo.svelte";
 
-	let state: MusicPlayerState = $state(musicPlayerStore.getState());
-	let showPlaylist = $state(false);
+let state: MusicPlayerState = $state(musicPlayerStore.getState());
+let showPlaylist = $state(false);
 
-	function handleStateUpdate(event: Event) {
-		const custom = event as CustomEvent<MusicPlayerState>;
-		if (custom.detail) {
-			state = custom.detail;
-		}
+function handleStateUpdate(event: Event) {
+	const custom = event as CustomEvent<MusicPlayerState>;
+	if (custom.detail) {
+		state = custom.detail;
 	}
+}
 
-	onMount(() => {
-		window.addEventListener("music-sidebar:state", handleStateUpdate);
-	});
+onMount(() => {
+	window.addEventListener("music-sidebar:state", handleStateUpdate);
+});
 
-	onDestroy(() => {
-		if (typeof window !== "undefined") {
-			window.removeEventListener(
-				"music-sidebar:state",
-				handleStateUpdate,
-			);
-		}
-	});
-
-	function togglePlay() {
-		musicPlayerStore.toggle();
+onDestroy(() => {
+	if (typeof window !== "undefined") {
+		window.removeEventListener("music-sidebar:state", handleStateUpdate);
 	}
+});
 
-	function prev() {
-		musicPlayerStore.prev();
-	}
+function togglePlay() {
+	musicPlayerStore.toggle();
+}
 
-	function next() {
-		musicPlayerStore.next();
-	}
+function prev() {
+	musicPlayerStore.prev();
+}
 
-	function toggleMode() {
-		musicPlayerStore.toggleMode();
-	}
+function next() {
+	musicPlayerStore.next();
+}
 
-	function togglePlaylistView() {
-		showPlaylist = !showPlaylist;
-	}
+function toggleMode() {
+	musicPlayerStore.toggleMode();
+}
 
-	function playIndex(index: number) {
-		musicPlayerStore.playIndex(index);
-	}
+function togglePlaylistView() {
+	showPlaylist = !showPlaylist;
+}
 
-	function seek(time: number) {
-		musicPlayerStore.seek(time);
-	}
+function playIndex(index: number) {
+	musicPlayerStore.playIndex(index);
+}
 
-	function toggleMute() {
-		musicPlayerStore.toggleMute();
-	}
+function seek(time: number) {
+	musicPlayerStore.seek(time);
+}
 
-	function setVolume(volume: number) {
-		musicPlayerStore.setVolume(volume);
-	}
+function toggleMute() {
+	musicPlayerStore.toggleMute();
+}
+
+function setVolume(volume: number) {
+	musicPlayerStore.setVolume(volume);
+}
 </script>
 
 <div class="music-sidebar-widget">

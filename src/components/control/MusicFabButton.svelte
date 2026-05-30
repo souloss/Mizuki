@@ -1,34 +1,38 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
-	import { onDestroy, onMount } from "svelte";
+import Icon from "@iconify/svelte";
+import { onDestroy, onMount } from "svelte";
 
-	import type { MusicPlayerState } from "@/stores/musicPlayerStore";
-	import { musicPlayerStore } from "@/stores/musicPlayerStore";
+import type { MusicPlayerState } from "@/stores/musicPlayerStore";
+import { musicPlayerStore } from "@/stores/musicPlayerStore";
 
-	let state: MusicPlayerState = $state(musicPlayerStore.getState());
-	let unsubscribe: (() => void) | undefined;
+let state: MusicPlayerState = $state(musicPlayerStore.getState());
+let unsubscribe: (() => void) | undefined;
 
-	function toggleControlCenter() {
-		musicPlayerStore.toggleExpanded();
-	}
+function toggleControlCenter() {
+	musicPlayerStore.toggleExpanded();
+}
 
-	const currentSongTitle = $derived(state.currentSong?.title || "音乐控制中心");
-	const ariaLabel = $derived(state.isExpanded
+const currentSongTitle = $derived(state.currentSong?.title || "音乐控制中心");
+const ariaLabel = $derived(
+	state.isExpanded
 		? `收起音乐控制中心：${currentSongTitle}`
-		: `打开音乐控制中心：${currentSongTitle}`);
-	const statusIcon = $derived(state.isLoading
+		: `打开音乐控制中心：${currentSongTitle}`,
+);
+const statusIcon = $derived(
+	state.isLoading
 		? "svg-spinners:90-ring-with-bg"
-		: "material-symbols:music-note-rounded");
+		: "material-symbols:music-note-rounded",
+);
 
-	onMount(() => {
-		unsubscribe = musicPlayerStore.subscribe((nextState) => {
-			state = nextState;
-		});
+onMount(() => {
+	unsubscribe = musicPlayerStore.subscribe((nextState) => {
+		state = nextState;
 	});
+});
 
-	onDestroy(() => {
-		unsubscribe?.();
-	});
+onDestroy(() => {
+	unsubscribe?.();
+});
 </script>
 
 <button

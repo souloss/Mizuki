@@ -26,7 +26,7 @@ export function initPostIdMap(
 	postIdMap = new Map();
 	sortedPosts.forEach((post, index) => {
 		// id 从 1 开始
-		postIdMap!.set(post.id, index + 1);
+		postIdMap?.set(post.id, index + 1);
 	});
 
 	return postIdMap;
@@ -102,14 +102,8 @@ export function generatePermalinkSlug(post: CollectionEntry<"posts">): string {
 		)
 		.replace(/%day%/g, published.getDate().toString().padStart(2, "0"))
 		.replace(/%hour%/g, published.getHours().toString().padStart(2, "0"))
-		.replace(
-			/%minute%/g,
-			published.getMinutes().toString().padStart(2, "0"),
-		)
-		.replace(
-			/%second%/g,
-			published.getSeconds().toString().padStart(2, "0"),
-		)
+		.replace(/%minute%/g, published.getMinutes().toString().padStart(2, "0"))
+		.replace(/%second%/g, published.getSeconds().toString().padStart(2, "0"))
 		.replace(/%post_id%/g, getPostNumericId(post.id).toString())
 		.replace(/%postname%/g, postname)
 		.replace(/%raw_postname%/g, rawPostname)

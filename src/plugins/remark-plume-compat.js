@@ -1,7 +1,8 @@
 import { visit } from "unist-util-visit";
 
 const selfClosingComponentPattern = /<([A-Z][A-Za-z0-9-]*)(\s[^<>]*?)?\s*\/>/g;
-const openingDirectivePattern = /^:{3,}\s*([A-Za-z][\w-]*)(?:\[(.*?)\])?(?:\s+(.+))?$/;
+const openingDirectivePattern =
+	/^:{3,}\s*([A-Za-z][\w-]*)(?:\[(.*?)\])?(?:\s+(.+))?$/;
 const closingDirectivePattern = /^:{3,}\s*$/;
 const directiveNames = new Set([
 	"card",
@@ -23,8 +24,12 @@ const labeledDirectiveNames = new Set([
 ]);
 
 function getParagraphText(node) {
-	if (node?.type !== "paragraph") {return null;}
-	if (!Array.isArray(node.children)) {return null;}
+	if (node?.type !== "paragraph") {
+		return null;
+	}
+	if (!Array.isArray(node.children)) {
+		return null;
+	}
 	return node.children
 		.map((child) => {
 			if (child.type === "text" || child.type === "inlineCode") {
@@ -37,22 +42,36 @@ function getParagraphText(node) {
 }
 
 function getNodeText(node) {
-	if (!node) {return "";}
-	if (node.type === "text" || node.type === "inlineCode" || node.type === "code") {
+	if (!node) {
+		return "";
+	}
+	if (
+		node.type === "text" ||
+		node.type === "inlineCode" ||
+		node.type === "code"
+	) {
 		return node.value ?? "";
 	}
-	if (!Array.isArray(node.children)) {return "";}
+	if (!Array.isArray(node.children)) {
+		return "";
+	}
 	return node.children.map(getNodeText).join("");
 }
 
 function parseOpeningDirective(node) {
 	const text = getParagraphText(node);
-	if (!text) {return null;}
+	if (!text) {
+		return null;
+	}
 	const match = text.match(openingDirectivePattern);
-	if (!match) {return null;}
+	if (!match) {
+		return null;
+	}
 
 	const name = match[1];
-	if (!directiveNames.has(name)) {return null;}
+	if (!directiveNames.has(name)) {
+		return null;
+	}
 
 	return {
 		name,
@@ -67,8 +86,12 @@ function isClosingDirective(node) {
 }
 
 function isEmptyNode(node) {
-	if (!node) {return true;}
-	if (node.type === "text") {return node.value.length === 0;}
+	if (!node) {
+		return true;
+	}
+	if (node.type === "text") {
+		return node.value.length === 0;
+	}
 	if (node.type === "paragraph") {
 		return !node.children || node.children.every(isEmptyNode);
 	}
@@ -79,7 +102,9 @@ function isEmptyNode(node) {
 }
 
 function pruneEmptyTrailingChildren(node) {
-	if (!Array.isArray(node?.children)) {return;}
+	if (!Array.isArray(node?.children)) {
+		return;
+	}
 
 	while (node.children.length > 0 && isEmptyNode(node.children.at(-1))) {
 		node.children.pop();
@@ -127,9 +152,12 @@ function findClosingDirectiveIndex(children, startIndex) {
 
 function parseAttributes(meta) {
 	const attributes = {};
-	if (!meta || !/[A-Za-z][\w-]*=/.test(meta)) {return attributes;}
+	if (!meta || !/[A-Za-z][\w-]*=/.test(meta)) {
+		return attributes;
+	}
 
-	const attrPattern = /([A-Za-z_:][\w:.-]*)(?:=(?:"([^"]*)"|'([^']*)'|([^\s"']+)))?/g;
+	const attrPattern =
+		/([A-Za-z_:][\w:.-]*)(?:=(?:"([^"]*)"|'([^']*)'|([^\s"']+)))?/g;
 	for (const match of meta.matchAll(attrPattern)) {
 		const key = match[1];
 		const value = match[2] ?? match[3] ?? match[4] ?? "";
@@ -180,7 +208,8 @@ function createDirectiveNode(opening, children) {
 	const attributes = parseAttributes(opening.meta);
 	const label =
 		opening.bracketLabel ||
-		(labeledDirectiveNames.has(opening.name) && Object.keys(attributes).length === 0
+		(labeledDirectiveNames.has(opening.name) &&
+		Object.keys(attributes).length === 0
 			? opening.meta
 			: "");
 
@@ -202,7 +231,9 @@ function createDirectiveNode(opening, children) {
 }
 
 function transformDirectiveBlocks(parent) {
-	if (!Array.isArray(parent?.children)) {return;}
+	if (!Array.isArray(parent?.children)) {
+		return;
+	}
 
 	for (let index = 0; index < parent.children.length; index += 1) {
 		const opening = parseOpeningDirective(parent.children[index]);
@@ -216,7 +247,9 @@ function transformDirectiveBlocks(parent) {
 			continue;
 		}
 
-		const childrenEnd = closing.includeClosingNode ? closing.index + 1 : closing.index;
+		const childrenEnd = closing.includeClosingNode
+			? closing.index + 1
+			: closing.index;
 		const children = parent.children.slice(index + 1, childrenEnd);
 		parent.children.splice(
 			index,
@@ -232,7 +265,8 @@ export function remarkPlumeCompat() {
 		visit(tree, "html", (node) => {
 			node.value = node.value.replace(
 				selfClosingComponentPattern,
-				(_, componentName, attributes = "") => `<${componentName}${attributes}></${componentName}>`,
+				(_, componentName, attributes = "") =>
+					`<${componentName}${attributes}></${componentName}>`,
 			);
 		});
 

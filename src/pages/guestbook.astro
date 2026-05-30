@@ -1,11 +1,11 @@
 ---
+import { getEntry, render } from "astro:content";
 import Comment from "@components/comment/index.astro";
 import { PageHeader } from "@components/features/page-header";
 import Markdown from "@components/misc/Markdown.astro";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getEntry, render } from "astro:content";
 
-import { commentConfig,siteConfig } from "@/config";
+import { commentConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 
@@ -17,7 +17,9 @@ if (!siteConfig.featurePages.guestbook) {
 }
 
 const guestbookPost = await getEntry("spec", "guestbook");
-const { Content } = guestbookPost ? await render(guestbookPost) : { Content: () => {} };
+const { Content } = guestbookPost
+	? await render(guestbookPost)
+	: { Content: () => {} };
 
 // Check if comments are enabled
 const isCommentEnabled = commentConfig.enable;

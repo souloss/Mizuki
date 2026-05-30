@@ -24,13 +24,12 @@
 		"astro": "astro",
 		"type-check": "tsc --noEmit",
 		"new-post": "node scripts/new-post.js",
-		"format": "prettier --write ./src",
-		"lint": "eslint ./src --fix",
+		"format": "biome format --write ./src",
+		"lint": "biome check --write ./src",
 		"postinstall": "node scripts/patch-vite-timeout.js && node scripts/patch-data-store-load.js",
 		"preinstall": "npx only-allow pnpm",
 		"compress-fonts": "node scripts/compress-fonts/index.js",
-		"prepare": "simple-git-hooks",
-		"format:check": "prettier --check ./src"
+		"prepare": "simple-git-hooks"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.9",
@@ -85,7 +84,7 @@
 	},
 	"devDependencies": {
 		"@astrojs/ts-plugin": "^1.10.9",
-		"@eslint/js": "^10.0.1",
+		"@biomejs/biome": "^2.4.15",
 		"@iconify-json/fa7-brands": "^1.2.2",
 		"@iconify-json/fa7-regular": "^1.2.3",
 		"@iconify-json/fa7-solid": "^1.2.4",
@@ -99,25 +98,13 @@
 		"@types/mdast": "^4.0.4",
 		"@types/qrcode": "^1.5.6",
 		"@types/sanitize-html": "^2.16.1",
-		"astro-eslint-parser": "^1.4.0",
-		"eslint": "^10.3.0",
-		"eslint-plugin-astro": "^1.7.0",
-		"eslint-plugin-import": "^2.32.0",
-		"eslint-plugin-simple-import-sort": "^12.1.1",
-		"eslint-plugin-svelte": "^3.17.1",
 		"fast-xml-parser": "^5.8.0",
 		"fontmin": "^1.1.1",
 		"glob": "^13.0.6",
-		"globals": "^17.6.0",
 		"lint-staged": "^17.0.5",
 		"postcss-import": "^16.1.1",
 		"postcss-nesting": "^14.0.0",
-		"prettier": "^3.8.3",
-		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-svelte": "^3.5.1",
-		"simple-git-hooks": "^2.13.1",
-		"svelte-eslint-parser": "^1.6.1",
-		"typescript-eslint": "^8.59.2"
+		"simple-git-hooks": "^2.13.1"
 	},
 	"packageManager": "pnpm@10.33.0",
 	"simple-git-hooks": {
@@ -125,18 +112,8 @@
 		"pre-push": "pnpm astro check"
 	},
 	"lint-staged": {
-		"*.{js,ts,mjs}": [
-			"eslint --fix",
-			"prettier --write"
-		],
-		"*.svelte": [
-			"prettier --write"
-		],
-		"*.css": [
-			"prettier --write"
-		],
-		"*.{json,yml,yaml}": [
-			"prettier --write"
+		"*.{js,ts,mjs,svelte,astro,json}": [
+			"biome check --write --no-errors-on-unmatched"
 		]
 	}
 }

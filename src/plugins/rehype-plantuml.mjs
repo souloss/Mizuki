@@ -27,8 +27,12 @@ function isDevMode(options = {}) {
  * @returns {string} 拼接后的文本
  */
 function extractText(node) {
-	if (node.type === "text") {return node.value || "";}
-	if (node.children) {return node.children.map(extractText).join("");}
+	if (node.type === "text") {
+		return node.value || "";
+	}
+	if (node.children) {
+		return node.children.map(extractText).join("");
+	}
 	return "";
 }
 
@@ -88,18 +92,23 @@ export function rehypePlantuml(options = {}) {
 				node.tagName = "div";
 				node.properties = {
 					class: "plantuml-dev-placeholder",
-					style: "border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;text-align:center;",
+					style:
+						"border:1px dashed #ccc;padding:1em;margin:1em 0;background:#f9f9f9;border-radius:4px;text-align:center;",
 				};
 				node.children = [
 					h("strong", "[PlantUML diagram — interactive in production]"),
 					lightSrc
 						? h("img", {
-							src: lightSrc,
-							alt: altText || "PlantUML diagram (dev preview)",
-							style: "max-width:100%;margin-top:0.5em;",
-							loading: "lazy",
-						})
-						: h("p", { style: "color:#888;margin-top:0.5em;" }, "(Image not available in dev preview)"),
+								src: lightSrc,
+								alt: altText || "PlantUML diagram (dev preview)",
+								style: "max-width:100%;margin-top:0.5em;",
+								loading: "lazy",
+							})
+						: h(
+								"p",
+								{ style: "color:#888;margin-top:0.5em;" },
+								"(Image not available in dev preview)",
+							),
 				];
 				foundAny = true;
 				return;

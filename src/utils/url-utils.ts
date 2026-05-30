@@ -1,6 +1,6 @@
+import type { CollectionEntry } from "astro:content";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import type { CollectionEntry } from "astro:content";
 
 import { permalinkConfig } from "../config";
 import { generatePermalinkSlug } from "./permalink-utils";
@@ -44,12 +44,17 @@ export function getPostUrlByAlias(alias: string): string {
  * 例如: filePath="src/content/posts/internet-architecture/1-从家到网站全景拓扑.md", slug="from-home-to-website-full-internet-topology"
  * → /posts/internet-architecture/from-home-to-website-full-internet-topology/
  */
-function getPostUrlBySlugField(entry: { id: string; data: { slug: string }; filePath?: string }): string {
+function getPostUrlBySlugField(entry: {
+	id: string;
+	data: { slug: string };
+	filePath?: string;
+}): string {
 	let dir = "";
 	if (entry.filePath) {
 		const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
 		const lastSlashIndex = relativePath.lastIndexOf("/");
-		dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+		dir =
+			lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
 	}
 	return url(`/posts/${dir}${entry.data.slug}/`);
 }
@@ -63,9 +68,7 @@ export function getPostUrl(post: {
 export function getPostUrl(post: any): string {
 	// 如果文章有自定义 permalink，优先使用（在根目录下）
 	if (post.data.permalink) {
-		const slug = post.data.permalink
-			.replace(/^\/+/, "")
-			.replace(/\/+$/, "");
+		const slug = post.data.permalink.replace(/^\/+/, "").replace(/\/+$/, "");
 		return url(`/${slug}/`);
 	}
 
@@ -100,8 +103,7 @@ export function getCategoryUrl(category: string | null): string {
 	if (
 		!category ||
 		category.trim() === "" ||
-		category.trim().toLowerCase() ===
-			i18n(I18nKey.uncategorized).toLowerCase()
+		category.trim().toLowerCase() === i18n(I18nKey.uncategorized).toLowerCase()
 	) {
 		return url("/archive/?uncategorized=true");
 	}

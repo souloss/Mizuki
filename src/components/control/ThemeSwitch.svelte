@@ -1,91 +1,84 @@
 <script lang="ts">
-	import { DARK_MODE, DEFAULT_THEME, LIGHT_MODE } from "@constants/constants";
-	import Icon from "@iconify/svelte";
-	import { getStoredTheme, setTheme } from "@utils/setting-utils";
-	import { onMount } from "svelte";
-	import { onDestroy } from "svelte";
+import { DARK_MODE, DEFAULT_THEME, LIGHT_MODE } from "@constants/constants";
+import Icon from "@iconify/svelte";
+import { getStoredTheme, setTheme } from "@utils/setting-utils";
+import { onDestroy, onMount } from "svelte";
 
-	import type { LIGHT_DARK_MODE } from "@/types/config.ts";
+import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
-	const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE];
-	let mode: LIGHT_DARK_MODE = $state(DEFAULT_THEME);
-	let isChanging = false;
-	let mounted = $state(false);
-	let cleanupSwupListener: (() => void) | undefined;
+const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE];
+let mode: LIGHT_DARK_MODE = $state(DEFAULT_THEME);
+let isChanging = false;
+let mounted = $state(false);
+let cleanupSwupListener: (() => void) | undefined;
 
-	onMount(() => {
-		mounted = true;
-		mode = getStoredTheme();
+onMount(() => {
+	mounted = true;
+	mode = getStoredTheme();
 
-		const handleContentReplace = () => {
-			requestAnimationFrame(() => {
-				const newMode = getStoredTheme();
-				if (mode !== newMode) {
-					mode = newMode;
-				}
-			});
-		};
-
-		const addSwupListener = () => {
-			if ((window as any).swup && (window as any).swup.hooks) {
-				(window as any).swup.hooks.on(
-					"content:replace",
-					handleContentReplace,
-				);
+	const handleContentReplace = () => {
+		requestAnimationFrame(() => {
+			const newMode = getStoredTheme();
+			if (mode !== newMode) {
+				mode = newMode;
 			}
-		};
-
-		addSwupListener();
-		document.addEventListener("swup:enable", addSwupListener);
-
-		cleanupSwupListener = () => {
-			if ((window as any).swup && (window as any).swup.hooks) {
-				(window as any).swup.hooks.off(
-					"content:replace",
-					handleContentReplace,
-				);
-			}
-			document.removeEventListener("swup:enable", addSwupListener);
-		};
-	});
-
-	onDestroy(() => {
-		cleanupSwupListener?.();
-	});
-
-	function switchScheme(
-		newMode: LIGHT_DARK_MODE,
-		clickCoords?: { x: number; y: number },
-	) {
-		if (isChanging) {
-			return;
-		}
-
-		isChanging = true;
-		mode = newMode;
-		setTheme(newMode, clickCoords);
-
-		setTimeout(() => {
-			isChanging = false;
-		}, 50);
-	}
-
-	function toggleScheme(e: MouseEvent) {
-		if (isChanging) {
-			return;
-		}
-
-		let i = 0;
-		for (; i < seq.length; i++) {
-			if (seq[i] === mode) {
-				break;
-			}
-		}
-		switchScheme(seq[(i + 1) % seq.length], {
-			x: e.clientX,
-			y: e.clientY,
 		});
+	};
+
+	const addSwupListener = () => {
+		if ((window as any).swup?.hooks) {
+			(window as any).swup.hooks.on("content:replace", handleContentReplace);
+		}
+	};
+
+	addSwupListener();
+	document.addEventListener("swup:enable", addSwupListener);
+
+	cleanupSwupListener = () => {
+		if ((window as any).swup?.hooks) {
+			(window as any).swup.hooks.off("content:replace", handleContentReplace);
+		}
+		document.removeEventListener("swup:enable", addSwupListener);
+	};
+});
+
+onDestroy(() => {
+	cleanupSwupListener?.();
+});
+
+function switchScheme(
+	newMode: LIGHT_DARK_MODE,
+	clickCoords?: { x: number; y: number },
+) {
+	if (isChanging) {
+		return;
 	}
+
+	isChanging = true;
+	mode = newMode;
+	setTheme(newMode, clickCoords);
+
+	setTimeout(() => {
+		isChanging = false;
+	}, 50);
+}
+
+function toggleScheme(e: MouseEvent) {
+	if (isChanging) {
+		return;
+	}
+
+	let i = 0;
+	for (; i < seq.length; i++) {
+		if (seq[i] === mode) {
+			break;
+		}
+	}
+	switchScheme(seq[(i + 1) % seq.length], {
+		x: e.clientX,
+		y: e.clientY,
+	});
+}
 </script>
 
 <button

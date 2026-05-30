@@ -1,43 +1,43 @@
 <script lang="ts">
-	import type { CalendarStats } from "../types/calendar";
-	import MonthPicker from "./MonthPicker.svelte";
-	import YearPicker from "./YearPicker.svelte";
+import type { CalendarStats } from "../types/calendar";
+import MonthPicker from "./MonthPicker.svelte";
+import YearPicker from "./YearPicker.svelte";
 
-	interface Props {
-		monthNames: string[];
-		currentYear: number;
-		currentMonth: number;
-		currentView: "day" | "month" | "year";
-		stats: CalendarStats;
-		onMonthSelect: (month: number) => void;
-		onYearSelect: (year: number) => void;
-		onClose: () => void;
+interface Props {
+	monthNames: string[];
+	currentYear: number;
+	currentMonth: number;
+	currentView: "day" | "month" | "year";
+	stats: CalendarStats;
+	onMonthSelect: (month: number) => void;
+	onYearSelect: (year: number) => void;
+	onClose: () => void;
+}
+
+const {
+	monthNames,
+	currentYear,
+	currentMonth,
+	currentView,
+	stats,
+	onMonthSelect,
+	onYearSelect,
+	onClose,
+}: Props = $props();
+
+function handleBackdropClick(e: MouseEvent) {
+	if (e.target === e.currentTarget) {
+		onClose();
 	}
+}
 
-	const {
-		monthNames,
-		currentYear,
-		currentMonth,
-		currentView,
-		stats,
-		onMonthSelect,
-		onYearSelect,
-		onClose,
-	}: Props = $props();
-
-	function handleBackdropClick(e: MouseEvent) {
+function handleBackdropKeydown(e: KeyboardEvent) {
+	if (e.key === "Enter" || e.key === " ") {
 		if (e.target === e.currentTarget) {
 			onClose();
 		}
 	}
-
-	function handleBackdropKeydown(e: KeyboardEvent) {
-		if (e.key === "Enter" || e.key === " ") {
-			if (e.target === e.currentTarget) {
-				onClose();
-			}
-		}
-	}
+}
 </script>
 
 <div

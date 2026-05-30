@@ -1,180 +1,200 @@
 <script lang="ts">
-	import I18nKey from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
-	import Icon from "@iconify/svelte";
-	import { onMount } from "svelte";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import Icon from "@iconify/svelte";
+import { onMount } from "svelte";
 
-	const {
-		docSlug,
-		variant = "sidebar",
-	}: {
-		docSlug: string;
-		variant?: "sidebar" | "navbar";
-	} = $props();
+const {
+	docSlug,
+	variant = "sidebar",
+}: {
+	docSlug: string;
+	variant?: "sidebar" | "navbar";
+} = $props();
 
-	let isOpen = $state(false);
-	let query = $state("");
-	let results = $state<SearchResult[]>([]);
-	let activeIndex = $state(-1);
-	let isLoading = $state(false);
-	let searchIndex: PagefindIndex | null = null;
-	let initialized = $state(false);
-	let searchUnavailable = $state(false);
+let isOpen = $state(false);
+let query = $state("");
+let results = $state<SearchResult[]>([]);
+let activeIndex = $state(-1);
+let isLoading = $state(false);
+let searchIndex: PagefindIndex | null = null;
+let initialized = $state(false);
+let searchUnavailable = $state(false);
 
-	interface SearchResult {
-		url: string;
-		title: string;
-		content: string;
-		tag?: string;
-		sub_results?: { title: string; url: string; content: string }[];
+interface SearchResult {
+	url: string;
+	title: string;
+	content: string;
+	tag?: string;
+	sub_results?: { title: string; url: string; content: string }[];
+}
+
+interface PagefindIndex {
+	search: (
+		query: string,
+		options?: { filters?: Record<string, string> },
+	) => Promise<{ results: SearchResult[] }>;
+	options: (opts: Record<string, unknown>) => Promise<void>;
+}
+
+async function loadSearchIndex() {
+	if (searchIndex) {
+		return true;
 	}
 
-	interface PagefindIndex {
-		search: (query: string, options?: { filters?: Record<string, string> }) => Promise<{ results: SearchResult[] }>;
-		options: (opts: Record<string, unknown>) => Promise<void>;
-	}
-
-	async function loadSearchIndex() {
-		if (searchIndex) {return true;}
-
-		if (import.meta.env.DEV) {
-			initialized = true;
-			searchUnavailable = true;
-			return false;
-		}
-
-		// @ts-expect-error Pagefind runtime global
-		if (typeof window.pagefindMizuki !== "undefined" && window.pagefindMizuki.search) {
-			// @ts-expect-error
-			searchIndex = window.pagefindMizuki;
-			initialized = true;
-			return true;
-		}
-
-		// @ts-expect-error
-		if (typeof window.loadPagefindMizuki === "function") {
-			try {
-				// @ts-expect-error
-				await window.loadPagefindMizuki();
-			} catch {
-				// ignore
-			}
-		}
-
-		// @ts-expect-error
-		if (typeof window.pagefindMizuki !== "undefined" && window.pagefindMizuki.search) {
-			// @ts-expect-error
-			searchIndex = window.pagefindMizuki;
-			initialized = true;
-			return true;
-		}
-
+	if (import.meta.env.DEV) {
 		initialized = true;
 		searchUnavailable = true;
 		return false;
 	}
 
-	async function doSearch(term: string) {
-		if (!term.trim()) {
+	// @ts-expect-error Pagefind runtime global
+	if (
+		typeof window.pagefindMizuki !== "undefined" &&
+		window.pagefindMizuki.search
+	) {
+		// @ts-expect-error
+		searchIndex = window.pagefindMizuki;
+		initialized = true;
+		return true;
+	}
+
+	// @ts-expect-error
+	if (typeof window.loadPagefindMizuki === "function") {
+		try {
+			// @ts-expect-error
+			await window.loadPagefindMizuki();
+		} catch {
+			// ignore
+		}
+	}
+
+	// @ts-expect-error
+	if (
+		typeof window.pagefindMizuki !== "undefined" &&
+		window.pagefindMizuki.search
+	) {
+		// @ts-expect-error
+		searchIndex = window.pagefindMizuki;
+		initialized = true;
+		return true;
+	}
+
+	initialized = true;
+	searchUnavailable = true;
+	return false;
+}
+
+async function doSearch(term: string) {
+	if (!term.trim()) {
+		results = [];
+		return;
+	}
+	isLoading = true;
+	try {
+		const loaded = await loadSearchIndex();
+		if (!loaded || !searchIndex) {
 			results = [];
 			return;
 		}
-		isLoading = true;
-		try {
-			const loaded = await loadSearchIndex();
-			if (!loaded || !searchIndex) {
-				results = [];
-				return;
-			}
-			const search = await searchIndex.search(term, {
-				filters: { docSlug: docSlug },
-			});
-			const items = await Promise.all(
-				search.results.slice(0, 15).map(async (r: SearchResult) => {
-					if (r.sub_results?.length) {return r;}
-					try {
-						const data = await r.data?.();
-						return data ?? r;
-					} catch {
-						return r;
-					}
-				}),
-			);
-			results = items;
-			activeIndex = -1;
-		} finally {
-			isLoading = false;
-		}
+		const search = await searchIndex.search(term, {
+			filters: { docSlug: docSlug },
+		});
+		const items = await Promise.all(
+			search.results.slice(0, 15).map(async (r: SearchResult) => {
+				if (r.sub_results?.length) {
+					return r;
+				}
+				try {
+					const data = await r.data?.();
+					return data ?? r;
+				} catch {
+					return r;
+				}
+			}),
+		);
+		results = items;
+		activeIndex = -1;
+	} finally {
+		isLoading = false;
 	}
+}
 
-	let debounceTimer: ReturnType<typeof setTimeout>;
-	function onInput(e: Event) {
-		const val = (e.target as HTMLInputElement).value;
-		query = val;
-		clearTimeout(debounceTimer);
-		debounceTimer = setTimeout(() => doSearch(val), 200);
+let debounceTimer: ReturnType<typeof setTimeout>;
+function onInput(e: Event) {
+	const val = (e.target as HTMLInputElement).value;
+	query = val;
+	clearTimeout(debounceTimer);
+	debounceTimer = setTimeout(() => doSearch(val), 200);
+}
+
+function navigate(index: number) {
+	const r = results[index];
+	if (!r) {
+		return;
 	}
+	const url = r.sub_results?.[0]?.url ?? r.url;
+	window.location.href = url;
+	closeModal();
+}
 
-	function navigate(index: number) {
-		const r = results[index];
-		if (!r) {return;}
-		const url = r.sub_results?.[0]?.url ?? r.url;
-		window.location.href = url;
+function onKeyDown(e: KeyboardEvent) {
+	if (e.key === "ArrowDown") {
+		e.preventDefault();
+		activeIndex = Math.min(activeIndex + 1, results.length - 1);
+	} else if (e.key === "ArrowUp") {
+		e.preventDefault();
+		activeIndex = Math.max(activeIndex - 1, 0);
+	} else if (e.key === "Enter" && activeIndex >= 0) {
+		e.preventDefault();
+		navigate(activeIndex);
+	} else if (e.key === "Escape") {
 		closeModal();
 	}
+}
 
-	function onKeyDown(e: KeyboardEvent) {
-		if (e.key === "ArrowDown") {
+function openModal() {
+	isOpen = true;
+	query = "";
+	results = [];
+	activeIndex = -1;
+	document.body.style.overflow = "hidden";
+	setTimeout(() => {
+		document.getElementById("doc-search-input")?.focus();
+	}, 50);
+}
+
+function closeModal() {
+	isOpen = false;
+	document.body.style.overflow = "";
+}
+
+onMount(() => {
+	function onKeydown(e: KeyboardEvent) {
+		if ((e.metaKey || e.ctrlKey) && e.key === "k") {
 			e.preventDefault();
-			activeIndex = Math.min(activeIndex + 1, results.length - 1);
-		} else if (e.key === "ArrowUp") {
-			e.preventDefault();
-			activeIndex = Math.max(activeIndex - 1, 0);
-		} else if (e.key === "Enter" && activeIndex >= 0) {
-			e.preventDefault();
-			navigate(activeIndex);
-		} else if (e.key === "Escape") {
-			closeModal();
-		}
-	}
-
-	function openModal() {
-		isOpen = true;
-		query = "";
-		results = [];
-		activeIndex = -1;
-		document.body.style.overflow = "hidden";
-		setTimeout(() => {
-			document.getElementById("doc-search-input")?.focus();
-		}, 50);
-	}
-
-	function closeModal() {
-		isOpen = false;
-		document.body.style.overflow = "";
-	}
-
-	onMount(() => {
-		function onKeydown(e: KeyboardEvent) {
-			if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-				e.preventDefault();
-				if (isOpen) {closeModal();}
-				else {openModal();}
+			if (isOpen) {
+				closeModal();
+			} else {
+				openModal();
 			}
 		}
-		document.addEventListener("keydown", onKeydown);
-		return () => document.removeEventListener("keydown", onKeydown);
-	});
+	}
+	document.addEventListener("keydown", onKeydown);
+	return () => document.removeEventListener("keydown", onKeydown);
+});
 
-	// Portal: move the overlay to <body> so it's not trapped inside
-	// the docs-navbar's containing block (backdrop-filter creates one)
-	$effect(() => {
-		if (!isOpen) {return;}
-		const overlay = document.querySelector(".doc-search-overlay");
-		if (overlay && overlay.parentElement !== document.body) {
-			document.body.appendChild(overlay);
-		}
-	});
+// Portal: move the overlay to <body> so it's not trapped inside
+// the docs-navbar's containing block (backdrop-filter creates one)
+$effect(() => {
+	if (!isOpen) {
+		return;
+	}
+	const overlay = document.querySelector(".doc-search-overlay");
+	if (overlay && overlay.parentElement !== document.body) {
+		document.body.appendChild(overlay);
+	}
+});
 </script>
 
 {#if variant === "navbar"}

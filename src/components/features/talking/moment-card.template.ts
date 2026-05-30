@@ -56,10 +56,7 @@ export function transformMemosToTalking(
 				m.attachments.length > 0
 					? m.attachments
 							.filter((a) => a.type.startsWith("image/"))
-							.map(
-								(a) =>
-									`${baseUrl}/file/${a.name}/${a.filename}`,
-							)
+							.map((a) => `${baseUrl}/file/${a.name}/${a.filename}`)
 					: undefined,
 			location: m.location?.placeholder,
 			mood: undefined,
@@ -87,9 +84,7 @@ export function formatRelativeTime(
 	daysAgo: string,
 ): string {
 	const date = new Date(dateString);
-	const diffInMinutes = Math.floor(
-		(Date.now() - date.getTime()) / (1000 * 60),
-	);
+	const diffInMinutes = Math.floor((Date.now() - date.getTime()) / (1000 * 60));
 
 	if (diffInMinutes < 60) {
 		return `${diffInMinutes}${minutesAgo}`;

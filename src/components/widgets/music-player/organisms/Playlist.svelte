@@ -1,29 +1,23 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
-	import { slide } from "svelte/transition";
+import Icon from "@iconify/svelte";
+import { slide } from "svelte/transition";
 
-	import Key from "../../../../i18n/i18nKey";
-	import { i18n } from "../../../../i18n/translation";
-	import PlaylistItem from "../atoms/PlaylistItem.svelte";
-	import type { Song } from "../types";
+import Key from "../../../../i18n/i18nKey";
+import { i18n } from "../../../../i18n/translation";
+import PlaylistItem from "../atoms/PlaylistItem.svelte";
+import type { Song } from "../types";
 
-	interface Props {
-		playlist: Song[];
-		currentIndex: number;
-		isPlaying: boolean;
-		show: boolean;
-		onClose: () => void;
-		onPlaySong: (index: number) => void;
-	}
+interface Props {
+	playlist: Song[];
+	currentIndex: number;
+	isPlaying: boolean;
+	show: boolean;
+	onClose: () => void;
+	onPlaySong: (index: number) => void;
+}
 
-	const {
-		playlist,
-		currentIndex,
-		isPlaying,
-		show,
-		onClose,
-		onPlaySong,
-	}: Props = $props();
+const { playlist, currentIndex, isPlaying, show, onClose, onPlaySong }: Props =
+	$props();
 </script>
 
 {#if show}

@@ -36,7 +36,11 @@ function escapeHtml(value) {
 export function remarkMark() {
 	return (tree) => {
 		visit(tree, "text", (node, index, parent) => {
-			if (!parent || typeof index !== "number" || !markPattern.test(node.value)) {
+			if (
+				!parent ||
+				typeof index !== "number" ||
+				!markPattern.test(node.value)
+			) {
 				markPattern.lastIndex = 0;
 				return;
 			}

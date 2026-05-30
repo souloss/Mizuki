@@ -415,6 +415,8 @@ export function initPerformanceMonitoring(
 
 	// 返回清理所有监控的函数
 	return () => {
-		cleanups.forEach((cleanup) => cleanup());
+		for (const cleanup of cleanups) {
+			cleanup();
+		}
 	};
 }

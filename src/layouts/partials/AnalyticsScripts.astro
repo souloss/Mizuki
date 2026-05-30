@@ -40,7 +40,7 @@ const {
 
 const clarityEnable =
 	thirdPartyAnalytics.enable && thirdPartyAnalytics.clarityId;
-const umamiEnable = umamiAnalytics && umamiAnalytics.websiteId && umamiAnalytics.scriptUrl;
+const umamiEnable = umamiAnalytics?.websiteId && umamiAnalytics.scriptUrl;
 ---
 
 <!-- 第三方分析脚本 - 仅在用户交互后延迟加载 -->

@@ -1,36 +1,31 @@
 <script lang="ts">
-	import type { CalendarStats } from "../types/calendar";
+import type { CalendarStats } from "../types/calendar";
 
-	interface Props {
-		monthNames: string[];
-		currentYear: number;
-		currentMonth: number;
-		stats: CalendarStats;
-		onMonthSelect: (month: number) => void;
+interface Props {
+	monthNames: string[];
+	currentYear: number;
+	currentMonth: number;
+	stats: CalendarStats;
+	onMonthSelect: (month: number) => void;
+}
+
+const { monthNames, currentYear, currentMonth, stats, onMonthSelect }: Props =
+	$props();
+
+function getMonthClass(index: number, _hasPost: boolean): string {
+	const isCurrentMonth = index === currentMonth;
+	let baseClass =
+		"cursor-pointer rounded-lg flex flex-col items-center justify-center p-2 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";
+
+	if (isCurrentMonth) {
+		baseClass +=
+			" border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/5";
+	} else {
+		baseClass += " text-neutral-700 dark:text-neutral-300";
 	}
 
-	const {
-		monthNames,
-		currentYear,
-		currentMonth,
-		stats,
-		onMonthSelect,
-	}: Props = $props();
-
-	function getMonthClass(index: number, hasPost: boolean): string {
-		const isCurrentMonth = index === currentMonth;
-		let baseClass =
-			"cursor-pointer rounded-lg flex flex-col items-center justify-center p-2 transition-all hover:bg-[var(--btn-plain-bg-hover)] relative border border-transparent";
-
-		if (isCurrentMonth) {
-			baseClass +=
-				" border-[var(--primary)] text-[var(--primary)] bg-[var(--primary)]/5";
-		} else {
-			baseClass += " text-neutral-700 dark:text-neutral-300";
-		}
-
-		return baseClass;
-	}
+	return baseClass;
+}
 </script>
 
 <div class="w-full h-full p-4 grid grid-cols-3 gap-3 content-center">

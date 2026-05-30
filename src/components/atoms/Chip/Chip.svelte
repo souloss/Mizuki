@@ -1,19 +1,19 @@
 <script lang="ts">
-	import type { Snippet } from "svelte";
+import type { Snippet } from "svelte";
 
-	import type { ChipProps } from "./types";
+import type { ChipProps } from "./types";
 
-	interface Props extends ChipProps {
-		children?: Snippet;
-	}
-	const {
-		href,
-		label,
-		dot = false,
-		badge,
-		class: className = "",
-		children,
-	}: Props = $props();
+interface Props extends ChipProps {
+	children?: Snippet;
+}
+const {
+	href,
+	label,
+	dot = false,
+	badge,
+	class: className = "",
+	children,
+}: Props = $props();
 </script>
 
 {#if href}

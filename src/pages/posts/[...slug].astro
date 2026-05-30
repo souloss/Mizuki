@@ -1,6 +1,8 @@
 ---
+import { getImage } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 import path from "node:path";
-
 import Comment from "@components/comment/index.astro";
 import {
 	LastModified,
@@ -19,10 +21,11 @@ import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getRelatedPosts, getSortedPosts } from "@utils/content-utils";
 import { hasCustomPermalink, initPostIdMap } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
-import { getFileDirFromPath, getPostUrl, removeFileExtension } from "@utils/url-utils";
-import { getImage } from "astro:assets";
-import type { CollectionEntry } from "astro:content";
-import { render } from "astro:content";
+import {
+	getFileDirFromPath,
+	getPostUrl,
+	removeFileExtension,
+} from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import {
 	licenseConfig,
@@ -90,9 +93,15 @@ export async function getStaticPaths() {
 				if (entry.filePath) {
 					// filePath 格式: "src/content/posts/subdir/filename.md"
 					// 提取 "src/content/posts/" 之后的目录部分
-					const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
+					const relativePath = entry.filePath.replace(
+						/^src\/content\/posts\//,
+						"",
+					);
 					const lastSlashIndex = relativePath.lastIndexOf("/");
-					dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+					dir =
+						lastSlashIndex >= 0
+							? relativePath.substring(0, lastSlashIndex + 1)
+							: "";
 				}
 				const slugPath = `${dir}${entry.data.slug}`;
 				// 避免与默认路径重复
@@ -108,9 +117,7 @@ export async function getStaticPaths() {
 			if (entry.data.alias) {
 				// 移除开头的斜杠和结尾的斜杠
 				// 同时移除可能的 "posts/" 前缀，避免重复
-				let alias = entry.data.alias
-					.replace(/^\/+/, "")
-					.replace(/\/+$/, "");
+				let alias = entry.data.alias.replace(/^\/+/, "").replace(/\/+$/, "");
 				if (alias.startsWith("posts/")) {
 					alias = alias.replace(/^posts\//, "");
 				}
@@ -134,14 +141,19 @@ if (entry.data.slug) {
 	if (entry.filePath) {
 		const relativePath = entry.filePath.replace(/^src\/content\/posts\//, "");
 		const lastSlashIndex = relativePath.lastIndexOf("/");
-		dir = lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
+		dir =
+			lastSlashIndex >= 0 ? relativePath.substring(0, lastSlashIndex + 1) : "";
 	}
 	const canonicalPath = `/posts/${dir}${entry.data.slug}/`;
-	canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined;
+	canonicalUrl = Astro.site
+		? new URL(canonicalPath, Astro.site).toString()
+		: undefined;
 } else if (entry.data.alias) {
 	const alias = entry.data.alias.replace(/^\/+/, "").replace(/\/+$/, "");
 	const canonicalPath = `/posts/${alias}/`;
-	canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined;
+	canonicalUrl = Astro.site
+		? new URL(canonicalPath, Astro.site).toString()
+		: undefined;
 }
 
 // 跳转逻辑：如果 redirect 或 repost.redirect 存在，直接重定向到目标页面
@@ -200,8 +212,7 @@ if (entry.data.image) {
 			const response = await fetch(entry.data.image);
 			const arrayBuffer = await response.arrayBuffer();
 			const base64 = Buffer.from(arrayBuffer).toString("base64");
-			const contentType =
-				response.headers.get("content-type") || "image/jpeg";
+			const contentType = response.headers.get("content-type") || "image/jpeg";
 			posterCoverUrl = `data:${contentType};base64,${base64}`;
 		} catch {
 			posterCoverUrl = entry.data.image;

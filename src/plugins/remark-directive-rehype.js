@@ -3,20 +3,74 @@ import { visit } from "unist-util-visit";
 
 // Directives handled by remark-content-directives.mjs — skip here to avoid interference
 const CONTENT_DIRECTIVE_NAMES = new Set([
-  // Text (inline) directives
-  "mark", "kbd", "blur", "psw", "u", "wavy", "emp", "del", "hashtag",
-  "button", "btn", "color", "sup", "sub", "checkbox", "radio", "step-brackets", "emoji",
-  // Leaf directives
-  "asciinema", "colors", "image",
-  // Container directives
-  "callout", "note", "info", "tip", "warning", "caution", "important",
-  "question", "quote", "bug", "example", "success", "failure", "danger",
-  "folding", "collapse", "folders", "timeline", "tabs", "poetry",
-  "copy", "grid", "panel", "blockquote", "quot", "reel", "paper",
-  "video", "audio", "gallery", "asciinema", "colors", "private", "ghcard", "sites",
-  "card", "banner", "yoicard", "link-card", "link",
-  // Alignment aliases
-  "left", "center", "right",
+	// Text (inline) directives
+	"mark",
+	"kbd",
+	"blur",
+	"psw",
+	"u",
+	"wavy",
+	"emp",
+	"del",
+	"hashtag",
+	"button",
+	"btn",
+	"color",
+	"sup",
+	"sub",
+	"checkbox",
+	"radio",
+	"step-brackets",
+	"emoji",
+	// Leaf directives
+	"asciinema",
+	"colors",
+	"image",
+	// Container directives
+	"callout",
+	"note",
+	"info",
+	"tip",
+	"warning",
+	"caution",
+	"important",
+	"question",
+	"quote",
+	"bug",
+	"example",
+	"success",
+	"failure",
+	"danger",
+	"folding",
+	"collapse",
+	"folders",
+	"timeline",
+	"tabs",
+	"poetry",
+	"copy",
+	"grid",
+	"panel",
+	"blockquote",
+	"quot",
+	"reel",
+	"paper",
+	"video",
+	"audio",
+	"gallery",
+	"asciinema",
+	"colors",
+	"private",
+	"ghcard",
+	"sites",
+	"card",
+	"banner",
+	"yoicard",
+	"link-card",
+	"link",
+	// Alignment aliases
+	"left",
+	"center",
+	"right",
 ]);
 
 export function parseDirectiveNode() {
@@ -28,7 +82,10 @@ export function parseDirectiveNode() {
 				node.type === "textDirective"
 			) {
 				// Skip directives handled by remark-content-directives
-				if (CONTENT_DIRECTIVE_NAMES.has(node.name) || node.name === "__md_element__") {
+				if (
+					CONTENT_DIRECTIVE_NAMES.has(node.name) ||
+					node.name === "__md_element__"
+				) {
 					return;
 				}
 

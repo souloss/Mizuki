@@ -29,7 +29,7 @@ const filterTabs = [
 	...allTags.map((tag) => ({
 		value: tag,
 		label: tag,
-		count: moments.filter((m) => m.tags && m.tags.includes(tag)).length,
+		count: moments.filter((m) => m.tags?.includes(tag)).length,
 	})),
 ];
 

@@ -203,9 +203,14 @@ export async function getBannerImages(): Promise<BannerImages> {
 	let bannerSrc = backgroundWallpaperConfig.banner?.src;
 
 	// 如果启用了图片API，获取API图片
-	if (backgroundWallpaperConfig.banner?.imageApi?.enable && backgroundWallpaperConfig.banner?.imageApi?.url) {
+	if (
+		backgroundWallpaperConfig.banner?.imageApi?.enable &&
+		backgroundWallpaperConfig.banner?.imageApi?.url
+	) {
 		try {
-			const response = await fetch(backgroundWallpaperConfig.banner.imageApi.url);
+			const response = await fetch(
+				backgroundWallpaperConfig.banner.imageApi.url,
+			);
 			const text = await response.text();
 			const apiImages = text.split("\n").filter((line) => line.trim());
 

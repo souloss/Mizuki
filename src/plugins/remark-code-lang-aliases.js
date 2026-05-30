@@ -16,7 +16,9 @@ function hasTitle(meta) {
 }
 
 function appendTitle(meta, title) {
-	if (!title || hasTitle(meta)) {return meta;}
+	if (!title || hasTitle(meta)) {
+		return meta;
+	}
 	const escapedTitle = title.replace(/"/g, "&quot;");
 	return meta ? `title="${escapedTitle}" ${meta}` : `title="${escapedTitle}"`;
 }
@@ -25,7 +27,9 @@ export function remarkCodeLangAliases() {
 	return (tree) => {
 		visit(tree, "code", (node) => {
 			const alias = languageAliases.get((node.lang || "").toLowerCase());
-			if (!alias) {return;}
+			if (!alias) {
+				return;
+			}
 
 			node.lang = alias.lang;
 			node.meta = appendTitle(node.meta, alias.title);

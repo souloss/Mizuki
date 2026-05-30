@@ -1,10 +1,15 @@
 ---
+import { PageProgressBar } from "@components/control/PageProgressBar";
+import Pio from "@components/features/pio/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
 import ConfigCarrier from "@components/misc/ConfigCarrier.astro";
 import MusicPlayer from "@components/widgets/music-player/MusicPlayer.svelte";
-import Pio from "@components/features/pio/Pio.svelte"; // 使用 Svelte 版本的 Pio 组件
-import { PageProgressBar } from "@components/control/PageProgressBar";
-import { fontConfig, pioConfig, profileConfig, siteConfig } from "@/config";
-import { backgroundWallpaperConfig } from "@/config";
+import {
+	backgroundWallpaperConfig,
+	fontConfig,
+	pioConfig,
+	profileConfig,
+	siteConfig,
+} from "@/config";
 
 const BANNER_HEIGHT = 35;
 const BANNER_HEIGHT_EXTEND = 30;
@@ -138,13 +143,19 @@ const bannerOffsetByPosition = {
 	bottom: "0",
 };
 const bannerOffset =
-	bannerOffsetByPosition[backgroundWallpaperConfig.banner?.position || "center"];
+	bannerOffsetByPosition[
+		backgroundWallpaperConfig.banner?.position || "center"
+	];
 
 // 构建字体配置的 CSS 变量
 // 从 fontConfig 的默认字体选项构建 body font-family
 let bodyFontFamily = "";
 const defaultFontId = fontConfig?.defaultFont || "system";
-const fontList = Array.isArray(fontConfig?.fonts) ? fontConfig.fonts : fontConfig?.fonts ? Object.values(fontConfig.fonts) : [];
+const fontList = Array.isArray(fontConfig?.fonts)
+	? fontConfig.fonts
+	: fontConfig?.fonts
+		? Object.values(fontConfig.fonts)
+		: [];
 const defaultFontItem = fontList.find((f) => f.id === defaultFontId);
 if (defaultFontItem) {
 	const fonts: string[] = [];
@@ -155,7 +166,19 @@ if (defaultFontItem) {
 	if (defaultFontItem.cjkFontFamily) {
 		fonts.push(defaultFontItem.cjkFontFamily);
 	}
-	fonts.push("system-ui", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "'Open Sans'", "'Helvetica Neue'", "sans-serif");
+	fonts.push(
+		"system-ui",
+		"-apple-system",
+		"BlinkMacSystemFont",
+		"'Segoe UI'",
+		"Roboto",
+		"Oxygen",
+		"Ubuntu",
+		"Cantarell",
+		"'Open Sans'",
+		"'Helvetica Neue'",
+		"sans-serif",
+	);
 	bodyFontFamily = fonts.join(", ");
 }
 ---

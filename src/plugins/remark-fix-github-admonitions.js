@@ -1,6 +1,6 @@
 import { visit } from "unist-util-visit";
 
-const GITHUB_ALERT_DECLARATION_REGEX = /^\s*\[\!(?<type>\w+)\]\s*$/;
+const GITHUB_ALERT_DECLARATION_REGEX = /^\s*\[!(?<type>\w+)\]\s*$/;
 const GITHUB_ALERT_TYPES = ["NOTE", "TIP", "IMPORTANT", "WARNING", "CAUTION"];
 
 function parseGithubAlertDeclaration(text) {
@@ -26,8 +26,7 @@ export function remarkFixGithubAdmonitions() {
 				return;
 			}
 
-			const possibleTypeDeclaration =
-				firstParagraphChild.value.split("\n")[0];
+			const possibleTypeDeclaration = firstParagraphChild.value.split("\n")[0];
 			if (!possibleTypeDeclaration) {
 				return;
 			}
@@ -76,10 +75,7 @@ export function remarkFixGithubAdmonitions() {
 			const directive = {
 				type: "containerDirective",
 				name: directiveName,
-				children: [
-					...alertParagraphChildren,
-					...node.children.slice(1),
-				],
+				children: [...alertParagraphChildren, ...node.children.slice(1)],
 			};
 
 			parent.children[index] = directive;

@@ -67,7 +67,8 @@ const groups: SiteGroup[] = [
 			{
 				title: "Tailwind CSS",
 				url: "https://tailwindcss.com",
-				description: "A utility-first CSS framework for rapidly building custom designs",
+				description:
+					"A utility-first CSS framework for rapidly building custom designs",
 				icon: "https://tailwindcss.com/favicon.ico",
 				labels: [{ name: "CSS", color: "#06b6d4" }],
 			},

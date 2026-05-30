@@ -29,7 +29,7 @@ const filterTabs = [
 	...allTags.map((tag) => ({
 		value: tag,
 		label: tag,
-		count: albumsData.filter((a) => a.tags && a.tags.includes(tag)).length,
+		count: albumsData.filter((a) => a.tags?.includes(tag)).length,
 	})),
 ];
 

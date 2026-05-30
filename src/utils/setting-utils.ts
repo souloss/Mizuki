@@ -262,12 +262,9 @@ export function setupSystemThemeListener() {
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 	// Handle system theme change callback
-	const handleSystemThemeChange = (
-		e: MediaQueryListEvent | MediaQueryList,
-	) => {
+	const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
 		const isDark = e.matches;
-		const currentIsDark =
-			document.documentElement.classList.contains("dark");
+		const currentIsDark = document.documentElement.classList.contains("dark");
 
 		// If theme state hasn't changed, return directly
 		if (currentIsDark === isDark) {
@@ -435,9 +432,7 @@ export function applyWallpaperModeToDocument(
 
 		// Remove transition protection class in next frame
 		requestAnimationFrame(() => {
-			document.documentElement.classList.remove(
-				"is-wallpaper-transitioning",
-			);
+			document.documentElement.classList.remove("is-wallpaper-transitioning");
 		});
 	});
 }
@@ -576,8 +571,7 @@ function showBannerMode(animate = false) {
 	const navbar = document.getElementById("navbar");
 	if (navbar) {
 		// Get navbar transparency mode config (banner mode)
-		const transparentMode =
-			siteConfig.banner.navbar?.transparentMode || "semi";
+		const transparentMode = siteConfig.banner.navbar?.transparentMode || "semi";
 		navbar.setAttribute("data-transparent-mode", transparentMode);
 
 		// Reinitialize semifull mode scroll detection (if needed)
@@ -816,18 +810,10 @@ function adjustMainContentPosition(
 				if (window.innerWidth < 1024) {
 					mainContent.style.setProperty("top", "5.5rem", "important");
 				} else {
-					mainContent.style.setProperty(
-						"top",
-						bannerTargetTop,
-						"important",
-					);
+					mainContent.style.setProperty("top", bannerTargetTop, "important");
 				}
 			} else {
-				mainContent.style.setProperty(
-					"top",
-					bannerTargetTop,
-					"important",
-				);
+				mainContent.style.setProperty("top", bannerTargetTop, "important");
 			}
 			const bannerGrid = document.getElementById("main-grid");
 			if (bannerGrid) {
@@ -861,17 +847,9 @@ function adjustMainContentPosition(
 				mainContent.style.transition = "none";
 				mainContent.style.position = "absolute";
 				mainContent.style.zIndex = "30";
-				mainContent.style.setProperty(
-					"top",
-					`${computedTop}px`,
-					"important",
-				);
+				mainContent.style.setProperty("top", `${computedTop}px`, "important");
 				// margin-top doesn't affect layout in absolute positioning, set final value early to avoid jump when switching to relative
-				mainContent.style.setProperty(
-					"margin-top",
-					"1rem",
-					"important",
-				);
+				mainContent.style.setProperty("margin-top", "1rem", "important");
 				mainContent.classList.add("no-banner-layout");
 				void mainContent.offsetWidth;
 				mainContent.style.setProperty(
@@ -893,11 +871,7 @@ function adjustMainContentPosition(
 				mainContent.style.position = "relative";
 				mainContent.style.zIndex = "30";
 				mainContent.style.setProperty("top", "0", "important");
-				mainContent.style.setProperty(
-					"margin-top",
-					"1rem",
-					"important",
-				);
+				mainContent.style.setProperty("margin-top", "1rem", "important");
 				mainContent.style.transition = "";
 			}
 			break;
@@ -1115,10 +1089,7 @@ export function applyOverlayBlurToDocument(blur: number): void {
 		"[data-fullscreen-wallpaper]",
 	) as HTMLElement | null;
 	if (fullscreenWallpaper) {
-		fullscreenWallpaper.style.setProperty(
-			"--wallpaper-blur",
-			`${safeBlur}px`,
-		);
+		fullscreenWallpaper.style.setProperty("--wallpaper-blur", `${safeBlur}px`);
 	}
 }
 
@@ -1207,10 +1178,7 @@ export function applyWavesEnabledToDocument(enabled: boolean): void {
 		return;
 	}
 	// Update html attribute, CSS takes effect immediately
-	document.documentElement.setAttribute(
-		"data-waves-enabled",
-		String(enabled),
-	);
+	document.documentElement.setAttribute("data-waves-enabled", String(enabled));
 	// Also update element style (compatibility)
 	const wavesElement = document.getElementById("header-waves");
 	if (wavesElement) {
@@ -1298,10 +1266,7 @@ export function setSakuraEnabled(enabled: boolean): void {
 		return;
 	}
 	localStorage.setItem("sakuraEnabled", String(enabled));
-	document.documentElement.setAttribute(
-		"data-sakura-enabled",
-		String(enabled),
-	);
+	document.documentElement.setAttribute("data-sakura-enabled", String(enabled));
 	// Toggle sakura effect in real-time
 	window.dispatchEvent(
 		new CustomEvent("sakuraToggle", { detail: { enabled } }),
@@ -1477,16 +1442,9 @@ export function applyFontToDocument(fontId: string): void {
 		const fullFontFamily = familyParts.join(", ");
 
 		// Set CSS variable for any CSS rules that reference it
-		document.documentElement.style.setProperty(
-			"--font-family",
-			fullFontFamily,
-		);
+		document.documentElement.style.setProperty("--font-family", fullFontFamily);
 		// Apply directly to body via inline style to override Layout.astro's inline style
-		document.body.style.setProperty(
-			"font-family",
-			fullFontFamily,
-			"important",
-		);
+		document.body.style.setProperty("font-family", fullFontFamily, "important");
 
 		// Load Google Fonts if specified
 		if (fontOption.googleFonts) {
@@ -1550,10 +1508,7 @@ export function applyStickyNavbarToDocument(enabled: boolean): void {
 		return;
 	}
 	// Set data attribute for CSS selectors that use :root[data-sticky-navbar]
-	document.documentElement.setAttribute(
-		"data-sticky-navbar",
-		String(enabled),
-	);
+	document.documentElement.setAttribute("data-sticky-navbar", String(enabled));
 
 	// Use body class as the primary mechanism - CSS !important rules in navbar.css
 	// enforce fixed positioning when body.sticky-navbar is present

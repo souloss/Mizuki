@@ -26,7 +26,7 @@ function convertMetingSong(song: MetingSong): Song {
 	const artist = song.artist ?? song.author ?? i18n(Key.unknownArtist);
 	let dur = song.duration ?? 0;
 	if (typeof dur === "string") {
-		dur = parseInt(dur, 10);
+		dur = Number.parseInt(dur, 10);
 	}
 	if (dur > 10000) {
 		dur = Math.floor(dur / 1000);
@@ -38,7 +38,7 @@ function convertMetingSong(song: MetingSong): Song {
 	return {
 		id:
 			typeof song.id === "string"
-				? parseInt(song.id, 10)
+				? Number.parseInt(song.id, 10)
 				: (song.id ?? 0),
 		title,
 		artist,
@@ -144,7 +144,7 @@ export async function fetchMetingPlaylist(
 		const list: MetingSong[] = await res.json();
 		state.playlist = list.map(convertMetingSong);
 		onLoadEnd();
-	} catch (e) {
+	} catch (_e) {
 		showError(i18n(Key.musicPlayerErrorPlaylist));
 		onLoadEnd();
 	}

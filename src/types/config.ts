@@ -567,12 +567,14 @@ export interface FontItem {
 		| "svg"; // 字体格式，仅当 src 为本地文件时需要
 	googleFonts?: string; // Google Fonts 引入URL
 	cdnUrl?: string; // 外部 CDN 字体样式表 URL
-	localFonts?: Array<{
-		family: string; // 字体族名
-		src: string; // 字体文件路径
-		weight?: number; // 字体粗细
-		style?: "normal" | "italic" | "oblique"; // 字体样式
-	}> | string[]; // 本地字体配置，支持对象数组或文件名数组
+	localFonts?:
+		| Array<{
+				family: string; // 字体族名
+				src: string; // 字体文件路径
+				weight?: number; // 字体粗细
+				style?: "normal" | "italic" | "oblique"; // 字体样式
+		  }>
+		| string[]; // 本地字体配置，支持对象数组或文件名数组
 	enableCompress?: boolean; // 是否启用字体子集优化
 }
 
@@ -796,7 +798,10 @@ export interface BackgroundWallpaperConfig {
 
 	// 全屏透明覆盖模式配置
 	overlay?: {
-		src?: string | string[] | { desktop?: string | string[]; mobile?: string | string[] };
+		src?:
+			| string
+			| string[]
+			| { desktop?: string | string[]; mobile?: string | string[] };
 		position?: string; // 壁纸位置："top-left" | "top-right" | "bottom-left" | "bottom-right"
 		size?: {
 			width?: number; // 宽度(px)

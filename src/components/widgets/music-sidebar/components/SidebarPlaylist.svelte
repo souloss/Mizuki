@@ -1,25 +1,19 @@
 <script lang="ts">
-	import AccordionDrawer from "../../common/AccordionDrawer.svelte";
-	import type { Song } from "../../music-player/types";
-	import TrackListItem from "./TrackListItem.svelte";
+import AccordionDrawer from "../../common/AccordionDrawer.svelte";
+import type { Song } from "../../music-player/types";
+import TrackListItem from "./TrackListItem.svelte";
 
-	interface Props {
-		playlist: Song[];
-		currentIndex: number;
-		isPlaying: boolean;
-		show: boolean;
-		onClose: () => void;
-		onPlaySong: (index: number) => void;
-	}
+interface Props {
+	playlist: Song[];
+	currentIndex: number;
+	isPlaying: boolean;
+	show: boolean;
+	onClose: () => void;
+	onPlaySong: (index: number) => void;
+}
 
-	const {
-		playlist,
-		currentIndex,
-		isPlaying,
-		show,
-		onClose,
-		onPlaySong,
-	}: Props = $props();
+const { playlist, currentIndex, isPlaying, show, onClose, onPlaySong }: Props =
+	$props();
 </script>
 
 <AccordionDrawer {show} class="playlist-drawer">

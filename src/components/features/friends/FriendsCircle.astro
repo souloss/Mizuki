@@ -33,7 +33,9 @@ function formatRelativeTime(dateStr: string): string {
 }
 
 function formatLastUpdate(dateStr: string): string {
-	if (!dateStr) {return "";}
+	if (!dateStr) {
+		return "";
+	}
 	try {
 		const date = new Date(dateStr);
 		return date.toLocaleString();

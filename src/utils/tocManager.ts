@@ -152,20 +152,13 @@ export class TOCManager {
 		filteredHeadings.forEach((heading) => {
 			const depth = Number.parseInt(heading.tagName.charAt(1), 10);
 			const depthLevel =
-				depth === this.minDepth
-					? 0
-					: depth === this.minDepth + 1
-						? 1
-						: 2;
+				depth === this.minDepth ? 0 : depth === this.minDepth + 1 ? 1 : 2;
 
 			if (!heading.id) {
 				return;
 			}
 
-			const badgeContent = this.generateBadgeContent(
-				depth,
-				heading1Count,
-			);
+			const badgeContent = this.generateBadgeContent(depth, heading1Count);
 			if (depth === this.minDepth) {
 				heading1Count++;
 			}
@@ -179,9 +172,7 @@ export class TOCManager {
 				if (dataSubtitles) {
 					try {
 						const subtitles = JSON.parse(dataSubtitles);
-						headingText = Array.isArray(subtitles)
-							? subtitles[0]
-							: subtitles;
+						headingText = Array.isArray(subtitles) ? subtitles[0] : subtitles;
 					} catch {
 						// ignore
 					}
@@ -236,8 +227,7 @@ export class TOCManager {
 		headings.forEach((heading) => {
 			if (heading.id) {
 				const rect = heading.getBoundingClientRect();
-				const isVisible =
-					rect.top < window.innerHeight && rect.bottom > 0;
+				const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
 
 				if (isVisible) {
 					visibleHeadingIds.push(heading.id);

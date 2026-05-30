@@ -1,14 +1,14 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
-	import type { Snippet } from "svelte";
+import Icon from "@iconify/svelte";
+import type { Snippet } from "svelte";
 
-	interface Props {
-		name: string;
-		icon?: string;
-		class?: string;
-		children?: Snippet;
-	}
-	const { name, icon, class: className = "", children }: Props = $props();
+interface Props {
+	name: string;
+	icon?: string;
+	class?: string;
+	children?: Snippet;
+}
+const { name, icon, class: className = "", children }: Props = $props();
 </script>
 
 <div class="widget-header {className}">

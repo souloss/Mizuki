@@ -1,4 +1,6 @@
 ---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
 /**
  * 处理 permalink 的文章（包括全局 permalink 和自定义 permalink）
  * 全局 permalink 启用时，所有文章链接在根目录下生成
@@ -28,9 +30,11 @@ import {
 	initPostIdMap,
 } from "@utils/permalink-utils";
 import { getPostPublicDescription } from "@utils/post-card-content";
-import { getFileDirFromPath, getPostUrl, removeFileExtension } from "@utils/url-utils";
-import type { CollectionEntry } from "astro:content";
-import { render } from "astro:content";
+import {
+	getFileDirFromPath,
+	getPostUrl,
+	removeFileExtension,
+} from "@utils/url-utils";
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 
@@ -55,9 +59,7 @@ export async function getStaticPaths() {
 
 		// 优先使用自定义 permalink
 		if (hasCustomPermalink(entry)) {
-			permalink = entry.data
-				.permalink!.replace(/^\/+/, "")
-				.replace(/\/+$/, "");
+			permalink = entry.data.permalink?.replace(/^\/+/, "").replace(/\/+$/, "");
 		}
 		// 其次使用全局 permalink（如果启用）
 		else if (permalinkConfig.enable) {
@@ -79,9 +81,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 
 // Compute canonical URL for SEO - permalink pages are already canonical
-const canonicalUrl = Astro.site
-	? Astro.url.href
-	: undefined;
+const canonicalUrl = Astro.site ? Astro.url.href : undefined;
 
 // 跳转逻辑：如果 redirect 或 repost.redirect 存在，直接重定向到目标页面
 const redirectUrl = entry.data.redirect || entry.data.repost?.redirect;

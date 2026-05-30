@@ -1,23 +1,23 @@
 <script lang="ts">
-	import Icon from "@iconify/svelte";
+import Icon from "@iconify/svelte";
 
-	import type { RepeatMode } from "../types";
+import type { RepeatMode } from "../types";
 
-	interface Props {
-		mode: "shuffle" | "repeat";
-		isActive: boolean;
-		repeatMode?: RepeatMode;
-		onclick: () => void;
-		disabled?: boolean;
-	}
+interface Props {
+	mode: "shuffle" | "repeat";
+	isActive: boolean;
+	repeatMode?: RepeatMode;
+	onclick: () => void;
+	disabled?: boolean;
+}
 
-	const {
-		mode,
-		isActive,
-		repeatMode = 0,
-		onclick,
-		disabled = false,
-	}: Props = $props();
+const {
+	mode,
+	isActive,
+	repeatMode = 0,
+	onclick,
+	disabled = false,
+}: Props = $props();
 </script>
 
 {#if mode === "shuffle"}
