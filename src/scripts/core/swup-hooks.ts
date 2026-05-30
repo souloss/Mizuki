@@ -129,6 +129,9 @@ export class SwupHooksManager {
 
 			// 更新页面标题覆盖层
 			this.updatePageOverlay();
+
+			// 通知其他组件内容已替换（CategoryBar 等依赖此事件）
+			document.dispatchEvent(new CustomEvent("swup:contentReplaced"));
 		});
 	}
 
@@ -269,7 +272,9 @@ export class SwupHooksManager {
 	 * 需要强制重排使 [data-wallpaper-mode="fullscreen"] #top-row CSS 生效
 	 */
 	private syncFullscreenLayout(): void {
-		const mode = document.documentElement.getAttribute("data-wallpaper-mode");
+		const mode = document.documentElement.getAttribute(
+			"data-wallpaper-mode",
+		);
 		if (mode !== "fullscreen") {
 			return;
 		}
