@@ -1,6 +1,9 @@
 /// <reference types="astro/client" />
 /// <reference path="../.astro/types.d.ts" />
 
+// Type declaration for side-effect font imports
+declare module "@fontsource-variable/jetbrains-mono";
+
 // Type declaration for glob-dev-trim.mjs loader
 declare module "*/loaders/glob-dev-trim.mjs" {
 	export function devGlob(options: { pattern: string; base: string }): {

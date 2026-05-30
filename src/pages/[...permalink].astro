@@ -59,7 +59,8 @@ export async function getStaticPaths() {
 
 		// 优先使用自定义 permalink
 		if (hasCustomPermalink(entry)) {
-			permalink = entry.data.permalink?.replace(/^\/+/, "").replace(/\/+$/, "");
+			permalink =
+				entry.data.permalink?.replace(/^\/+/, "").replace(/\/+$/, "") ?? null;
 		}
 		// 其次使用全局 permalink（如果启用）
 		else if (permalinkConfig.enable) {
