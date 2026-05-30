@@ -129,10 +129,10 @@
 			"eslint --fix",
 			"prettier --write"
 		],
-		"*.{astro,svelte}": [
+		"*.svelte": [
 			"prettier --write"
 		],
-		"*.{css,styl}": [
+		"*.css": [
 			"prettier --write"
 		],
 		"*.{json,yml,yaml}": [

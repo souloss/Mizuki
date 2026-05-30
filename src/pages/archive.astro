@@ -240,6 +240,7 @@ function formatTag(tagList: string[]) {
 	// Apply on initial load
 	applyArchiveFilter();
 
-	// Re-apply after Swup page transitions
-	document.addEventListener("swup:content-replace", applyArchiveFilter);
+	// Re-apply after page transitions
+	document.addEventListener("astro:page-load", applyArchiveFilter);
+	document.addEventListener("mizuki:page:loaded", applyArchiveFilter);
 </script>
