@@ -28,7 +28,9 @@
 		"lint": "eslint ./src --fix",
 		"postinstall": "node scripts/patch-vite-timeout.js && node scripts/patch-data-store-load.js",
 		"preinstall": "npx only-allow pnpm",
-		"compress-fonts": "node scripts/compress-fonts/index.js"
+		"compress-fonts": "node scripts/compress-fonts/index.js",
+		"prepare": "simple-git-hooks",
+		"format:check": "prettier --check ./src"
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.9",
@@ -107,13 +109,34 @@
 		"fontmin": "^1.1.1",
 		"glob": "^13.0.6",
 		"globals": "^17.6.0",
+		"lint-staged": "^17.0.5",
 		"postcss-import": "^16.1.1",
 		"postcss-nesting": "^14.0.0",
 		"prettier": "^3.8.3",
 		"prettier-plugin-astro": "^0.14.1",
 		"prettier-plugin-svelte": "^3.5.1",
+		"simple-git-hooks": "^2.13.1",
 		"svelte-eslint-parser": "^1.6.1",
 		"typescript-eslint": "^8.59.2"
 	},
-	"packageManager": "pnpm@10.33.0"
+	"packageManager": "pnpm@10.33.0",
+	"simple-git-hooks": {
+		"pre-commit": "pnpm lint-staged",
+		"pre-push": "pnpm astro check"
+	},
+	"lint-staged": {
+		"*.{js,ts,mjs}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{astro,svelte}": [
+			"prettier --write"
+		],
+		"*.{css,styl}": [
+			"prettier --write"
+		],
+		"*.{json,yml,yaml}": [
+			"prettier --write"
+		]
+	}
 }
