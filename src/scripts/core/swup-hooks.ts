@@ -140,7 +140,7 @@ export class SwupHooksManager {
 	 * 处理页面访问开始时的状态
 	 */
 	private registerVisitStartHook(): void {
-		window.swup!.hooks.on("visit:start", (visit: VisitObject) => {
+		window.swup!.hooks.on("visit:start", ((visit: VisitObject) => {
 			// 清理上一页的 Fancybox
 			this.handlers.cleanupFancybox?.();
 
@@ -156,7 +156,7 @@ export class SwupHooksManager {
 
 			// 隐藏 TOC
 			this.hideTOC();
-		});
+			}) as (...args: unknown[]) => void);
 	}
 
 	/**
@@ -187,7 +187,7 @@ export class SwupHooksManager {
 	 * 处理页面访问结束时的清理
 	 */
 	private registerVisitEndHook(): void {
-		window.swup!.hooks.on("visit:end", (_visit: VisitObject) => {
+		window.swup!.hooks.on("visit:end", ((_visit: VisitObject) => {
 			setTimeout(() => {
 				// 隐藏高度扩展元素
 				this.extendPageHeight(true);
@@ -195,7 +195,7 @@ export class SwupHooksManager {
 				// 显示 TOC
 				this.showTOC();
 			}, ANIMATION_CONFIG.heightExtendDelay);
-		});
+		}) as (...args: unknown[]) => void);
 	}
 
 	// ==================== 私有辅助方法 ====================
