@@ -82,9 +82,9 @@ const walineConfig = {
     function waitForStylesheet(hrefSubstring, timeout) {
       timeout = timeout || 5000;
       return new Promise(function (resolve) {
-        var links = document.querySelectorAll('link[rel="stylesheet"]');
-        for (var i = 0; i < links.length; i++) {
-          var link = links[i];
+        const links = document.querySelectorAll('link[rel="stylesheet"]');
+        for (let i = 0; i < links.length; i++) {
+          const link = links[i];
           if (link.href && link.href.indexOf(hrefSubstring) !== -1) {
             // Already loaded: sheet exists and is accessible
             try {

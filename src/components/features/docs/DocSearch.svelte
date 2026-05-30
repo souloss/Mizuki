@@ -1,11 +1,10 @@
 <script lang="ts">
+	import I18nKey from "@i18n/i18nKey";
+	import { i18n } from "@i18n/translation";
 	import Icon from "@iconify/svelte";
 	import { onMount } from "svelte";
 
-	import I18nKey from "@i18n/i18nKey";
-	import { i18n } from "@i18n/translation";
-
-	let {
+	const {
 		docSlug,
 		variant = "sidebar",
 	}: {
@@ -36,7 +35,7 @@
 	}
 
 	async function loadSearchIndex() {
-		if (searchIndex) return true;
+		if (searchIndex) {return true;}
 
 		if (import.meta.env.DEV) {
 			initialized = true;
@@ -92,7 +91,7 @@
 			});
 			const items = await Promise.all(
 				search.results.slice(0, 15).map(async (r: SearchResult) => {
-					if (r.sub_results?.length) return r;
+					if (r.sub_results?.length) {return r;}
 					try {
 						const data = await r.data?.();
 						return data ?? r;
@@ -118,7 +117,7 @@
 
 	function navigate(index: number) {
 		const r = results[index];
-		if (!r) return;
+		if (!r) {return;}
 		const url = r.sub_results?.[0]?.url ?? r.url;
 		window.location.href = url;
 		closeModal();
@@ -159,8 +158,8 @@
 		function onKeydown(e: KeyboardEvent) {
 			if ((e.metaKey || e.ctrlKey) && e.key === "k") {
 				e.preventDefault();
-				if (isOpen) closeModal();
-				else openModal();
+				if (isOpen) {closeModal();}
+				else {openModal();}
 			}
 		}
 		document.addEventListener("keydown", onKeydown);
@@ -170,7 +169,7 @@
 	// Portal: move the overlay to <body> so it's not trapped inside
 	// the docs-navbar's containing block (backdrop-filter creates one)
 	$effect(() => {
-		if (!isOpen) return;
+		if (!isOpen) {return;}
 		const overlay = document.querySelector(".doc-search-overlay");
 		if (overlay && overlay.parentElement !== document.body) {
 			document.body.appendChild(overlay);

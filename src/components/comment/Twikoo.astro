@@ -30,18 +30,18 @@ const config = {
 
   <script is:inline define:vars={{ config }}>
     (function () {
-      var TWIKOO_CONTAINER_ID = "twikoo-container";
-      var TWIKOO_SCRIPT_URL = "/assets/js/twikoo.all.min.js";
-      var ROOT_MARGIN = "200px";
-      var LOADING_TIMEOUT = 15000;
+      const TWIKOO_CONTAINER_ID = "twikoo-container";
+      const TWIKOO_SCRIPT_URL = "/assets/js/twikoo.all.min.js";
+      const ROOT_MARGIN = "200px";
+      const LOADING_TIMEOUT = 15000;
 
-      var observer = null;
-      var twikooLoaded = false;
-      var timeoutId = null;
-      var initialized = false;
+      let observer = null;
+      let twikooLoaded = false;
+      let timeoutId = null;
+      let initialized = false;
 
       function hideLoading() {
-        var loading = document.getElementById('twikoo-loading');
+        const loading = document.getElementById('twikoo-loading');
         if (loading) {
           loading.style.display = 'none';
         }
@@ -52,14 +52,14 @@ const config = {
       }
 
       function showError(message) {
-        var loading = document.getElementById('twikoo-loading');
+        const loading = document.getElementById('twikoo-loading');
         if (loading) {
           loading.innerHTML = '<div class="text-center text-muted-foreground">' + message + '</div>';
         }
       }
 
       function getCurrentPath() {
-        var pathname = window.location.pathname;
+        const pathname = window.location.pathname;
         return pathname.endsWith("/") && pathname.length > 1
           ? pathname.slice(0, -1)
           : pathname;
@@ -80,7 +80,7 @@ const config = {
           return;
         }
         return new Promise(function (resolve, reject) {
-          var script = document.createElement("script");
+          const script = document.createElement("script");
           script.id = "twikoo-script-loaded";
           script.src = TWIKOO_SCRIPT_URL;
           script.async = true;
@@ -104,7 +104,7 @@ const config = {
         // twikoo.css) are matched against the final DOM structure.
         await new Promise(function (r) { requestAnimationFrame(function () { requestAnimationFrame(r); }); });
 
-        var container = document.getElementById(TWIKOO_CONTAINER_ID);
+        const container = document.getElementById(TWIKOO_CONTAINER_ID);
         if (container) {
           // Force a synchronous layout reflow so computed styles are up-to-date
           void container.offsetHeight;
@@ -117,7 +117,7 @@ const config = {
       }
 
       async function initTwikoo() {
-        var commentEl = document.getElementById("tcomment");
+        const commentEl = document.getElementById("tcomment");
         if (!commentEl) {
           return;
         }
@@ -145,7 +145,7 @@ const config = {
             commentEl.innerHTML = "";
           }
 
-          var dynamicConfig = createTwikooConfig();
+          const dynamicConfig = createTwikooConfig();
           await twikoo.init(dynamicConfig);
           initialized = true;
 
@@ -171,7 +171,7 @@ const config = {
       }
 
       function setupLazyLoad() {
-        var container = document.getElementById(TWIKOO_CONTAINER_ID);
+        const container = document.getElementById(TWIKOO_CONTAINER_ID);
         if (!container) {
           return;
         }

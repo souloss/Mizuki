@@ -16,7 +16,7 @@
 		type SizeConfig,
 	} from "./utils/poster-renderer";
 
-	let {
+	const {
 		title,
 		author,
 		description = "",

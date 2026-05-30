@@ -4,7 +4,7 @@
  */
 
 import type { SakuraConfig } from "../../types/config";
-import { initSakura, getSakuraStatus, stopSakura } from "../../utils/sakura-manager";
+import { getSakuraStatus, initSakura, stopSakura } from "../../utils/sakura-manager";
 
 /**
  * Sakura 特效处理器类

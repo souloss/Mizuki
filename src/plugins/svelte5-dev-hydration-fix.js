@@ -22,11 +22,11 @@ export default function svelte5DevHydrationFix() {
 		enforce: "pre",
 
 		resolveId(id) {
-			if (id === virtualModuleId) return resolvedVirtualModuleId;
+			if (id === virtualModuleId) {return resolvedVirtualModuleId;}
 		},
 
 		load(id) {
-			if (id !== resolvedVirtualModuleId) return;
+			if (id !== resolvedVirtualModuleId) {return;}
 			return `
 import { mount, unmount } from "svelte";
 
@@ -45,7 +45,7 @@ try {
 		transformIndexHtml: {
 			enforce: "pre",
 			transform(_html, ctx) {
-				if (!ctx.server) return;
+				if (!ctx.server) {return;}
 				return [
 					{
 						tag: "script",

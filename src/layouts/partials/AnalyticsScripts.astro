@@ -104,7 +104,7 @@ const umamiEnable = umamiAnalytics && umamiAnalytics.websiteId && umamiAnalytics
 
 			// Umami (仅在启用时加载)
 			if (umamiEnable && umamiScriptUrl && umamiWebsiteId) {
-				var umamiScript = document.createElement("script");
+				const umamiScript = document.createElement("script");
 				umamiScript.defer = true;
 				umamiScript.src = umamiScriptUrl;
 				umamiScript.setAttribute("data-website-id", umamiWebsiteId);

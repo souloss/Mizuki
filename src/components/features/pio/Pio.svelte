@@ -5,7 +5,7 @@
 
 	import type { PioProps } from "./types";
 
-	let { config = {} }: { config?: Partial<PioProps["config"]> } = $props();
+	const { config = {} }: { config?: Partial<PioProps["config"]> } = $props();
 
 	const merged = $derived({
 		mode: config?.mode ?? pioConfig.mode,

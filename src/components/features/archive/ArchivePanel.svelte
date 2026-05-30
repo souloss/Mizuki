@@ -2,7 +2,7 @@
 	import I18nKey from "@i18n/i18nKey";
 	import { i18n } from "@i18n/translation";
 
-	let { sortedPosts = [] }: { sortedPosts?: Post[] } = $props();
+	const { sortedPosts = [] }: { sortedPosts?: Post[] } = $props();
 
 	interface Post {
 		id: string;

@@ -12,11 +12,11 @@
 		musicPlayerStore.toggleExpanded();
 	}
 
-	let currentSongTitle = $derived(state.currentSong?.title || "音乐控制中心");
-	let ariaLabel = $derived(state.isExpanded
+	const currentSongTitle = $derived(state.currentSong?.title || "音乐控制中心");
+	const ariaLabel = $derived(state.isExpanded
 		? `收起音乐控制中心：${currentSongTitle}`
 		: `打开音乐控制中心：${currentSongTitle}`);
-	let statusIcon = $derived(state.isLoading
+	const statusIcon = $derived(state.isLoading
 		? "svg-spinners:90-ring-with-bg"
 		: "material-symbols:music-note-rounded");
 
