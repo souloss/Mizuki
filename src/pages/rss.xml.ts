@@ -27,7 +27,7 @@ export async function GET(context: APIContext) {
 
 	// Use the same ordering as site listing (pinned first, then by published desc)
 	const posts = (await getSortedPosts()).filter(
-		(post) => !post.data.encrypted,
+		(post) => !post.data.encrypted && post.data.draft !== true,
 	);
 
 	// 初始化文章 ID 映射（用于 permalink 功能）
