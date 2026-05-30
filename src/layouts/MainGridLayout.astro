@@ -117,6 +117,8 @@ const stickyNavbar = siteConfig.navbar?.stickyNavbar ?? false;
 	<GridScripts
 		navbarTransparentMode={siteConfig.banner?.navbar?.transparentMode ||
 			"semi"}
+		fullscreenNavbarTransparentMode={backgroundWallpaperConfig.fullscreen?.navbar?.transparentMode ||
+			siteConfig.banner?.navbar?.transparentMode || "semifull"}
 		defaultWallpaperMode={backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER}
 		defaultPostListLayout={siteConfig.postListLayout?.defaultMode || "list"}
 		BANNER_HEIGHT={BANNER_HEIGHT}

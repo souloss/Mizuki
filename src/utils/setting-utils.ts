@@ -157,7 +157,10 @@ let systemThemeListener:
 	| ((e: MediaQueryListEvent | MediaQueryList) => void)
 	| null = null;
 
-export function setTheme(theme: LIGHT_DARK_MODE): void {
+export function setTheme(
+	theme: LIGHT_DARK_MODE,
+	clickCoords?: { x: number; y: number },
+): void {
 	// Check if in browser environment
 	if (
 		typeof localStorage === "undefined" ||
@@ -166,8 +169,74 @@ export function setTheme(theme: LIGHT_DARK_MODE): void {
 		return;
 	}
 
-	// Apply theme first
-	applyThemeToDocument(theme);
+	// Resolve the target theme to check if dark mode will change
+	const resolvedTheme = resolveTheme(theme);
+	const currentIsDark =
+		typeof document !== "undefined" &&
+		document.documentElement.classList.contains("dark");
+	const targetIsDark = resolvedTheme === DARK_MODE;
+
+	if (
+		currentIsDark !== targetIsDark &&
+		typeof document !== "undefined" &&
+		document.startViewTransition
+	) {
+		// Use View Transition API for animated theme switch
+		const root = document.documentElement;
+		root.classList.add("is-theme-transitioning", "use-view-transition");
+
+		if (targetIsDark) {
+			root.classList.add("going-dark");
+		}
+
+		const transition = document.startViewTransition(() => {
+			applyThemeToDocument(theme);
+		});
+
+		// Apply circular clip animation if click coordinates provided
+		if (clickCoords) {
+			const { x, y } = clickCoords;
+			const endRadius = Math.hypot(
+				Math.max(x, window.innerWidth - x),
+				Math.max(y, window.innerHeight - y),
+			);
+			const isDark = targetIsDark;
+			transition.ready.then(() => {
+				const clipPath = isDark
+					? [
+							`circle(0px at ${x}px ${y}px)`,
+							`circle(${endRadius}px at ${x}px ${y}px)`,
+						]
+					: [
+							`circle(${endRadius}px at ${x}px ${y}px)`,
+							`circle(0px at ${x}px ${y}px)`,
+						];
+				document.documentElement.animate(
+					{
+						clipPath,
+					},
+					{
+						duration: 500,
+						easing: "ease-in-out",
+						pseudoElement: isDark
+							? "::view-transition-new(root)"
+							: "::view-transition-old(root)",
+					},
+				);
+			});
+		}
+
+		transition.finished.then(() => {
+			root.classList.remove(
+				"is-theme-transitioning",
+				"use-view-transition",
+				"going-dark",
+			);
+		});
+	} else {
+		// Fallback: apply theme directly without animation
+		applyThemeToDocument(theme);
+	}
 
 	// Save to localStorage
 	localStorage.setItem("theme", theme);
@@ -193,9 +262,12 @@ export function setupSystemThemeListener() {
 	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 	// Handle system theme change callback
-	const handleSystemThemeChange = (e: MediaQueryListEvent | MediaQueryList) => {
+	const handleSystemThemeChange = (
+		e: MediaQueryListEvent | MediaQueryList,
+	) => {
 		const isDark = e.matches;
-		const currentIsDark = document.documentElement.classList.contains("dark");
+		const currentIsDark =
+			document.documentElement.classList.contains("dark");
 
 		// If theme state hasn't changed, return directly
 		if (currentIsDark === isDark) {
@@ -321,8 +393,8 @@ export function applyWallpaperModeToDocument(
 			"enable-banner",
 			"wallpaper-transparent",
 			"no-banner-layout",
-				"no-banner-mode",
-				"fullscreen-banner",
+			"no-banner-mode",
+			"fullscreen-banner",
 		);
 
 		// Add corresponding CSS class based on mode
@@ -332,7 +404,11 @@ export function applyWallpaperModeToDocument(
 				showBannerMode(true);
 				break;
 			case WALLPAPER_FULLSCREEN:
-				body.classList.remove("wallpaper-transparent", "no-banner-layout", "no-banner-mode");
+				body.classList.remove(
+					"wallpaper-transparent",
+					"no-banner-layout",
+					"no-banner-mode",
+				);
 				body.classList.add("enable-banner", "fullscreen-banner");
 				showFullscreenMode(animate);
 				break;
@@ -359,7 +435,9 @@ export function applyWallpaperModeToDocument(
 
 		// Remove transition protection class in next frame
 		requestAnimationFrame(() => {
-			document.documentElement.classList.remove("is-wallpaper-transitioning");
+			document.documentElement.classList.remove(
+				"is-wallpaper-transitioning",
+			);
 		});
 	});
 }
@@ -384,8 +462,12 @@ function ensureWallpaperState(mode: WALLPAPER_MODE) {
 			showBannerMode();
 			break;
 		case WALLPAPER_FULLSCREEN:
-				body.classList.remove("wallpaper-transparent", "no-banner-layout", "no-banner-mode");
-				body.classList.add("enable-banner", "fullscreen-banner");
+			body.classList.remove(
+				"wallpaper-transparent",
+				"no-banner-layout",
+				"no-banner-mode",
+			);
+			body.classList.add("enable-banner", "fullscreen-banner");
 			showFullscreenMode();
 			break;
 		case WALLPAPER_OVERLAY:
@@ -508,8 +590,6 @@ function showBannerMode(animate = false) {
 	}
 }
 
-
-
 function showFullscreenMode(animate = false) {
 	// Fullscreen mode: show banner wrapper at 100vh (full viewport)
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
@@ -524,14 +604,20 @@ function showFullscreenMode(animate = false) {
 
 	// Show banner wrapper as fullscreen banner (CSS makes it 100vh with fullscreen-banner class)
 	if (wallpaperWrapper) {
-		wallpaperWrapper.classList.remove("wallpaper-overlay", "wallpaper-fullscreen", "mobile-hide-banner");
+		wallpaperWrapper.classList.remove(
+			"wallpaper-overlay",
+			"wallpaper-fullscreen",
+			"mobile-hide-banner",
+		);
 		wallpaperWrapper.style.display = "block";
 		wallpaperWrapper.style.top = "0";
 		wallpaperWrapper.style.transform = "none";
 	}
 
 	// Hide banner text overlay in fullscreen mode
-	const bannerTextOverlay = document.querySelector(".banner-text-overlay") as HTMLElement | null;
+	const bannerTextOverlay = document.querySelector(
+		".banner-text-overlay",
+	) as HTMLElement | null;
 	if (bannerTextOverlay) {
 		bannerTextOverlay.classList.add("hidden");
 	}
@@ -550,7 +636,10 @@ function showOverlayMode() {
 		// Apply overlay opacity/blur from localStorage to the fullscreen wallpaper
 		const opacity = getStoredOverlayOpacity();
 		const blur = getStoredOverlayBlur();
-		fullscreenWallpaper.style.setProperty("--wallpaper-opacity", String(opacity));
+		fullscreenWallpaper.style.setProperty(
+			"--wallpaper-opacity",
+			String(opacity),
+		);
 		fullscreenWallpaper.style.setProperty("--wallpaper-blur", `${blur}px`);
 	}
 
@@ -615,7 +704,9 @@ function hideAllWallpapers() {
 
 function updateNavbarTransparency(mode: WALLPAPER_MODE) {
 	const navbar = document.getElementById("navbar");
-	if (!navbar) {return;}
+	if (!navbar) {
+		return;
+	}
 
 	let transparentMode: string;
 	let enableBlur: boolean;
@@ -648,8 +739,7 @@ function updateNavbarTransparency(mode: WALLPAPER_MODE) {
 			20;
 	} else {
 		// Banner mode: use configured transparency mode and blur effect
-		transparentMode =
-			siteConfig.banner.navbar?.transparentMode || "semi";
+		transparentMode = siteConfig.banner.navbar?.transparentMode || "semi";
 		enableBlur = siteConfig.banner.navbar?.enableBlur ?? true;
 		blurAmount = siteConfig.banner.navbar?.blur ?? 20;
 	}
@@ -694,7 +784,9 @@ function adjustMainContentPosition(
 	const mainContent = document.querySelector(
 		".w-full.z-30.pointer-events-none",
 	) as HTMLElement;
-	if (!mainContent) {return;}
+	if (!mainContent) {
+		return;
+	}
 
 	// Cancel previous fullscreen mode animation setTimeout to avoid race condition when switching quickly
 	if (fullscreenAnimationTimeout) {
@@ -724,10 +816,18 @@ function adjustMainContentPosition(
 				if (window.innerWidth < 1024) {
 					mainContent.style.setProperty("top", "5.5rem", "important");
 				} else {
-					mainContent.style.setProperty("top", bannerTargetTop, "important");
+					mainContent.style.setProperty(
+						"top",
+						bannerTargetTop,
+						"important",
+					);
 				}
 			} else {
-				mainContent.style.setProperty("top", bannerTargetTop, "important");
+				mainContent.style.setProperty(
+					"top",
+					bannerTargetTop,
+					"important",
+				);
 			}
 			const bannerGrid = document.getElementById("main-grid");
 			if (bannerGrid) {
@@ -761,9 +861,17 @@ function adjustMainContentPosition(
 				mainContent.style.transition = "none";
 				mainContent.style.position = "absolute";
 				mainContent.style.zIndex = "30";
-				mainContent.style.setProperty("top", `${computedTop}px`, "important");
+				mainContent.style.setProperty(
+					"top",
+					`${computedTop}px`,
+					"important",
+				);
 				// margin-top doesn't affect layout in absolute positioning, set final value early to avoid jump when switching to relative
-				mainContent.style.setProperty("margin-top", "1rem", "important");
+				mainContent.style.setProperty(
+					"margin-top",
+					"1rem",
+					"important",
+				);
 				mainContent.classList.add("no-banner-layout");
 				void mainContent.offsetWidth;
 				mainContent.style.setProperty(
@@ -785,7 +893,11 @@ function adjustMainContentPosition(
 				mainContent.style.position = "relative";
 				mainContent.style.zIndex = "30";
 				mainContent.style.setProperty("top", "0", "important");
-				mainContent.style.setProperty("margin-top", "1rem", "important");
+				mainContent.style.setProperty(
+					"margin-top",
+					"1rem",
+					"important",
+				);
 				mainContent.style.transition = "";
 			}
 			break;
@@ -871,7 +983,8 @@ export function initWallpaperMode(): void {
 }
 
 export function getStoredWallpaperMode(): WALLPAPER_MODE {
-	const defaultMode = backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER;
+	const defaultMode =
+		backgroundWallpaperConfig.mode?.defaultMode ?? WALLPAPER_BANNER;
 	// Check if in browser environment
 	if (
 		typeof localStorage === "undefined" ||
@@ -887,8 +1000,7 @@ export function getStoredWallpaperMode(): WALLPAPER_MODE {
 	}
 
 	return (
-		(localStorage.getItem("wallpaperMode") as WALLPAPER_MODE) ||
-		defaultMode
+		(localStorage.getItem("wallpaperMode") as WALLPAPER_MODE) || defaultMode
 	);
 }
 
@@ -971,12 +1083,20 @@ export function applyOverlayOpacityToDocument(opacity: number): void {
 	// Corner card overlay
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
 	if (wallpaperWrapper) {
-		wallpaperWrapper.style.setProperty("--overlay-opacity", String(safeOpacity));
+		wallpaperWrapper.style.setProperty(
+			"--overlay-opacity",
+			String(safeOpacity),
+		);
 	}
 	// Full-page background
-	const fullscreenWallpaper = document.querySelector("[data-fullscreen-wallpaper]") as HTMLElement | null;
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
+	) as HTMLElement | null;
 	if (fullscreenWallpaper) {
-		fullscreenWallpaper.style.setProperty("--wallpaper-opacity", String(safeOpacity));
+		fullscreenWallpaper.style.setProperty(
+			"--wallpaper-opacity",
+			String(safeOpacity),
+		);
 	}
 }
 
@@ -991,9 +1111,14 @@ export function applyOverlayBlurToDocument(blur: number): void {
 		wallpaperWrapper.style.setProperty("--overlay-blur", `${safeBlur}px`);
 	}
 	// Full-page background
-	const fullscreenWallpaper = document.querySelector("[data-fullscreen-wallpaper]") as HTMLElement | null;
+	const fullscreenWallpaper = document.querySelector(
+		"[data-fullscreen-wallpaper]",
+	) as HTMLElement | null;
 	if (fullscreenWallpaper) {
-		fullscreenWallpaper.style.setProperty("--wallpaper-blur", `${safeBlur}px`);
+		fullscreenWallpaper.style.setProperty(
+			"--wallpaper-blur",
+			`${safeBlur}px`,
+		);
 	}
 }
 
@@ -1082,7 +1207,10 @@ export function applyWavesEnabledToDocument(enabled: boolean): void {
 		return;
 	}
 	// Update html attribute, CSS takes effect immediately
-	document.documentElement.setAttribute("data-waves-enabled", String(enabled));
+	document.documentElement.setAttribute(
+		"data-waves-enabled",
+		String(enabled),
+	);
 	// Also update element style (compatibility)
 	const wavesElement = document.getElementById("header-waves");
 	if (wavesElement) {
@@ -1170,7 +1298,10 @@ export function setSakuraEnabled(enabled: boolean): void {
 		return;
 	}
 	localStorage.setItem("sakuraEnabled", String(enabled));
-	document.documentElement.setAttribute("data-sakura-enabled", String(enabled));
+	document.documentElement.setAttribute(
+		"data-sakura-enabled",
+		String(enabled),
+	);
 	// Toggle sakura effect in real-time
 	window.dispatchEvent(
 		new CustomEvent("sakuraToggle", { detail: { enabled } }),
@@ -1201,8 +1332,7 @@ export function getStoredBannerTitleEnabled(): boolean {
 }
 
 export function getStoredBannerCarouselEnabled(): boolean {
-	const isSwitchable =
-		siteConfig.banner.carousel?.switchable ?? false;
+	const isSwitchable = siteConfig.banner.carousel?.switchable ?? false;
 	if (!isSwitchable) {
 		return getDefaultBannerCarouselEnabled();
 	}
@@ -1232,8 +1362,7 @@ export function setBannerTitleEnabled(enabled: boolean): void {
 
 export function setBannerCarouselEnabled(enabled: boolean): void {
 	const safeEnabled = !!enabled;
-	const isSwitchable =
-		siteConfig.banner.carousel?.switchable ?? false;
+	const isSwitchable = siteConfig.banner.carousel?.switchable ?? false;
 	if (
 		isSwitchable &&
 		typeof localStorage !== "undefined" &&
@@ -1321,7 +1450,11 @@ export function applyFontToDocument(fontId: string): void {
 
 	// Find the font option and apply its fontFamily + cjkFontFamily + external resources
 	const fonts = fontConfig?.fonts;
-	const fontList = Array.isArray(fonts) ? fonts : fonts ? Object.values(fonts) : [];
+	const fontList = Array.isArray(fonts)
+		? fonts
+		: fonts
+			? Object.values(fonts)
+			: [];
 	const fontOption = fontList.find((f) => f.id === fontId);
 	if (fontOption) {
 		const mainFamily = fontOption.fontFamily ?? fontOption.family ?? null;
@@ -1333,17 +1466,33 @@ export function applyFontToDocument(fontId: string): void {
 		if (fontOption.cjkFontFamily) {
 			familyParts.push(fontOption.cjkFontFamily);
 		}
-		familyParts.push("system-ui", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "sans-serif");
+		familyParts.push(
+			"system-ui",
+			"-apple-system",
+			"BlinkMacSystemFont",
+			"'Segoe UI'",
+			"Roboto",
+			"sans-serif",
+		);
 		const fullFontFamily = familyParts.join(", ");
 
 		// Set CSS variable for any CSS rules that reference it
-		document.documentElement.style.setProperty("--font-family", fullFontFamily);
+		document.documentElement.style.setProperty(
+			"--font-family",
+			fullFontFamily,
+		);
 		// Apply directly to body via inline style to override Layout.astro's inline style
-		document.body.style.setProperty("font-family", fullFontFamily, "important");
+		document.body.style.setProperty(
+			"font-family",
+			fullFontFamily,
+			"important",
+		);
 
 		// Load Google Fonts if specified
 		if (fontOption.googleFonts) {
-			const existingLink = document.querySelector(`link[data-font-id="${fontId}-gfonts"]`);
+			const existingLink = document.querySelector(
+				`link[data-font-id="${fontId}-gfonts"]`,
+			);
 			if (!existingLink) {
 				const link = document.createElement("link");
 				link.rel = "stylesheet";
@@ -1354,7 +1503,9 @@ export function applyFontToDocument(fontId: string): void {
 		}
 		// Load CDN font stylesheet if specified
 		if (fontOption.cdnUrl) {
-			const existingLink = document.querySelector(`link[data-font-id="${fontId}-cdn"]`);
+			const existingLink = document.querySelector(
+				`link[data-font-id="${fontId}-cdn"]`,
+			);
 			if (!existingLink) {
 				const link = document.createElement("link");
 				link.rel = "stylesheet";
@@ -1399,7 +1550,10 @@ export function applyStickyNavbarToDocument(enabled: boolean): void {
 		return;
 	}
 	// Set data attribute for CSS selectors that use :root[data-sticky-navbar]
-	document.documentElement.setAttribute("data-sticky-navbar", String(enabled));
+	document.documentElement.setAttribute(
+		"data-sticky-navbar",
+		String(enabled),
+	);
 
 	// Use body class as the primary mechanism - CSS !important rules in navbar.css
 	// enforce fixed positioning when body.sticky-navbar is present
@@ -1421,7 +1575,8 @@ export function applyStickyNavbarToDocument(enabled: boolean): void {
 		} else {
 			navbar.classList.remove("navbar-sticky-shadow");
 			// Re-initialize scroll detection to handle scrolled state correctly
-			const initSemifullScrollDetection = (window as any).initSemifullScrollDetection;
+			const initSemifullScrollDetection = (window as any)
+				.initSemifullScrollDetection;
 			if (typeof initSemifullScrollDetection === "function") {
 				initSemifullScrollDetection();
 			}

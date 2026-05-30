@@ -179,6 +179,13 @@ const archiveUrl = url("/archive/");
 			bar.querySelector<HTMLAnchorElement>(
 				'.category-pill[data-category-name=""]',
 			)?.setAttribute("data-active", "");
+		} else if (hasUncategorized) {
+			// Highlight uncategorized pill when ?uncategorized=true
+			pills.forEach((pill) => {
+				if (pill.href.includes("uncategorized=true")) {
+					pill.setAttribute("data-active", "");
+				}
+			});
 		} else if (activeCategory) {
 			pills.forEach((pill) => {
 				if (
@@ -187,7 +194,7 @@ const archiveUrl = url("/archive/");
 					pill.setAttribute("data-active", "");
 				}
 			});
-		} else if (isArchive && !hasTag && !hasUncategorized) {
+		} else if (isArchive && !hasTag) {
 			bar.querySelector<HTMLAnchorElement>(
 				'.category-pill[data-category-name="__archive__"]',
 			)?.setAttribute("data-active", "");

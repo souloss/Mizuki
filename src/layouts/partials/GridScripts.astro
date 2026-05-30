@@ -6,6 +6,7 @@
 
 interface Props {
 	navbarTransparentMode?: string;
+	fullscreenNavbarTransparentMode?: string;
 	defaultWallpaperMode?: string;
 	defaultPostListLayout?: string;
 	BANNER_HEIGHT?: number;
@@ -14,6 +15,7 @@ interface Props {
 
 const {
 	navbarTransparentMode = "semi",
+	fullscreenNavbarTransparentMode = "semifull",
 	defaultWallpaperMode = "banner",
 	defaultPostListLayout = "list",
 	BANNER_HEIGHT = 35,
@@ -26,6 +28,7 @@ const {
 	is:inline
 	define:vars={{
 		navbarTransparentMode,
+		fullscreenNavbarTransparentMode,
 		defaultWallpaperMode,
 		defaultPostListLayout,
 		BANNER_HEIGHT,
@@ -61,6 +64,9 @@ const {
 				break;
 		}
 
+		// Set data-wallpaper-mode attribute for CSS selectors
+		document.documentElement.setAttribute("data-wallpaper-mode", wallpaperMode);
+
 		// 立即调整主内容区域位置和布局模式（避免闪烁和位置错误）
 		// 使用 requestAnimationFrame 确保 DOM 准备好
 		requestAnimationFrame(function () {
@@ -71,8 +77,12 @@ const {
 				if (wallpaperMode === "banner") {
 					// 让主内容区域从banner顶部开始，这样波浪线会自然覆盖内容上部
 					mainContent.style.top = `${BANNER_HEIGHT}vh`;
+				} else if (wallpaperMode === "fullscreen") {
+					// fullscreen: content below full-viewport wallpaper on home page
+					const isHome = document.body.classList.contains("lg:is-home");
+					mainContent.style.top = isHome ? "100vh" : "5.5rem";
 				} else {
-					// fullscreen 或 none 模式
+					// none 模式
 					mainContent.style.top = "5.5rem";
 				}
 			}
@@ -176,6 +186,7 @@ const {
 					mainContent.style.removeProperty("top");
 				}
 				body.classList.add("enable-banner");
+				document.documentElement.setAttribute("data-wallpaper-mode", "banner");
 				// navbar 恢复原始透明模式（从 config 读取）
 				if (navbar) {
 					navbar.removeAttribute("data-dynamic-transparent");
@@ -209,15 +220,21 @@ const {
 						tocWrapper.classList.remove("toc-hide");
 					}
 					if (mainContent) {
-						mainContent.style.removeProperty("top");
+						const isHome = document.body.classList.contains("lg:is-home");
+						mainContent.style.top = isHome ? "100vh" : "5.5rem";
 					}
 					body.classList.add("enable-banner");
 					body.classList.add("fullscreen-banner");
-					// navbar 透明模式
+					// navbar 透明模式：使用全屏专用配置
 					if (navbar) {
 						navbar.removeAttribute("data-dynamic-transparent");
-						navbar.setAttribute("data-transparent-mode", navbarTransparentMode);
+						navbar.setAttribute("data-transparent-mode", fullscreenNavbarTransparentMode);
+						// 如果是 semifull 模式，初始化滚动检测
+						if (fullscreenNavbarTransparentMode === "semifull" && window.initSemifullScrollDetection) {
+							window.initSemifullScrollDetection();
+						}
 					}
+					document.documentElement.setAttribute("data-wallpaper-mode", "fullscreen");
 					forceReflow();
 					break;
 
@@ -239,6 +256,7 @@ const {
 				}
 				body.classList.add("wallpaper-transparent");
 				body.classList.add("no-banner-mode");
+				document.documentElement.setAttribute("data-wallpaper-mode", "overlay");
 				// navbar 半透明
 				if (navbar) {
 					navbar.setAttribute("data-dynamic-transparent", "semi");
@@ -263,6 +281,7 @@ const {
 					mainContent.style.removeProperty("top");
 				}
 				body.classList.add("no-banner-mode");
+				document.documentElement.setAttribute("data-wallpaper-mode", "none");
 				// navbar 强制设置为不透明（忽略 config 配置）
 				if (navbar) {
 					navbar.setAttribute("data-dynamic-transparent", "none");

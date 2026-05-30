@@ -2,16 +2,18 @@
 	import { DARK_MODE, DEFAULT_THEME, LIGHT_MODE } from "@constants/constants";
 	import Icon from "@iconify/svelte";
 	import { getStoredTheme, setTheme } from "@utils/setting-utils";
-	import { onDestroy,onMount } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
 	import type { LIGHT_DARK_MODE } from "@/types/config.ts";
 
 	const seq: LIGHT_DARK_MODE[] = [LIGHT_MODE, DARK_MODE];
 	let mode: LIGHT_DARK_MODE = $state(DEFAULT_THEME);
 	let isChanging = false;
+	let mounted = $state(false);
 	let cleanupSwupListener: (() => void) | undefined;
 
 	onMount(() => {
+		mounted = true;
 		mode = getStoredTheme();
 
 		const handleContentReplace = () => {
@@ -25,7 +27,10 @@
 
 		const addSwupListener = () => {
 			if ((window as any).swup && (window as any).swup.hooks) {
-				(window as any).swup.hooks.on("content:replace", handleContentReplace);
+				(window as any).swup.hooks.on(
+					"content:replace",
+					handleContentReplace,
+				);
 			}
 		};
 
@@ -34,7 +39,10 @@
 
 		cleanupSwupListener = () => {
 			if ((window as any).swup && (window as any).swup.hooks) {
-				(window as any).swup.hooks.off("content:replace", handleContentReplace);
+				(window as any).swup.hooks.off(
+					"content:replace",
+					handleContentReplace,
+				);
 			}
 			document.removeEventListener("swup:enable", addSwupListener);
 		};
@@ -81,7 +89,9 @@
 
 <button
 	aria-label="Light/Dark Mode"
-	class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn z-50"
+	class="relative btn-plain scale-animation rounded-lg h-11 w-11 active:scale-90 theme-switch-btn z-50 transition-opacity"
+	class:opacity-50={!mounted}
+	class:pointer-events-none={!mounted}
 	id="scheme-switch"
 	onclick={toggleScheme}
 	data-mode={mode}

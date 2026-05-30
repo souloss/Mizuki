@@ -209,6 +209,39 @@ if (defaultFontItem) {
 			title={profileConfig.name}
 			href={`${Astro.site}rss.xml`}
 		/>
+
+	<script is:inline>
+		// Hydration guard: prevent "clicks do nothing" when client:only Svelte islands
+		// haven't loaded yet (common after dev server restarts with stale Vite cache).
+		(function(){
+			var s=document.createElement('style');
+			s.id='astro-hydration-guard';
+			s.textContent='astro-island[client="only"]:empty{opacity:.4;pointer-events:none;transition:opacity .15s}';
+			document.head.appendChild(s);
+			function checkHydration(){
+				var empty=document.querySelectorAll('astro-island[client="only"]:empty');
+				if(empty.length===0){
+					sessionStorage.removeItem('astro-reloaded');
+					s.remove();
+					return true;
+				}
+				return false;
+			}
+			// Periodically check if all islands have hydrated
+			var checkInterval=setInterval(function(){
+				if(checkHydration()) clearInterval(checkInterval);
+			},1000);
+			// Auto-reload if islands fail to hydrate within 15s (504 errors etc)
+			setTimeout(function(){
+				clearInterval(checkInterval);
+				var empty=document.querySelectorAll('astro-island[client="only"]:empty');
+				if(empty.length>0 && !sessionStorage.getItem('astro-reloaded')){
+					sessionStorage.setItem('astro-reloaded','1');
+					location.reload();
+				}
+			},15000);
+		})();
+	</script>
 	</head>
 	<body
 		class="min-h-screen"
