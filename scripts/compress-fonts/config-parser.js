@@ -25,43 +25,90 @@ export function getLang() {
 }
 
 /**
- * 提取字体配置（只返回 enableCompress=true 且有 localFonts 的字体）
+ * 提取字体配置（只返回有 localFonts 的字体）
  */
 export function getFontConfigs() {
 	const content = readSiteConfig();
 
 	const fontConfigMatch = content.match(/font:\s*\{([\s\S]*?)\n\t\},/);
-	if (!fontConfigMatch) {
-		console.log("⚠ Font config not found, using default settings");
-		return [];
+
+	// Also try reading from the separate fontConfig.ts
+	let fontConfigStr = fontConfigMatch ? fontConfigMatch[1] : null;
+	if (!fontConfigStr) {
+		try {
+			const fontConfigPath = path.join(
+				ROOT_DIR,
+				"src/config/fontConfig.ts",
+			);
+			const fontContent = fs.readFileSync(fontConfigPath, "utf-8");
+			fontConfigStr = fontContent;
+		} catch {
+			console.log("⚠ Font config not found, using default settings");
+			return [];
+		}
 	}
 
-	const fontConfigStr = fontConfigMatch[1];
 	const fonts = [];
-	const fontTypes = ["asciiFont", "cjkFont"];
 
-	for (const fontType of fontTypes) {
-		const regex = new RegExp(`${fontType}:\\s*\\{([\\s\\S]*?)\\}`, "m");
-		const match = fontConfigStr.match(regex);
-		if (!match) continue;
-
-		const config = match[1];
-
-		const compressMatch = config.match(/enableCompress:\s*(true|false)/);
-		const enableCompress = compressMatch ? compressMatch[1] === "true" : false;
-
-		const localFontsMatch = config.match(/localFonts:\s*\[(.*?)\]/s);
-		let localFonts = [];
-		if (localFontsMatch?.[1].trim()) {
-			localFonts =
-				localFontsMatch[1]
-					.match(/["']([^"']+)["']/g)
-					?.map((s) => s.replace(/["']/g, "")) || [];
+	// Try new fontConfig.ts format: fonts array with localFonts
+	const localFontMatches = fontConfigStr.matchAll(
+		/localFonts:\s*\[([\s\S]*?)\]/g,
+	);
+	for (const match of localFontMatches) {
+		const srcMatches = match[1].matchAll(/src:\s*["']([^"']+)["']/g);
+		const localFonts = [];
+		for (const srcMatch of srcMatches) {
+			localFonts.push(srcMatch[1]);
 		}
-
-		if (enableCompress && localFonts.length > 0) {
-			fonts.push({ type: fontType, files: localFonts, enableCompress });
+		if (localFonts.length > 0) {
+			fonts.push({
+				type: "localFont",
+				files: localFonts,
+				enableCompress: true,
+			});
 		}
+	}
+
+	// Also try legacy siteConfig format: asciiFont/cjkFont with localFonts
+	if (fonts.length === 0) {
+		const fontTypes = ["asciiFont", "cjkFont"];
+		for (const fontType of fontTypes) {
+			const regex = new RegExp(
+				`${fontType}:\\s*\\{([\\s\\S]*?)\\}`,
+				"m",
+			);
+			const match = fontConfigStr.match(regex);
+			if (!match) continue;
+
+			const config = match[1];
+			const compressMatch = config.match(
+				/enableCompress:\s*(true|false)/,
+			);
+			const enableCompress = compressMatch
+				? compressMatch[1] === "true"
+				: false;
+
+			const localFontsMatch = config.match(/localFonts:\s*\[(.*?)\]/s);
+			let localFonts = [];
+			if (localFontsMatch?.[1].trim()) {
+				localFonts =
+					localFontsMatch[1]
+						.match(/["']([^"']+)["']/g)
+						?.map((s) => s.replace(/["']/g, "")) || [];
+			}
+
+			if (enableCompress && localFonts.length > 0) {
+				fonts.push({
+					type: fontType,
+					files: localFonts,
+					enableCompress,
+				});
+			}
+		}
+	}
+
+	if (fonts.length === 0) {
+		console.log("⚠ No fonts to compress (enableCompress=false or localFonts is empty)");
 	}
 
 	return fonts;

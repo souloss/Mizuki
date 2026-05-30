@@ -4,11 +4,11 @@ const site = "dist";
 
 console.log("Building separate Pagefind indexes...\n");
 
-// Default index: all HTML except docs pages (which have class="docs-page")
+// Default index: all HTML except docs pages
 console.log("1. Building default (main site) index...");
 try {
 	execSync(
-		`npx pagefind --site ${site} --glob "**/*.html" --exclude-selectors ".docs-page" --output-subdir pagefind/default`,
+		`npx pagefind --site ${site} --glob "**/*.html" --exclude-selectors ".docs-page" --output-subdir pagefind/default --silent`,
 		{ stdio: "inherit" },
 	);
 	console.log("   Default index built.\n");
@@ -21,7 +21,7 @@ try {
 console.log("2. Building Mizuki docs index...");
 try {
 	execSync(
-		`npx pagefind --site ${site} --glob "docs/mizuki/**/*.html" --output-subdir pagefind/mizuki`,
+		`npx pagefind --site ${site} --glob "docs/mizuki/**/*.html" --output-subdir pagefind/mizuki --silent`,
 		{ stdio: "inherit" },
 	);
 	console.log("   Mizuki docs index built.\n");

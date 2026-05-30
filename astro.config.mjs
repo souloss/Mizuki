@@ -1,4 +1,4 @@
-import mdx from '@astrojs/mdx';
+import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import svelte, { vitePreprocess } from "@astrojs/svelte";
 import { pluginCollapsibleSections } from "@expressive-code/plugin-collapsible-sections";
@@ -18,7 +18,11 @@ import remarkDirective from "remark-directive";
 import remarkMath from "remark-math";
 import remarkSectionize from "remark-sectionize";
 
-import { markmapConfig, plantumlConfig, siteConfig } from "./src/config/index.ts";
+import {
+	markmapConfig,
+	plantumlConfig,
+	siteConfig,
+} from "./src/config/index.ts";
 import { pluginCustomCopyButton } from "./src/plugins/expressive-code/custom-copy-button.js";
 import { pluginLanguageBadge } from "./src/plugins/expressive-code/language-badge.ts";
 import { AdmonitionComponent } from "./src/plugins/rehype-component-admonition.mjs";
@@ -76,11 +80,7 @@ export default defineConfig({
 			resolveUrl: (url) => url,
 			animateHistoryBrowsing: false,
 			skipPopStateHandling: (event) => {
-				return (
-					event.state &&
-					event.state.url &&
-					event.state.url.includes("#")
-				);
+				return event.state && event.state.url && event.state.url.includes("#");
 			},
 		}),
 		icon(),
@@ -176,8 +176,7 @@ export default defineConfig({
 						github: GithubCardComponent,
 						note: (x, y) => AdmonitionComponent(x, y, "note"),
 						tip: (x, y) => AdmonitionComponent(x, y, "tip"),
-						important: (x, y) =>
-							AdmonitionComponent(x, y, "important"),
+						important: (x, y) => AdmonitionComponent(x, y, "important"),
 						caution: (x, y) => AdmonitionComponent(x, y, "caution"),
 						warning: (x, y) => AdmonitionComponent(x, y, "warning"),
 					},
@@ -206,10 +205,26 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		customLogger: {
+			info: (msg, options) => console.log(msg),
+			warn: (msg, options) => {
+				if (msg.includes("svelte/transition") && msg.includes("but never used"))
+					return;
+				console.warn(msg);
+			},
+			error: (msg, options) => console.error(msg),
+			warnOnce: (msg, options) => {
+				if (msg.includes("svelte/transition") && msg.includes("but never used"))
+					return;
+				console.warn(msg);
+			},
+			hasWarned: false,
+			hasErrorLogged: () => false,
+			clearScreen: () => {},
+		},
 		plugins: [tailwindcss()],
 		optimizeDeps: {
 			include: [
-				"@iconify/svelte",
 				"overlayscrollbars",
 				"@fancyapps/ui",
 				"marked",
@@ -250,15 +265,18 @@ export default defineConfig({
 			cssMinify: "esbuild",
 			inlineStylesheets: "auto",
 			minify: "esbuild",
+			chunkSizeWarningLimit: 1200,
 			rollupOptions: {
 				onwarn(warning, warn) {
 					if (
-						warning.message.includes(
-							"is dynamically imported by"
-						) &&
-						warning.message.includes(
-							"but also statically imported by"
-						)
+						warning.message.includes("is dynamically imported by") &&
+						warning.message.includes("but also statically imported by")
+					) {
+						return;
+					}
+					if (
+						warning.message.includes("is imported from external module") &&
+						warning.message.includes("but never used")
 					) {
 						return;
 					}
@@ -268,9 +286,7 @@ export default defineConfig({
 		},
 		esbuildOptions: {
 			drop:
-				process.env.NODE_ENV === "production"
-					? ["console", "debugger"]
-					: [],
+				process.env.NODE_ENV === "production" ? ["console", "debugger"] : [],
 		},
 	},
 });

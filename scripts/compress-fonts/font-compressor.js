@@ -49,16 +49,15 @@ export async function compressFonts() {
 				fontConfig.type === "asciiFont" ? asciiText : cjkText;
 
 			for (const fontFile of fontConfig.files) {
-				const fontSrc = path.join(
-					ROOT_DIR,
-					"public/assets/font",
-					fontFile,
-				);
+				const relativePath = fontFile.startsWith("/")
+					? fontFile.slice(1)
+					: `assets/font/${fontFile}`;
+				const fontSrc = path.join(ROOT_DIR, "public", relativePath);
 				const ext = path.extname(fontFile).toLowerCase();
 				const baseName = path.basename(fontFile, ext);
 
 				if (!fs.existsSync(fontSrc)) {
-					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist\n   In config: "${fontFile}"\n   Expected path: public/assets/font/${fontFile}\n\n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is ${fontConfig.type}.localFonts in src/config/siteConfig.ts correct?`;
+					const errorMsg = `❌ Config error [${fontConfig.type}]: Font file does not exist\n   In config: "${fontFile}"\n   Expected path: public/${relativePath}\n\n   Please check:\n   1. Is the filename correct (case sensitive)?\n   2. Is the file in public/assets/font/?\n   3. Is ${fontConfig.type}.localFonts in src/config/siteConfig.ts correct?`;
 					errors.push(errorMsg);
 					console.log(`\n${errorMsg}\n`);
 					continue;

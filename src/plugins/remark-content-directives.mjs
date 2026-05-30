@@ -134,10 +134,7 @@ function getFa7SolidSvg(name, size = "1em") {
 }
 
 /** Generic icon resolver: "lucide:info" or "fa7-solid:quote-left" or bare "info" (defaults to lucide) */
-function getIconSvg(name, size) {
-	if (!size) {
-		size = "1em";
-	}
+function getIconSvg(name, size = "1em") {
 	if (name.includes(":")) {
 		const colonIdx = name.indexOf(":");
 		const set = name.slice(0, colonIdx);
@@ -196,10 +193,8 @@ function h(tagName, properties, children) {
 
 /** Serialize AST nodes to HTML string */
 function serializeToHtml(nodes) {
-	if (!Array.isArray(nodes)) {
-		nodes = [nodes];
-	}
-	return nodes
+	const nodeArr = Array.isArray(nodes) ? nodes : [nodes];
+	return nodeArr
 		.map((node) => {
 			if (!node) {
 				return "";
@@ -409,7 +404,7 @@ const CALLOUT_ICONS = {
 // ---------------------------------------------------------------------------
 let hashtagIndex = 0;
 
-function processInlineDirective(node) {
+function _processInlineDirective(node) {
 	const name = node.name;
 	const attrs = node.attributes || {};
 	const text = node.children
@@ -651,10 +646,7 @@ function processInlineDirective(node) {
 // ---------------------------------------------------------------------------
 // Block directive processors
 // ---------------------------------------------------------------------------
-function processBlockDirective(node, options) {
-	if (!options) {
-		options = {};
-	}
+function processBlockDirective(node, options = {}) {
 	const _links = options.links;
 	const _screenshotService = options.screenshotService;
 	const name = node.name;
@@ -1430,14 +1422,7 @@ function processBlockDirective(node, options) {
 // ---------------------------------------------------------------------------
 // Card directive processors
 // ---------------------------------------------------------------------------
-function processCardDirective(node, options) {
-	if (!options) {
-		options = {};
-	}
-	const _links = options.links;
-	const _screenshotService = options.screenshotService;
-	const attrs = node.attributes || {};
-
+function processCardDirective(node, _options = {}) {
 	switch (node.name) {
 		case "link-card": {
 			const lcHref = attrs.href || attrs.url || "";
@@ -1908,17 +1893,10 @@ function processLeafDirective(node) {
 // ---------------------------------------------------------------------------
 // Main plugin entry
 // ---------------------------------------------------------------------------
-export default function remarkContentDirectives(options) {
-	if (!options) {
-		options = {};
-	}
+export default function remarkContentDirectives(options = {}) {
 	const links = options.links;
 	const screenshotService = options.screenshotService;
 	return (tree) => {
-		visit(tree, "textDirective", (node) => {
-			processInlineDirective(node);
-		});
-
 		visit(tree, "leafDirective", (node) => {
 			processLeafDirective(node);
 		});
