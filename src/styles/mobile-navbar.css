@@ -177,9 +177,7 @@
   #wallpaper-wrapper ~ * #nav-menu-panel,
   body:has(#wallpaper-wrapper) #nav-menu-panel,
   #wallpaper-wrapper ~ * #mobile-toc-panel,
-  body:has(#wallpaper-wrapper) #mobile-toc-panel,
-  #wallpaper-wrapper ~ * #search-panel,
-  body:has(#wallpaper-wrapper) #search-panel {
+  body:has(#wallpaper-wrapper) #mobile-toc-panel {
     backdrop-filter: none;
   }
 }
@@ -195,9 +193,7 @@
   #wallpaper-wrapper ~ * #nav-menu-panel,
   body:has(#wallpaper-wrapper) #nav-menu-panel,
   #wallpaper-wrapper ~ * #mobile-toc-panel,
-  body:has(#wallpaper-wrapper) #mobile-toc-panel,
-  #wallpaper-wrapper ~ * #search-panel,
-  body:has(#wallpaper-wrapper) #search-panel {
+  body:has(#wallpaper-wrapper) #mobile-toc-panel {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
@@ -213,9 +209,7 @@
   :root.dark #wallpaper-wrapper ~ * #nav-menu-panel,
   :root.dark body:has(#wallpaper-wrapper) #nav-menu-panel,
   :root.dark #wallpaper-wrapper ~ * #mobile-toc-panel,
-  :root.dark body:has(#wallpaper-wrapper) #mobile-toc-panel,
-  :root.dark #wallpaper-wrapper ~ * #search-panel,
-  :root.dark body:has(#wallpaper-wrapper) #search-panel {
+  :root.dark body:has(#wallpaper-wrapper) #mobile-toc-panel {
     background: rgba(24, 25, 38, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   }
@@ -231,7 +225,6 @@
   body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
   body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
   body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
-  body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #search-panel,
   body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #display-setting {
     backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.85);
@@ -247,7 +240,6 @@
   :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] ~ * #display-setting,
   :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #nav-menu-panel,
   :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #mobile-toc-panel,
-  :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #search-panel,
   :root.dark body:has(#wallpaper-wrapper) #navbar[data-is-home="true"] #display-setting {
     background: rgba(24, 25, 38, 0.85);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);

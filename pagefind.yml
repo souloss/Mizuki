@@ -2,11 +2,10 @@ exclude_selectors:
   - "span.katex"
   - "span.katex-display"
   - "[data-pagefind-ignore]"
-  - ".search-panel"
-  - "#search-panel"
+  - ".search-modal-overlay"
+  - ".search-modal"
   - ".docs-sidebar-nav"
   - ".docs-lang-switcher"
-  - ".docs-search"
 
 filter_selector_keys:
   - "docSlug"

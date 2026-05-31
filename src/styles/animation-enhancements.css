@@ -156,20 +156,6 @@ html.is-entering .transition-main {
   transform: scale(1);
 }
 
-/* 搜索框动画 */
-.search-animate {
-  transform: scale(0.95);
-  opacity: 0;
-  transition:
-    transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
-    opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.search-animate.animate {
-  transform: scale(1);
-  opacity: 1;
-}
-
 /* 标签云动画 */
 .tag-animate {
   opacity: 0;

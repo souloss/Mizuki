@@ -136,6 +136,7 @@ const { entry } = Astro.props;
 
 // Compute canonical URL for SEO - prefer slug-based URL when available
 let canonicalUrl: string | undefined;
+let isCanonicalPage = true;
 if (entry.data.slug) {
 	let dir = "";
 	if (entry.filePath) {
@@ -148,12 +149,14 @@ if (entry.data.slug) {
 	canonicalUrl = Astro.site
 		? new URL(canonicalPath, Astro.site).toString()
 		: undefined;
+	isCanonicalPage = Astro.url.pathname === canonicalPath;
 } else if (entry.data.alias) {
 	const alias = entry.data.alias.replace(/^\/+/, "").replace(/\/+$/, "");
 	const canonicalPath = `/posts/${alias}/`;
 	canonicalUrl = Astro.site
 		? new URL(canonicalPath, Astro.site).toString()
 		: undefined;
+	isCanonicalPage = Astro.url.pathname === canonicalPath;
 }
 
 // 跳转逻辑：如果 redirect 或 repost.redirect 存在，直接重定向到目标页面
@@ -302,6 +305,7 @@ const jsonLd = {
 	>
 		<div
 			id="post-container"
+			data-pagefind-ignore={!isCanonicalPage ? "all" : undefined}
 			class:list={[
 				"card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
 				{},
@@ -328,7 +332,7 @@ const jsonLd = {
 			<!-- title -->
 			<div class="relative onload-animation">
 				<div
-					data-pagefind-body
+					data-pagefind-body={isCanonicalPage ? "" : undefined}
 					data-pagefind-weight="10"
 					data-pagefind-meta="title"
 					class="transition w-full block font-bold mb-3
@@ -396,12 +400,12 @@ const jsonLd = {
 						slug={entry.id}
 						hint={entry.data.passwordHint}
 					>
-						<Markdown class="mb-6 markdown-content onload-animation">
+						<Markdown class="mb-6 markdown-content onload-animation" indexable={isCanonicalPage}>
 							<Content />
 						</Markdown>
 					</Encryptor>
 				) : (
-					<Markdown class="mb-6 markdown-content onload-animation">
+					<Markdown class="mb-6 markdown-content onload-animation" indexable={isCanonicalPage}>
 						<Content />
 					</Markdown>
 				)

@@ -40,14 +40,6 @@
   transform: scaleY(0) scaleX(0.6);
 }
 
-#search-panel {
-  transform-origin: top center;
-}
-
-#search-panel.float-panel-closed {
-  transform: scaleY(0) scaleX(0.8);
-}
-
 #nav-menu-panel {
   transform-origin: top right;
 }

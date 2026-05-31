@@ -4,12 +4,14 @@ import "@fontsource-variable/jetbrains-mono";
 
 interface Props {
 	class: string;
+	indexable?: boolean;
 }
 const className = Astro.props.class;
+const indexable = Astro.props.indexable ?? true;
 ---
 
 <div
-	data-pagefind-body
+	data-pagefind-body={indexable ? "" : undefined}
 	class={`prose dark:prose-invert prose-base !max-w-none custom-md ${className}`}
 >
 	<!--<div class="prose dark:prose-invert max-w-none custom-md">-->

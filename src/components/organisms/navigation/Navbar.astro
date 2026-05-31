@@ -9,7 +9,7 @@ import ThemeSwitch from "../../control/ThemeSwitch.svelte";
 import MobileTOC from "../../features/toc/MobileTOC.svelte";
 import DropdownMenu from "./DropdownMenu.astro";
 import NavMenuPanel from "./NavMenuPanel.astro";
-import Search from "./Search.svelte";
+import SearchModal from "./SearchModal.svelte";
 
 const className = Astro.props.class;
 
@@ -140,9 +140,7 @@ const iconWebpSrc = hasIconPngFallback
             })}
         </div>
         <div class="flex items-center gap-1">
-            <div id="search-container">
-                <Search client:only="svelte"></Search>
-            </div>
+            <SearchModal client:only="svelte" variant="icon" />
             {/* 只在 sidebar 模式下显示移动端 TOC 按钮 */}
 			{siteConfig.toc.enable && siteConfig.toc.mobileTop && <MobileTOC client:only="svelte"></MobileTOC>}
             {!siteConfig.themeColor.fixed && (
@@ -160,52 +158,7 @@ const iconWebpSrc = hasIconPngFallback
 </div>
 
 <script>
-	const searchContainer = document.getElementById("search-container");
-	const navbarLinksContainer = document.getElementById("navbar-links-container");
-
-	if (searchContainer && navbarLinksContainer) {
-		// 鼠标移入/触摸开始时隐藏导航链接
-		const hideLinks = () => {
-			if (window.matchMedia("(min-width: 1280px)").matches && window.matchMedia("(hover: hover)").matches) {
-				navbarLinksContainer.style.opacity = "0";
-			}
-		};
-
-		// 鼠标移出/触摸结束时显示导航链接
-		const showLinks = () => {
-			const navbar = document.getElementById("navbar");
-			if (navbar && !navbar.classList.contains("is-searching")) {
-				navbarLinksContainer.style.opacity = "1";
-			}
-		};
-
-		searchContainer.addEventListener("mouseenter", hideLinks);
-		searchContainer.addEventListener("mouseleave", showLinks);
-
-		// 移动端/触摸屏支持
-		searchContainer.addEventListener("touchstart", hideLinks, { passive: true });
-		searchContainer.addEventListener("touchend", showLinks);
-
-		// 监听 navbar 的 class 变化，当搜索框折叠时确保链接显示
-		const navbar = document.getElementById("navbar");
-		if (navbar) {
-			const observer = new MutationObserver((mutations) => {
-				mutations.forEach((mutation) => {
-					if (mutation.type === "attributes" && mutation.attributeName === "class") {
-						if (!navbar.classList.contains("is-searching")) {
-							// 搜索框已折叠，如果此时鼠标不在搜索容器内，强制显示链接
-							if (!searchContainer.matches(':hover')) {
-								showLinks();
-							}
-						}
-					}
-				});
-			});
-			observer.observe(navbar, { attributes: true });
-		}
-	}
-
-async function loadButtonScript() {
+	async function loadButtonScript() {
     const settingBtn = document.getElementById("display-settings-switch");
     const menuBtn = document.getElementById("nav-menu-switch");
 

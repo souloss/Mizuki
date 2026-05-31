@@ -107,7 +107,7 @@ body.wallpaper-transparent #navbar[data-transparent-mode="semifull"].scrolled {
  * 注意：不再强制覆盖 .music-player .mini-player 的背景，
  * 让其使用自身的 card-base / 主题卡片背景，以保持与主播放器一致。
  */
-:is(.dropdown-content, #nav-menu-panel, #mobile-toc-panel, #display-setting, #search-panel, .float-panel) {
+:is(.dropdown-content, #nav-menu-panel, #mobile-toc-panel, #display-setting, .float-panel) {
   /* 使用面板专用变量 */
   background: var(--panel-bg);
   backdrop-filter: var(--panel-blur);
@@ -122,10 +122,10 @@ body.wallpaper-transparent #navbar[data-transparent-mode="semifull"].scrolled {
 
 /* Banner 模式下的特殊增强 */
 @media (min-width: 1280px) {
-  body.wallpaper-transparent :is(.dropdown-content, #display-setting, #search-panel) {
+  body.wallpaper-transparent :is(.dropdown-content, #display-setting) {
     background: rgba(255, 255, 255, 0.85);
   }
-  :root.dark body.wallpaper-transparent :is(.dropdown-content, #display-setting, #search-panel) {
+  :root.dark body.wallpaper-transparent :is(.dropdown-content, #display-setting) {
     background: rgba(24, 25, 38, 0.85);
   }
 }
@@ -139,16 +139,8 @@ body.wallpaper-transparent #navbar[data-transparent-mode="semifull"].scrolled {
     max-width: none;
   }
 
-  /* 搜索框内部颜色处理 */
-  body:has(#navbar[data-dynamic-transparent="none"]) #search-panel #search-bar-inside {
-    background: rgba(0, 0, 0, 0.08);
-  }
-  :root.dark body:has(#navbar[data-dynamic-transparent="none"]) #search-panel #search-bar-inside {
-    background: rgba(255, 255, 255, 0.15);
-  }
-
   /* 非首页时，移动端各个弹出面板不透明 */
-  #navbar:not([data-is-home="true"]) :is(#nav-menu-panel, #mobile-toc-panel, #search-panel, #display-setting) {
+  #navbar:not([data-is-home="true"]) :is(#nav-menu-panel, #mobile-toc-panel, #display-setting) {
     background: var(--card-bg);
     backdrop-filter: none;
   }
