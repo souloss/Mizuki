@@ -77,7 +77,7 @@
 		"satori": "^0.26.0",
 		"sharp": "^0.34.5",
 		"stylus": "^0.64.0",
-		"svelte": "^5.55.9",
+		"svelte": "5.55.5",
 		"tailwindcss": "^4.3.0",
 		"typescript": "^6.0.3",
 		"unist-util-visit": "^5.1.0"
@@ -115,5 +115,10 @@
 		"*.{js,ts,mjs,svelte,astro,json}": [
 			"biome check --write --no-errors-on-unmatched"
 		]
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"svelte@5.55.5": "patches/svelte@5.55.5.patch"
+		}
 	}
 }
