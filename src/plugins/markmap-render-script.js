@@ -1,18 +1,49 @@
 (() => {
-	// 单例模式：检查是否已经初始化过
 	if (window.markmapInitialized) {
 		return;
 	}
-
 	window.markmapInitialized = true;
 
 	let isRendering = false;
+	let pendingTheme = null;
+	let currentTheme = null;
 	let retryCount = 0;
 	const MAX_RETRIES = 3;
 	const RETRY_DELAY = 1000;
+	let renderObserver = null;
 
-	// 存储 Markmap 实例，key 为容器 id
 	const markmapInstances = new Map();
+	const renderedElements = new WeakSet();
+
+	// Dual cache: element -> { light: svgHtml|null, dark: svgHtml|null }
+	const cacheStore = new WeakMap();
+
+	function getCache(element) {
+		if (!cacheStore.has(element)) {
+			cacheStore.set(element, { light: null, dark: null });
+		}
+		return cacheStore.get(element);
+	}
+
+	function getDarkColorFn() {
+		const colors = [
+			"#e0e0e0",
+			"#b0b0b0",
+			"#90caf9",
+			"#ce93d8",
+			"#80cbc4",
+			"#fff59d",
+			"#ef9a9a",
+			"#a5d6a7",
+			"#90a4ae",
+			"#f48fb1",
+		];
+		return (node) => {
+			const path = node.state?.path || "1";
+			const idx = path.split(".").length % colors.length;
+			return colors[idx];
+		};
+	}
 
 	function _waitForMarkmap(timeout = 15000) {
 		return new Promise((resolve, reject) => {
@@ -34,7 +65,6 @@
 		if (window.markmap?.Transformer && window.markmap.Markmap) {
 			return Promise.resolve();
 		}
-
 		return new Promise((resolve, reject) => {
 			const d3Script = document.createElement("script");
 			d3Script.src = "https://cdn.jsdelivr.net/npm/d3@7";
@@ -44,15 +74,11 @@
 				libScript.onload = () => {
 					const viewScript = document.createElement("script");
 					viewScript.src = "https://cdn.jsdelivr.net/npm/markmap-view@0.16";
-					viewScript.onload = () => {
-						resolve();
-					};
+					viewScript.onload = () => resolve();
 					viewScript.onerror = () => {
 						const fallbackView = document.createElement("script");
 						fallbackView.src = "https://unpkg.com/markmap-view@0.16";
-						fallbackView.onload = () => {
-							resolve();
-						};
+						fallbackView.onload = () => resolve();
 						fallbackView.onerror = () =>
 							reject(new Error("Failed to load markmap-view from both CDNs"));
 						document.head.appendChild(fallbackView);
@@ -72,9 +98,7 @@
 					libScript.onload = () => {
 						const viewScript = document.createElement("script");
 						viewScript.src = "https://unpkg.com/markmap-view@0.16";
-						viewScript.onload = () => {
-							resolve();
-						};
+						viewScript.onload = () => resolve();
 						viewScript.onerror = () =>
 							reject(
 								new Error("Failed to load markmap-view from fallback CDN"),
@@ -97,7 +121,6 @@
 		if (typeof window.svgPanZoom !== "undefined") {
 			return Promise.resolve();
 		}
-
 		return new Promise((resolve) => {
 			const script = document.createElement("script");
 			script.src =
@@ -108,74 +131,248 @@
 				fallbackScript.src =
 					"https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
 				fallbackScript.onload = () => resolve();
-				fallbackScript.onerror = () => {
-					// svg-pan-zoom 仅全屏模式使用，加载失败不阻塞
-					resolve();
-				};
+				fallbackScript.onerror = () => resolve();
 				document.head.appendChild(fallbackScript);
 			};
 			document.head.appendChild(script);
 		});
 	}
 
-	function applyThemeToMarkmap(svgElement, isDark) {
-		if (!svgElement) {
+	// Swap cached SVG into container, return true if cache hit
+	function swapFromCache(markmapDiv, theme) {
+		const cache = getCache(markmapDiv);
+		const key = theme === "dark" ? "dark" : "light";
+		const cached = cache[key];
+		if (cached === null) {
+			return false;
+		}
+		markmapDiv.innerHTML = cached;
+		return true;
+	}
+
+	async function renderSingleMarkmap(container, theme) {
+		const wrapper = container.querySelector(".markmap-wrapper");
+		if (!wrapper) {
 			return;
 		}
-		if (isDark) {
-			svgElement.style.filter = "brightness(0.9) contrast(1.1)";
-		} else {
-			svgElement.style.filter = "none";
+		const markmapDiv = wrapper.querySelector(".markmap");
+		if (!markmapDiv) {
+			return;
+		}
+		if (renderedElements.has(markmapDiv)) {
+			return;
+		}
+		renderedElements.add(markmapDiv);
+
+		let code = markmapDiv.getAttribute("data-markmap-code") || "";
+		if (!code) {
+			code = markmapDiv.textContent?.trim() || "";
+		}
+		if (!code) {
+			renderedElements.delete(markmapDiv);
+			return;
+		}
+
+		markmapDiv.innerHTML =
+			'<div class="markmap-loading">Rendering mindmap...</div>';
+
+		try {
+			const { Transformer, Markmap } = window.markmap;
+			const transformer = new Transformer();
+			const { root } = transformer.transform(code);
+
+			const svgElement = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"svg",
+			);
+			svgElement.style.width = "100%";
+			svgElement.style.height = "400px";
+			markmapDiv.innerHTML = "";
+			markmapDiv.appendChild(svgElement);
+
+			const options = {
+				autoFit: true,
+				fitRatio: 0.95,
+				duration: 0,
+				maxWidth: 0,
+			};
+			if (theme === "dark") {
+				options.color = getDarkColorFn();
+			}
+
+			const mmInstance = Markmap.create(svgElement, options, root);
+
+			const wrapperId = wrapper.id;
+			if (wrapperId) {
+				markmapInstances.set(wrapperId, mmInstance);
+			}
+
+			// Wait for render to complete, then cache
+			await new Promise((resolve) => setTimeout(resolve, 300));
+
+			// Cache the rendered SVG HTML (only after successful render)
+			const renderedSvg = markmapDiv.querySelector("svg");
+			if (renderedSvg) {
+				const cache = getCache(markmapDiv);
+				cache[theme === "dark" ? "dark" : "light"] = markmapDiv.innerHTML;
+			}
+		} catch (_error) {
+			renderedElements.delete(markmapDiv);
+			markmapDiv.innerHTML = `
+				<div class="markmap-error">
+					<p>Failed to render mindmap.</p>
+					<button onclick="location.reload()" style="margin-top: 8px; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
+						Retry Page
+					</button>
+				</div>
+			`;
 		}
 	}
 
-	function destroyAllControls() {
-		markmapInstances.forEach((instance, containerId) => {
+	function setupLazyRenderObserver() {
+		if (renderObserver) {
+			renderObserver.disconnect();
+		}
+		renderObserver = new IntersectionObserver(
+			(entries, obs) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const container = entry.target;
+						obs.unobserve(container);
+						renderSingleMarkmap(container, currentTheme);
+					}
+				});
+			},
+			{ rootMargin: "200px" },
+		);
+
+		document
+			.querySelectorAll(".markmap-diagram-container")
+			.forEach((container) => {
+				const markmapDiv = container.querySelector(
+					".markmap[data-markmap-code]",
+				);
+				if (markmapDiv && !renderedElements.has(markmapDiv)) {
+					renderObserver.observe(container);
+				}
+			});
+	}
+
+	async function onThemeChange(newTheme) {
+		if (isRendering) {
+			pendingTheme = newTheme;
+			return;
+		}
+
+		currentTheme = newTheme;
+		isRendering = true;
+
+		try {
+			const containers = document.querySelectorAll(
+				".markmap-diagram-container",
+			);
+			if (containers.length === 0) {
+				isRendering = false;
+				return;
+			}
+
+			// Phase 1: Swap all cached diagrams instantly
+			const uncached = [];
+			containers.forEach((container) => {
+				const wrapper = container.querySelector(".markmap-wrapper");
+				if (!wrapper) {
+					return;
+				}
+				const markmapDiv = wrapper.querySelector(".markmap");
+				if (!markmapDiv) {
+					return;
+				}
+				if (
+					!renderedElements.has(markmapDiv) &&
+					!markmapDiv.querySelector("svg")
+				) {
+					// Not yet rendered — IntersectionObserver will handle
+					return;
+				}
+				if (swapFromCache(markmapDiv, newTheme)) {
+					renderedElements.add(markmapDiv);
+				} else {
+					// Rendered but no cache for this theme — need to render
+					renderedElements.delete(markmapDiv);
+					uncached.push(container);
+				}
+			});
+
+			// Phase 2: Render uncached diagrams sequentially with yield between each
+			if (uncached.length > 0) {
+				for (const container of uncached) {
+					await renderSingleMarkmap(container, newTheme);
+					await new Promise((r) => setTimeout(r, 0));
+				}
+			}
+
+			// Re-init controls for all rendered containers
+			initControls();
+			retryCount = 0;
+		} catch (_error) {
+			if (retryCount < MAX_RETRIES) {
+				retryCount++;
+				setTimeout(() => onThemeChange(currentTheme), RETRY_DELAY * retryCount);
+			}
+		} finally {
+			isRendering = false;
+			if (pendingTheme !== null && pendingTheme !== currentTheme) {
+				const next = pendingTheme;
+				pendingTheme = null;
+				onThemeChange(next);
+			} else {
+				pendingTheme = null;
+			}
+		}
+	}
+
+	function _destroyAllInstances() {
+		markmapInstances.forEach((instance) => {
 			try {
 				instance.destroy();
 			} catch (_e) {
 				// ignore
 			}
-			const container = document.getElementById(containerId);
-			if (container) {
+		});
+		markmapInstances.clear();
+		document
+			.querySelectorAll(".markmap-diagram-container")
+			.forEach((container) => {
 				const controls = container.querySelector(".markmap-controls");
 				if (controls) {
 					controls.remove();
 				}
 				container.removeAttribute("data-markmap-init");
-			}
-		});
-		markmapInstances.clear();
+			});
 	}
 
 	function initControls() {
 		const containers = document.querySelectorAll(".markmap-diagram-container");
-
 		containers.forEach((container) => {
 			if (container.hasAttribute("data-markmap-init")) {
 				return;
 			}
-
 			const wrapper = container.querySelector(".markmap-wrapper");
 			if (!wrapper) {
 				return;
 			}
-
 			const wrapperId = wrapper.id;
 			if (!wrapperId) {
 				return;
 			}
-
 			const mmInstance = markmapInstances.get(wrapperId);
 			if (!mmInstance) {
 				return;
 			}
-
 			container.setAttribute("data-markmap-init", "true");
 
 			const controlsDiv = document.createElement("div");
 			controlsDiv.className = "markmap-controls";
-
 			const buttons = [
 				{
 					label: "+",
@@ -183,22 +380,21 @@
 					action: () => mmInstance.rescale(1.25),
 				},
 				{
-					label: "\u2212",
+					label: "−",
 					title: "缩小",
 					action: () => mmInstance.rescale(0.8),
 				},
 				{
-					label: "\u21BA",
+					label: "↺",
 					title: "重置",
 					action: () => mmInstance.fit(),
 				},
 				{
-					label: "\u26F6",
+					label: "⛶",
 					title: "全屏",
 					action: () => openFullscreen(container),
 				},
 			];
-
 			buttons.forEach((btn) => {
 				const button = document.createElement("button");
 				button.className = "markmap-ctrl-btn";
@@ -211,7 +407,6 @@
 				});
 				controlsDiv.appendChild(button);
 			});
-
 			container.appendChild(controlsDiv);
 		});
 	}
@@ -221,15 +416,10 @@
 		if (!svgElement) {
 			return;
 		}
-
-		const isDark = document.documentElement.classList.contains("dark");
-
 		const overlay = document.createElement("div");
 		overlay.className = "markmap-fullscreen-overlay";
-
 		const content = document.createElement("div");
 		content.className = "markmap-fs-content";
-
 		const clonedSvg = svgElement.cloneNode(true);
 		clonedSvg.style.cssText =
 			"width:100%;height:100%;max-width:none;max-height:none;filter:none;";
@@ -237,7 +427,6 @@
 
 		const fsControls = document.createElement("div");
 		fsControls.className = "markmap-fs-controls";
-
 		let fsInstance = null;
 
 		const closeOverlay = () => {
@@ -252,14 +441,12 @@
 			document.removeEventListener("keydown", escHandler);
 			document.body.style.overflow = "";
 		};
-
 		const escHandler = (e) => {
 			if (e.key === "Escape") {
 				closeOverlay();
 			}
 		};
 
-		// 全屏模式下尝试使用 svg-pan-zoom（克隆的 SVG 没有 D3 zoom 行为）
 		const fsButtons = [
 			{
 				label: "+",
@@ -267,12 +454,12 @@
 				action: () => fsInstance?.zoomIn(),
 			},
 			{
-				label: "\u2212",
+				label: "−",
 				title: "缩小",
 				action: () => fsInstance?.zoomOut(),
 			},
 			{
-				label: "\u21BA",
+				label: "↺",
 				title: "重置",
 				action: () => {
 					if (fsInstance) {
@@ -282,9 +469,8 @@
 					}
 				},
 			},
-			{ label: "\u2715", title: "关闭", action: closeOverlay },
+			{ label: "✕", title: "关闭", action: closeOverlay },
 		];
-
 		fsButtons.forEach((btn) => {
 			const button = document.createElement("button");
 			button.className = "markmap-ctrl-btn";
@@ -301,21 +487,16 @@
 		overlay.appendChild(content);
 		overlay.appendChild(fsControls);
 		document.body.appendChild(overlay);
-
 		document.body.style.overflow = "hidden";
-
 		overlay.addEventListener("click", (e) => {
 			if (e.target === overlay) {
 				closeOverlay();
 			}
 		});
-
 		document.addEventListener("keydown", escHandler);
 
-		// 全屏模式：为克隆的 SVG 设置 viewBox 并使用 svg-pan-zoom
 		requestAnimationFrame(() => {
 			try {
-				// 克隆的 SVG 没有 viewBox，需要手动设置
 				const bbox = clonedSvg.getBBox();
 				if (bbox.width > 0 && bbox.height > 0) {
 					const padding = 20;
@@ -324,7 +505,6 @@
 						`${bbox.x - padding} ${bbox.y - padding} ${bbox.width + padding * 2} ${bbox.height + padding * 2}`,
 					);
 				}
-
 				if (typeof window.svgPanZoom === "function") {
 					fsInstance = window.svgPanZoom(clonedSvg, {
 						panEnabled: true,
@@ -339,175 +519,51 @@
 						zoomScaleSensitivity: 0.3,
 					});
 				}
-
-				applyThemeToMarkmap(clonedSvg, isDark);
 			} catch (_e) {
-				// svg-pan-zoom 初始化失败时，全屏仍可查看，只是没有缩放控制
+				// svg-pan-zoom init failed
 			}
-		});
-	}
-
-	async function renderMarkmaps() {
-		if (isRendering) {
-			return;
-		}
-
-		if (!window.markmap?.Transformer || !window.markmap.Markmap) {
-			return;
-		}
-
-		isRendering = true;
-
-		destroyAllControls();
-
-		try {
-			const containers = document.querySelectorAll(
-				".markmap-diagram-container",
-			);
-			if (containers.length === 0) {
-				isRendering = false;
-				return;
-			}
-
-			// 等待 DOM 布局稳定
-			await new Promise((resolve) => setTimeout(resolve, 100));
-
-			const { Transformer, Markmap } = window.markmap;
-			const transformer = new Transformer();
-			const isDark = document.documentElement.classList.contains("dark");
-
-			for (const container of containers) {
-				const wrapper = container.querySelector(".markmap-wrapper");
-				if (!wrapper) {
-					continue;
-				}
-
-				const markmapDiv = wrapper.querySelector(".markmap");
-				if (!markmapDiv) {
-					continue;
-				}
-
-				let code = markmapDiv.getAttribute("data-markmap-code") || "";
-				if (!code) {
-					code = markmapDiv.textContent?.trim() || "";
-				}
-				if (!code) {
-					continue;
-				}
-
-				markmapDiv.innerHTML =
-					'<div class="markmap-loading">Rendering mindmap...</div>';
-
-				try {
-					const { root } = transformer.transform(code);
-
-					const svgElement = document.createElementNS(
-						"http://www.w3.org/2000/svg",
-						"svg",
-					);
-					svgElement.style.width = "100%";
-					svgElement.style.height = "400px";
-					markmapDiv.innerHTML = "";
-					markmapDiv.appendChild(svgElement);
-
-					const mmInstance = Markmap.create(
-						svgElement,
-						{
-							autoFit: true,
-							fitRatio: 0.95,
-							duration: 0,
-							maxWidth: 0,
-						},
-						root,
-					);
-
-					// 存储 Markmap 实例，key 为 wrapper 的 id
-					const wrapperId = wrapper.id;
-					if (wrapperId) {
-						markmapInstances.set(wrapperId, mmInstance);
-					}
-
-					const renderedSvg = markmapDiv.querySelector("svg");
-					if (renderedSvg) {
-						applyThemeToMarkmap(renderedSvg, isDark);
-					}
-				} catch (_error) {
-					markmapDiv.innerHTML = `
-						<div class="markmap-error">
-							<p>Failed to render mindmap.</p>
-							<button onclick="location.reload()" style="margin-top: 8px; padding: 4px 8px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">
-								Retry Page
-							</button>
-						</div>
-					`;
-				}
-			}
-
-			// 等待 Markmap 渲染完成后再初始化控制按钮
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			initControls();
-			retryCount = 0;
-		} catch (_error) {
-			if (retryCount < MAX_RETRIES) {
-				retryCount++;
-				setTimeout(() => renderMarkmaps(), RETRY_DELAY * retryCount);
-			}
-		} finally {
-			isRendering = false;
-		}
-	}
-
-	function setupMutationObserver() {
-		const observer = new MutationObserver((mutations) => {
-			for (const mutation of mutations) {
-				if (
-					mutation.type === "attributes" &&
-					mutation.attributeName === "class"
-				) {
-					const isDark = document.documentElement.classList.contains("dark");
-					const svgElements = document.querySelectorAll(".markmap svg");
-					for (const svg of svgElements) {
-						applyThemeToMarkmap(svg, isDark);
-					}
-					break;
-				}
-			}
-		});
-
-		observer.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ["class"],
 		});
 	}
 
 	function setupEventListeners() {
 		document.addEventListener("astro:page-load", () => {
 			retryCount = 0;
-			renderMarkmaps();
+			setupLazyRenderObserver();
 		});
 
+		// visibilitychange: only re-init controls, NOT full re-render
 		document.addEventListener("visibilitychange", () => {
 			if (!document.hidden) {
-				renderMarkmaps();
+				initControls();
 			}
 		});
 	}
 
 	async function initialize() {
 		try {
-			setupMutationObserver();
+			const coordinator = window.__diagramThemeCoordinator;
+			if (coordinator) {
+				currentTheme = coordinator.getTheme();
+				coordinator.subscribe(onThemeChange);
+			} else {
+				currentTheme = document.documentElement.classList.contains("dark")
+					? "dark"
+					: "default";
+			}
+
 			setupEventListeners();
 			await loadMarkmap();
-			// svg-pan-zoom 仅全屏模式使用，不阻塞主渲染流程
 			loadSvgPanZoom();
-			await renderMarkmaps();
+			setupLazyRenderObserver();
 		} catch (_error) {
-			// 初始化失败
+			// Initialization failed
 		}
 	}
 
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initialize, { once: true });
+		document.addEventListener("DOMContentLoaded", initialize, {
+			once: true,
+		});
 	} else {
 		initialize();
 	}

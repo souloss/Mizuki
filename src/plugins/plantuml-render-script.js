@@ -1,14 +1,3 @@
-/*
- * plantuml 图表客户端渲染与交互脚本
- *
- * 职责：
- *   - 根据 <html> 的 `dark` class，动态切换 .plantuml-image 的 data-light-src / data-dark-src
- *   - 加载失败时替换容器内容为错误提示 + 重试按钮
- *   - 为每个容器提供 pan-zoom（CSS transform）与全屏查看能力
- *   - 响应 astro:page-load（Swup）与主题切换事件
- *
- * 通过 IIFE + window.plantumlInitialized 防止在 Swup 场景下重复初始化。
- */
 (() => {
 	if (window.plantumlInitialized) {
 		return;
@@ -18,32 +7,107 @@
 	const MIN_SCALE = 0.5;
 	const MAX_SCALE = 5;
 	const SCALE_STEP = 1.2;
-
-	/** @type {Set<HTMLElement>} 当前已打开的全屏 overlay 集合（跨页面清理用） */
+	const CACHE_NAME = "plantuml-diagrams";
 	const fullscreenOverlays = new Set();
 
-	/**
-	 * 按当前主题为所有图片选择正确的 src。
-	 * @returns {void}
-	 */
-	function applyTheme() {
-		const isDark = document.documentElement.classList.contains("dark");
+	// Debounce timer for applyTheme
+	let applyThemeTimer = null;
+	let pendingApplyTheme = null;
+
+	async function getImageFromCache(url) {
+		try {
+			const cache = await caches.open(CACHE_NAME);
+			const response = await cache.match(url);
+			if (response) {
+				const blob = await response.blob();
+				return URL.createObjectURL(blob);
+			}
+		} catch (_e) {
+			// Cache API not available or error
+		}
+		return null;
+	}
+
+	async function saveImageToCache(url) {
+		try {
+			const cache = await caches.open(CACHE_NAME);
+			const existing = await cache.match(url);
+			if (existing) {
+				return;
+			}
+			const response = await fetch(url);
+			if (response.ok) {
+				await cache.put(url, response);
+			}
+		} catch (_e) {
+			// Network error or Cache API unavailable
+		}
+	}
+
+	async function applyThemeNow(isDark) {
 		const images = document.querySelectorAll(".plantuml-image");
-		images.forEach((img) => {
+		for (const img of images) {
 			const light = img.getAttribute("data-light-src") || "";
 			const dark = img.getAttribute("data-dark-src") || light;
 			const next = isDark ? dark : light;
-			if (next && img.getAttribute("src") !== next) {
-				img.setAttribute("src", next);
+			if (!next || img.getAttribute("src") === next) {
+				continue;
 			}
-		});
+
+			// Try cache first
+			const cachedUrl = await getImageFromCache(next);
+			if (cachedUrl) {
+				// Cache hit — verify theme hasn't changed while we awaited cache
+				const currentIsDark =
+					document.documentElement.classList.contains("dark");
+				if (currentIsDark !== isDark) {
+					URL.revokeObjectURL(cachedUrl);
+					continue;
+				}
+				img.setAttribute("src", cachedUrl);
+				// Revoke old objectURL if it was one
+				const oldSrc = img.getAttribute("data-obj-url");
+				if (oldSrc?.startsWith("blob:")) {
+					URL.revokeObjectURL(oldSrc);
+				}
+				img.setAttribute("data-obj-url", cachedUrl);
+				const container = img.closest(".plantuml-diagram-container");
+				if (container) {
+					bindLoadHandler(img, container);
+				}
+			} else {
+				// Cache miss — set src normally, save to cache in background
+				img.setAttribute("src", next);
+				const oldSrc = img.getAttribute("data-obj-url");
+				if (oldSrc?.startsWith("blob:")) {
+					URL.revokeObjectURL(oldSrc);
+				}
+				img.removeAttribute("data-obj-url");
+				saveImageToCache(next);
+				const container = img.closest(".plantuml-diagram-container");
+				if (container) {
+					bindLoadHandler(img, container);
+				}
+			}
+
+			// Remove loading="lazy" on visible images so they update immediately
+			if (img.getBoundingClientRect().top < window.innerHeight) {
+				img.removeAttribute("loading");
+			}
+		}
 	}
 
-	/**
-	 * 为单个图片绑定加载失败的降级 UI。
-	 * @param {HTMLImageElement} img 图片元素
-	 * @param {HTMLElement} container .plantuml-diagram-container
-	 */
+	function debouncedApplyTheme(isDark) {
+		pendingApplyTheme = isDark;
+		clearTimeout(applyThemeTimer);
+		applyThemeTimer = setTimeout(() => {
+			if (pendingApplyTheme !== null) {
+				applyThemeNow(pendingApplyTheme);
+				pendingApplyTheme = null;
+			}
+		}, 300);
+	}
+
 	function bindErrorHandler(img, container) {
 		if (img.dataset.errorBound === "true") {
 			return;
@@ -54,6 +118,8 @@
 				return;
 			}
 			container.dataset.errorShown = "true";
+			// Clear interactionInit so pan-zoom can reinitialize after retry
+			delete container.dataset.interactionInit;
 			const wrapper = container.querySelector(".plantuml-wrapper");
 			if (!wrapper) {
 				return;
@@ -82,12 +148,11 @@
 					"data-dark-src",
 					img.getAttribute("data-dark-src") || "",
 				);
-				newImg.loading = "lazy";
-				newImg.decoding = "async";
 				wrapper.appendChild(newImg);
 				bindErrorHandler(newImg, container);
 				bindLoadHandler(newImg, container);
-				applyTheme();
+				const isDark = document.documentElement.classList.contains("dark");
+				applyThemeNow(isDark);
 			});
 			errorBox.appendChild(msg);
 			errorBox.appendChild(retry);
@@ -95,30 +160,20 @@
 		});
 	}
 
-	/**
-	 * 为单个图片绑定 load 回调，在加载成功后初始化 pan-zoom 与控制栏。
-	 * @param {HTMLImageElement} img 图片元素
-	 * @param {HTMLElement} container .plantuml-diagram-container
-	 */
 	function bindLoadHandler(img, container) {
-		if (img.dataset.loadBound === "true") {
-			return;
-		}
-		img.dataset.loadBound = "true";
 		const onLoad = () => initInteraction(container);
 		if (img.complete && img.naturalWidth > 0) {
 			queueMicrotask(onLoad);
 		} else {
+			// Remove old listener if any, add new one
+			if (img._loadHandler) {
+				img.removeEventListener("load", img._loadHandler);
+			}
+			img._loadHandler = onLoad;
 			img.addEventListener("load", onLoad, { once: true });
 		}
 	}
 
-	/**
-	 * 初始化指定容器上的缩放、平移、控制栏与双击行为。
-	 * 重入安全：同一容器多次调用不会重复绑定。
-	 *
-	 * @param {HTMLElement} container .plantuml-diagram-container
-	 */
 	function initInteraction(container) {
 		if (container.dataset.interactionInit === "true") {
 			return;
@@ -127,24 +182,23 @@
 		if (!img) {
 			return;
 		}
+		if (!img.complete || img.naturalWidth === 0) {
+			return;
+		}
 		container.dataset.interactionInit = "true";
 
 		const state = { scale: 1, translateX: 0, translateY: 0 };
-
 		const applyTransform = () => {
 			img.style.transformOrigin = "center center";
 			img.style.transform = `translate(${state.translateX}px, ${state.translateY}px) scale(${state.scale})`;
 		};
-
 		const clampScale = (next) => Math.min(MAX_SCALE, Math.max(MIN_SCALE, next));
-
 		const reset = () => {
 			state.scale = 1;
 			state.translateX = 0;
 			state.translateY = 0;
 			applyTransform();
 		};
-
 		const zoomBy = (factor, originX, originY) => {
 			const prev = state.scale;
 			const next = clampScale(prev * factor);
@@ -165,7 +219,6 @@
 			applyTransform();
 		};
 
-		// 控制栏按钮
 		const controls = document.createElement("div");
 		controls.className = "plantuml-controls";
 		const buttons = [
@@ -175,13 +228,13 @@
 				action: () => zoomBy(SCALE_STEP),
 			},
 			{
-				label: "\u2212",
+				label: "−",
 				title: "缩小",
 				action: () => zoomBy(1 / SCALE_STEP),
 			},
-			{ label: "\u21BA", title: "重置", action: reset },
+			{ label: "↺", title: "重置", action: reset },
 			{
-				label: "\u26F6",
+				label: "⛶",
 				title: "全屏",
 				action: () => openFullscreen(container),
 			},
@@ -201,12 +254,12 @@
 		});
 		container.appendChild(controls);
 
-		// 滚轮缩放
+		// Wheel zoom — only intercept Ctrl/Meta+wheel
 		container.addEventListener(
 			"wheel",
 			(event) => {
 				if (!event.ctrlKey && !event.metaKey) {
-					// 保持与 mermaid 一致：悬停时直接缩放
+					return;
 				}
 				event.preventDefault();
 				const factor = event.deltaY < 0 ? SCALE_STEP : 1 / SCALE_STEP;
@@ -215,13 +268,11 @@
 			{ passive: false },
 		);
 
-		// 拖拽平移
 		let isDragging = false;
 		let startX = 0;
 		let startY = 0;
 		let startTx = 0;
 		let startTy = 0;
-
 		const onPointerDown = (event) => {
 			if (event.button !== 0 && event.pointerType !== "touch") {
 				return;
@@ -258,7 +309,6 @@
 		container.addEventListener("pointerup", onPointerUp);
 		container.addEventListener("pointercancel", onPointerUp);
 
-		// 双击放大/重置
 		container.addEventListener("dblclick", (event) => {
 			if (event.target.closest(".plantuml-controls")) {
 				return;
@@ -273,22 +323,15 @@
 		applyTransform();
 	}
 
-	/**
-	 * 打开全屏 overlay 展示指定容器中的图片。
-	 * @param {HTMLElement} container .plantuml-diagram-container
-	 */
 	function openFullscreen(container) {
 		const sourceImg = container.querySelector(".plantuml-image");
 		if (!sourceImg) {
 			return;
 		}
-
 		const overlay = document.createElement("div");
 		overlay.className = "plantuml-fullscreen-overlay";
-
 		const content = document.createElement("div");
 		content.className = "plantuml-fs-content";
-
 		const img = document.createElement("img");
 		img.src = sourceImg.src;
 		img.alt = sourceImg.alt;
@@ -297,7 +340,6 @@
 
 		const fsControls = document.createElement("div");
 		fsControls.className = "plantuml-fs-controls";
-
 		const state = { scale: 1, tx: 0, ty: 0 };
 		const apply = () => {
 			img.style.transformOrigin = "center center";
@@ -328,7 +370,6 @@
 			state.ty = 0;
 			apply();
 		};
-
 		const close = () => {
 			document.removeEventListener("keydown", onKeyDown);
 			overlay.remove();
@@ -343,12 +384,12 @@
 		const fsButtons = [
 			{ label: "+", title: "放大", action: () => zoom(SCALE_STEP) },
 			{
-				label: "\u2212",
+				label: "−",
 				title: "缩小",
 				action: () => zoom(1 / SCALE_STEP),
 			},
-			{ label: "\u21BA", title: "重置", action: resetState },
-			{ label: "\u2715", title: "关闭", action: close },
+			{ label: "↺", title: "重置", action: resetState },
+			{ label: "✕", title: "关闭", action: close },
 		];
 		fsButtons.forEach((btn) => {
 			const el = document.createElement("button");
@@ -364,7 +405,6 @@
 			fsControls.appendChild(el);
 		});
 
-		// overlay 内滚轮缩放
 		content.addEventListener(
 			"wheel",
 			(event) => {
@@ -375,7 +415,6 @@
 			{ passive: false },
 		);
 
-		// overlay 内拖拽平移
 		let dragging = false;
 		let sx = 0;
 		let sy = 0;
@@ -410,13 +449,11 @@
 		content.addEventListener("pointerup", endDrag);
 		content.addEventListener("pointercancel", endDrag);
 
-		// 背景点击关闭
 		overlay.addEventListener("click", (event) => {
 			if (event.target === overlay) {
 				close();
 			}
 		});
-
 		overlay.appendChild(content);
 		overlay.appendChild(fsControls);
 		document.body.appendChild(overlay);
@@ -424,9 +461,6 @@
 		document.addEventListener("keydown", onKeyDown);
 	}
 
-	/**
-	 * 清理全部已打开的全屏 overlay；用于 Swup 页面切换前。
-	 */
 	function closeAllOverlays() {
 		fullscreenOverlays.forEach((overlay) => {
 			overlay.remove();
@@ -434,9 +468,6 @@
 		fullscreenOverlays.clear();
 	}
 
-	/**
-	 * 扫描当前文档中的所有 .plantuml-diagram-container，初始化交互与降级。
-	 */
 	function initAll() {
 		const containers = document.querySelectorAll(".plantuml-diagram-container");
 		containers.forEach((container) => {
@@ -447,36 +478,45 @@
 			bindErrorHandler(img, container);
 			bindLoadHandler(img, container);
 		});
-		applyTheme();
+		// Cache the initial theme's images in background
+		const isDark = document.documentElement.classList.contains("dark");
+		document.querySelectorAll(".plantuml-image").forEach((img) => {
+			const src = img.getAttribute("src");
+			if (src) {
+				saveImageToCache(src);
+			}
+			// Also pre-cache the opposite theme's URL
+			const light = img.getAttribute("data-light-src") || "";
+			const dark = img.getAttribute("data-dark-src") || light;
+			const opposite = isDark ? light : dark;
+			if (opposite) {
+				saveImageToCache(opposite);
+			}
+		});
 	}
 
-	// 监听主题切换
-	const themeObserver = new MutationObserver((mutations) => {
-		for (const mutation of mutations) {
-			if (
-				mutation.type === "attributes" &&
-				mutation.attributeName === "class"
-			) {
-				applyTheme();
-				break;
-			}
-		}
-	});
-	themeObserver.observe(document.documentElement, {
-		attributes: true,
-		attributeFilter: ["class"],
-	});
+	// Theme change handler from coordinator
+	function onThemeChange(newTheme) {
+		const isDark = newTheme === "dark";
+		debouncedApplyTheme(isDark);
+	}
 
-	// Swup 导航清理
 	document.addEventListener("astro:before-preparation", closeAllOverlays);
 	document.addEventListener("astro:page-load", () => {
 		closeAllOverlays();
 		initAll();
 	});
 
-	// 初次加载
+	// Subscribe to coordinator
+	const coordinator = window.__diagramThemeCoordinator;
+	if (coordinator) {
+		coordinator.subscribe(onThemeChange);
+	}
+
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", initAll, { once: true });
+		document.addEventListener("DOMContentLoaded", initAll, {
+			once: true,
+		});
 	} else {
 		initAll();
 	}

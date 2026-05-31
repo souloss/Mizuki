@@ -1,7 +1,11 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
+import diagramThemeCoordinator from "./diagram-theme-coordinator.js?raw";
 import mermaidRenderScript from "./mermaid-render-script.js?raw";
+
+/** 已注入协调器脚本的 tree 集合 */
+const coordinatorInjectedTrees = new WeakSet();
 
 /**
  * 递归提取 HAST 节点树中的所有文本内容
@@ -96,8 +100,14 @@ export function rehypeMermaid(options = {}) {
 			}
 		});
 
-		// 注入渲染脚本（运行时 mermaidInitialized 单例守卫防止重复初始化）
+		// 注入协调器脚本（单例守卫防止重复初始化）和渲染脚本
 		if (mermaidCount > 0) {
+			if (!coordinatorInjectedTrees.has(tree)) {
+				coordinatorInjectedTrees.add(tree);
+				tree.children.push(
+					h("script", { type: "text/javascript" }, diagramThemeCoordinator),
+				);
+			}
 			tree.children.push(
 				h("script", { type: "text/javascript" }, mermaidRenderScript),
 			);

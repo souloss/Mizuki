@@ -1,27 +1,30 @@
 (() => {
-	// 单例模式：检查是否已经初始化过
 	if (window.mermaidInitialized) {
 		return;
 	}
-
 	window.mermaidInitialized = true;
 
-	// 记录当前主题状态，避免不必要的重新渲染
 	let currentTheme = null;
+	let renderIdCounter = 0;
 	let isRendering = false;
+	let pendingTheme = null;
 	let retryCount = 0;
 	const MAX_RETRIES = 3;
 	const RETRY_DELAY = 1000;
-	// 主题切换防抖
-	let themeChangeTimer = null;
-	// IntersectionObserver 实例（渲染用）
 	let renderObserver = null;
-	// IntersectionObserver 实例（pan-zoom 用）
 	let panZoomObserver = null;
-	// 已渲染的图表集合，防止重复渲染
 	const renderedElements = new WeakSet();
 
-	// 为所有未渲染的 mermaid 容器注入骨架屏占位符
+	// Dual cache: element -> { light: svgHtml|null, dark: svgHtml|null }
+	const cacheStore = new WeakMap();
+
+	function getCache(element) {
+		if (!cacheStore.has(element)) {
+			cacheStore.set(element, { light: null, dark: null });
+		}
+		return cacheStore.get(element);
+	}
+
 	function injectSkeletons() {
 		document
 			.querySelectorAll(".mermaid-diagram-container")
@@ -37,7 +40,6 @@
 			});
 	}
 
-	// 移除指定容器的骨架屏
 	function removeSkeleton(container) {
 		const skeleton = container.querySelector(".mermaid-skeleton");
 		if (skeleton) {
@@ -45,23 +47,9 @@
 		}
 	}
 
-	// 检查主题是否真的发生了变化
-	function hasThemeChanged() {
-		const isDark = document.documentElement.classList.contains("dark");
-		const newTheme = isDark ? "dark" : "default";
-
-		if (currentTheme !== newTheme) {
-			currentTheme = newTheme;
-			return true;
-		}
-		return false;
-	}
-
-	// 等待 Mermaid 库加载完成
 	function waitForMermaid(timeout = 10000) {
 		return new Promise((resolve, reject) => {
 			const startTime = Date.now();
-
 			function check() {
 				if (window.mermaid && typeof window.mermaid.initialize === "function") {
 					resolve(window.mermaid);
@@ -71,146 +59,17 @@
 					setTimeout(check, 100);
 				}
 			}
-
 			check();
 		});
 	}
 
-	// 设置 MutationObserver 监听 html 元素的 class 属性变化
-	function setupMutationObserver() {
-		const obs = new MutationObserver((mutations) => {
-			mutations.forEach((mutation) => {
-				if (
-					mutation.type === "attributes" &&
-					mutation.attributeName === "class"
-				) {
-					const target = mutation.target;
-					const wasDark = mutation.oldValue
-						? mutation.oldValue.includes("dark")
-						: false;
-					const isDark = target.classList.contains("dark");
-
-					if (wasDark !== isDark) {
-						if (hasThemeChanged()) {
-							clearTimeout(themeChangeTimer);
-							themeChangeTimer = setTimeout(() => reRenderAllDiagrams(), 300);
-						}
-					}
-				}
-			});
-		});
-
-		obs.observe(document.documentElement, {
-			attributes: true,
-			attributeFilter: ["class"],
-			attributeOldValue: true,
-		});
-	}
-
-	// 设置其他事件监听器
-	function setupEventListeners() {
-		document.addEventListener("astro:page-load", () => {
-			currentTheme = null;
-			retryCount = 0;
-			if (hasThemeChanged()) {
-				setupLazyRenderObserver();
-			}
-		});
-
-		document.addEventListener("mizuki:page:loaded", () => {
-			currentTheme = null;
-			retryCount = 0;
-			if (hasThemeChanged()) {
-				setupLazyRenderObserver();
-			}
-		});
-
-		document.addEventListener("visibilitychange", () => {
-			if (!document.hidden) {
-				setupLazyRenderObserver();
-			}
-		});
-	}
-
-	async function initializeMermaid() {
-		try {
-			await waitForMermaid();
-
-			window.mermaid.initialize({
-				startOnLoad: false,
-				theme: "default",
-				themeVariables: {
-					fontFamily: "inherit",
-					fontSize: "16px",
-				},
-				securityLevel: "loose",
-				errorLevel: "warn",
-				logLevel: "error",
-			});
-
-			// 不立即渲染，交给 IntersectionObserver 按需渲染
-			setupLazyRenderObserver();
-		} catch (error) {
-			console.error("Failed to initialize Mermaid:", error);
-			if (retryCount < MAX_RETRIES) {
-				retryCount++;
-				setTimeout(() => initializeMermaid(), RETRY_DELAY * retryCount);
-			}
-		}
-	}
-
-	// 让出主线程，保持 UI 响应
 	function yieldToMain() {
 		return new Promise((resolve) => setTimeout(resolve, 0));
 	}
 
-	// 设置懒渲染 Observer：只在图表接近视口时才渲染
-	function setupLazyRenderObserver() {
-		if (renderObserver) {
-			renderObserver.disconnect();
-		}
-
-		renderObserver = new IntersectionObserver(
-			(entries, obs) => {
-				entries.forEach((entry) => {
-					if (entry.isIntersecting) {
-						const container = entry.target;
-						obs.unobserve(container);
-						renderDiagramInContainer(container);
-					}
-				});
-			},
-			{ rootMargin: "200px" },
-		);
-
-		// 观察所有未渲染的 mermaid 容器
-		injectSkeletons();
-		document
-			.querySelectorAll(".mermaid-diagram-container")
-			.forEach((container) => {
-				const mermaidEl = container.querySelector(
-					".mermaid[data-mermaid-code]",
-				);
-				if (mermaidEl && !renderedElements.has(mermaidEl)) {
-					renderObserver.observe(container);
-				}
-			});
-	}
-
-	// 渲染单个容器中的图表
-	async function renderDiagramInContainer(container) {
-		const mermaidEl = container.querySelector(".mermaid[data-mermaid-code]");
-		if (!mermaidEl || renderedElements.has(mermaidEl)) {
-			return;
-		}
-
-		renderedElements.add(mermaidEl);
-
-		const isDark = document.documentElement.classList.contains("dark");
-		const theme = isDark ? "dark" : "default";
-
-		// 每次渲染前更新主题
-		window.mermaid.initialize({
+	function getThemeConfig(theme) {
+		const isDark = theme === "dark";
+		return {
 			startOnLoad: false,
 			theme: theme,
 			themeVariables: {
@@ -226,22 +85,54 @@
 			securityLevel: "loose",
 			errorLevel: "warn",
 			logLevel: "error",
-		});
+		};
+	}
 
-		await renderSingleDiagram(mermaidEl, isDark);
+	function setupLazyRenderObserver() {
+		if (renderObserver) {
+			renderObserver.disconnect();
+		}
+		renderObserver = new IntersectionObserver(
+			(entries, obs) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const container = entry.target;
+						obs.unobserve(container);
+						renderDiagramInContainer(container);
+					}
+				});
+			},
+			{ rootMargin: "200px" },
+		);
+		injectSkeletons();
+		document
+			.querySelectorAll(".mermaid-diagram-container")
+			.forEach((container) => {
+				const mermaidEl = container.querySelector(
+					".mermaid[data-mermaid-code]",
+				);
+				if (mermaidEl && !renderedElements.has(mermaidEl)) {
+					renderObserver.observe(container);
+				}
+			});
+	}
 
-		// 渲染完成后，移除骨架屏
+	async function renderDiagramInContainer(container) {
+		const mermaidEl = container.querySelector(".mermaid[data-mermaid-code]");
+		if (!mermaidEl || renderedElements.has(mermaidEl)) {
+			return;
+		}
+		renderedElements.add(mermaidEl);
+		await renderSingleDiagram(mermaidEl, currentTheme);
 		removeSkeleton(container);
-
-		// 让出主线程
 		await yieldToMain();
-
-		// 设置 pan-zoom 懒加载
 		setupPanZoomObserver(container);
 	}
 
-	// 渲染单个图表
-	async function renderSingleDiagram(element, isDark) {
+	async function renderSingleDiagram(element, theme) {
+		// Yield before heavy work so browser can paint skeleton / respond to input
+		await yieldToMain();
+
 		let attempts = 0;
 		const maxAttempts = 3;
 
@@ -252,39 +143,38 @@
 					break;
 				}
 
-				const { svg } = await window.mermaid.render(
-					`mermaid-${Date.now()}-${attempts}`,
-					code,
-				);
+				const id = `mermaid-${renderIdCounter++}`;
+				const { svg } = await window.mermaid.render(id, code);
+
+				// Only cache verified-successful SVG
+				const cache = getCache(element);
+				cache[theme === "dark" ? "dark" : "light"] = svg;
 
 				element.innerHTML = svg;
-
-				// 添加响应式支持
 				const svgElement = element.querySelector("svg");
 				if (svgElement) {
 					svgElement.setAttribute("width", "100%");
 					svgElement.removeAttribute("height");
 					svgElement.style.maxWidth = "100%";
 					svgElement.style.height = "auto";
-
-					if (isDark) {
+					if (theme === "dark") {
 						svgElement.style.filter = "brightness(0.9) contrast(1.1)";
 					} else {
 						svgElement.style.filter = "none";
 					}
 				}
-
 				element.setAttribute("data-mermaid-rendered", "true");
 				break;
 			} catch (error) {
 				attempts++;
 				console.warn(`Mermaid rendering attempt ${attempts} failed:`, error);
-
 				if (attempts >= maxAttempts) {
 					console.error(
 						`Failed to render Mermaid diagram after ${maxAttempts} attempts:`,
 						error,
 					);
+					// Remove from WeakSet so re-attempt is possible on theme switch
+					renderedElements.delete(element);
 					element.innerHTML = `
 						<div class="mermaid-error">
 							<p>Failed to render diagram after ${maxAttempts} attempts.</p>
@@ -293,13 +183,9 @@
 							</button>
 						</div>
 					`;
-					// 移除骨架屏即使渲染失败
 					const container = element.closest(".mermaid-diagram-container");
 					if (container) {
-						const skeleton = container.querySelector(".mermaid-skeleton");
-						if (skeleton) {
-							skeleton.remove();
-						}
+						removeSkeleton(container);
 					}
 				} else {
 					await new Promise((resolve) => setTimeout(resolve, 500 * attempts));
@@ -308,75 +194,100 @@
 		}
 	}
 
-	// 主题切换时重新渲染所有已渲染的图表
-	async function reRenderAllDiagrams() {
+	// Swap cached SVG into element, return true if cache hit
+	function swapFromCache(element, theme) {
+		const cache = getCache(element);
+		const key = theme === "dark" ? "dark" : "light";
+		const cached = cache[key];
+		if (cached === null) {
+			return false;
+		}
+		element.innerHTML = cached;
+		const svgElement = element.querySelector("svg");
+		if (svgElement) {
+			svgElement.setAttribute("width", "100%");
+			svgElement.removeAttribute("height");
+			svgElement.style.maxWidth = "100%";
+			svgElement.style.height = "auto";
+			if (theme === "dark") {
+				svgElement.style.filter = "brightness(0.9) contrast(1.1)";
+			} else {
+				svgElement.style.filter = "none";
+			}
+		}
+		element.setAttribute("data-mermaid-rendered", "true");
+		return true;
+	}
+
+	// Theme change handler: swap cache or render missing
+	async function onThemeChange(newTheme) {
 		if (isRendering) {
+			// Queue the theme change instead of dropping it
+			pendingTheme = newTheme;
 			return;
 		}
 
-		if (!window.mermaid || typeof window.mermaid.render !== "function") {
-			return;
-		}
-
+		currentTheme = newTheme;
 		isRendering = true;
 		document.dispatchEvent(new CustomEvent("mermaid:render:start"));
 
 		destroyAllPanZoom();
 
 		try {
-			const mermaidElements = document.querySelectorAll(
-				".mermaid[data-mermaid-rendered]",
-			);
+			// Initialize mermaid with new theme ONCE
+			window.mermaid.initialize(getThemeConfig(newTheme));
 
+			const mermaidElements = document.querySelectorAll(
+				".mermaid[data-mermaid-code]",
+			);
 			if (mermaidElements.length === 0) {
 				isRendering = false;
 				document.dispatchEvent(new CustomEvent("mermaid:render:done"));
 				return;
 			}
 
-			const isDark = document.documentElement.classList.contains("dark");
-			const theme = isDark ? "dark" : "default";
-
-			window.mermaid.initialize({
-				startOnLoad: false,
-				theme: theme,
-				themeVariables: {
-					fontFamily: "inherit",
-					fontSize: "16px",
-					primaryColor: isDark ? "#ffffff" : "#000000",
-					primaryTextColor: isDark ? "#ffffff" : "#000000",
-					primaryBorderColor: isDark ? "#ffffff" : "#000000",
-					lineColor: isDark ? "#ffffff" : "#000000",
-					secondaryColor: isDark ? "#333333" : "#f0f0f0",
-					tertiaryColor: isDark ? "#555555" : "#e0e0e0",
-				},
-				securityLevel: "loose",
-				errorLevel: "warn",
-				logLevel: "error",
+			// Phase 1: Swap all cached diagrams instantly
+			const uncached = [];
+			mermaidElements.forEach((element) => {
+				if (swapFromCache(element, newTheme)) {
+					renderedElements.add(element);
+				} else if (
+					element.getAttribute("data-mermaid-rendered") === "true" ||
+					renderedElements.has(element)
+				) {
+					// Was rendered before but missing cache for new theme
+					uncached.push(element);
+				}
 			});
 
-			for (const element of mermaidElements) {
-				// 重新渲染：清除 rendered 标记
-				element.removeAttribute("data-mermaid-rendered");
-				renderedElements.delete(element);
-				await renderSingleDiagram(element, isDark);
-				await yieldToMain();
+			// Phase 2: Render uncached diagrams sequentially with yield between each
+			if (uncached.length > 0) {
+				for (const element of uncached) {
+					await renderSingleDiagram(element, newTheme);
+					await yieldToMain();
+				}
 			}
 
 			retryCount = 0;
 		} catch (error) {
-			console.error("Error in reRenderAllDiagrams:", error);
+			console.error("Error in mermaid theme change:", error);
 		} finally {
 			isRendering = false;
 			document.dispatchEvent(new CustomEvent("mermaid:render:done"));
+
+			// Check if a pending theme change was queued
+			if (pendingTheme !== null && pendingTheme !== currentTheme) {
+				const next = pendingTheme;
+				pendingTheme = null;
+				onThemeChange(next);
+			} else {
+				pendingTheme = null;
+			}
 		}
 	}
 
-	// Pan-zoom 懒加载 Observer
 	function setupPanZoomObserver(container) {
-		if (panZoomObserver) {
-			// 如果已经在观察中，直接观察新容器
-		} else {
+		if (!panZoomObserver) {
 			panZoomObserver = new IntersectionObserver(
 				(entries, obs) => {
 					entries.forEach((entry) => {
@@ -390,95 +301,11 @@
 				{ rootMargin: "100px" },
 			);
 		}
-
 		if (!container.hasAttribute("data-panzoom-init")) {
 			panZoomObserver.observe(container);
 		}
 	}
 
-	// 初始化主题状态
-	function initializeThemeState() {
-		const isDark = document.documentElement.classList.contains("dark");
-		currentTheme = isDark ? "dark" : "default";
-	}
-
-	// 加载 Mermaid 库
-	async function loadMermaid() {
-		if (typeof window.mermaid !== "undefined") {
-			return Promise.resolve();
-		}
-
-		return new Promise((resolve, reject) => {
-			const script = document.createElement("script");
-			script.src =
-				"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.12.0/mermaid.min.js";
-
-			script.onload = () => {
-				resolve();
-			};
-
-			script.onerror = () => {
-				const fallbackScript = document.createElement("script");
-				fallbackScript.src =
-					"https://unpkg.com/mermaid@11.12.0/dist/mermaid.min.js";
-
-				fallbackScript.onload = () => {
-					resolve();
-				};
-
-				fallbackScript.onerror = () => {
-					reject(
-						new Error(
-							"Failed to load Mermaid from both primary and fallback CDNs",
-						),
-					);
-				};
-
-				document.head.appendChild(fallbackScript);
-			};
-
-			document.head.appendChild(script);
-		});
-	}
-
-	// 加载 svg-pan-zoom 库
-	async function loadSvgPanZoom() {
-		if (typeof window.svgPanZoom !== "undefined") {
-			return Promise.resolve();
-		}
-
-		return new Promise((resolve, _reject) => {
-			const script = document.createElement("script");
-			script.src =
-				"https://unpkg.com/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
-			script.onload = () => {
-				resolve();
-			};
-
-			script.onerror = () => {
-				const fallbackScript = document.createElement("script");
-				fallbackScript.src =
-					"https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
-
-				fallbackScript.onload = () => {
-					resolve();
-				};
-
-				fallbackScript.onerror = () => {
-					console.warn(
-						"Failed to load svg-pan-zoom, pan/zoom features will be unavailable",
-					);
-					resolve();
-				};
-
-				document.head.appendChild(fallbackScript);
-			};
-
-			document.head.appendChild(script);
-		});
-	}
-
-	// 销毁所有 pan-zoom 实例
 	function destroyAllPanZoom() {
 		const containers = document.querySelectorAll(
 			".mermaid-diagram-container[data-panzoom-init]",
@@ -488,7 +315,7 @@
 				try {
 					container._panZoomInstance.destroy();
 				} catch (_e) {
-					// 忽略销毁错误
+					// ignore
 				}
 				container._panZoomInstance = null;
 			}
@@ -500,21 +327,17 @@
 		});
 	}
 
-	// 为单个容器初始化 pan-zoom（懒加载）
 	function initPanZoomForContainer(container) {
 		if (typeof window.svgPanZoom !== "function") {
 			return;
 		}
-
 		if (container.hasAttribute("data-panzoom-init")) {
 			return;
 		}
-
 		const svgElement = container.querySelector(".mermaid svg");
 		if (!svgElement) {
 			return;
 		}
-
 		if (!svgElement.getAttribute("viewBox")) {
 			return;
 		}
@@ -538,14 +361,11 @@
 				center: true,
 				zoomScaleSensitivity: 0.3,
 			});
-
 			container._panZoomInstance = panZoomInstance;
 			container.setAttribute("data-panzoom-init", "true");
 
-			// 创建控制栏
 			const controlsDiv = document.createElement("div");
 			controlsDiv.className = "mermaid-controls";
-
 			const buttons = [
 				{
 					label: "+",
@@ -572,7 +392,6 @@
 					action: () => openFullscreen(container),
 				},
 			];
-
 			buttons.forEach((btn) => {
 				const button = document.createElement("button");
 				button.className = "mermaid-ctrl-btn";
@@ -585,26 +404,21 @@
 				});
 				controlsDiv.appendChild(button);
 			});
-
 			container.appendChild(controlsDiv);
 		} catch (e) {
 			console.warn("Failed to initialize svg-pan-zoom for a diagram:", e);
 		}
 	}
 
-	// 全屏查看
 	function openFullscreen(container) {
 		const svgElement = container.querySelector(".mermaid svg");
 		if (!svgElement) {
 			return;
 		}
-
 		const overlay = document.createElement("div");
 		overlay.className = "mermaid-fullscreen-overlay";
-
 		const content = document.createElement("div");
 		content.className = "mermaid-fs-content";
-
 		const clonedSvg = svgElement.cloneNode(true);
 		clonedSvg.style.filter = "";
 		clonedSvg.setAttribute("width", "100%");
@@ -614,7 +428,6 @@
 
 		const fsControls = document.createElement("div");
 		fsControls.className = "mermaid-fs-controls";
-
 		let fsInstance = null;
 
 		const closeOverlay = () => {
@@ -622,13 +435,12 @@
 				try {
 					fsInstance.destroy();
 				} catch (_e) {
-					// 忽略
+					// ignore
 				}
 			}
 			overlay.remove();
 			document.removeEventListener("keydown", escHandler);
 		};
-
 		const escHandler = (e) => {
 			if (e.key === "Escape") {
 				closeOverlay();
@@ -659,7 +471,6 @@
 			},
 			{ label: "✕", title: "关闭", action: closeOverlay },
 		];
-
 		fsButtons.forEach((btn) => {
 			const button = document.createElement("button");
 			button.className = "mermaid-ctrl-btn";
@@ -676,13 +487,11 @@
 		overlay.appendChild(content);
 		overlay.appendChild(fsControls);
 		document.body.appendChild(overlay);
-
 		overlay.addEventListener("click", (e) => {
 			if (e.target === overlay) {
 				closeOverlay();
 			}
 		});
-
 		document.addEventListener("keydown", escHandler);
 
 		requestAnimationFrame(() => {
@@ -705,22 +514,103 @@
 		});
 	}
 
-	// 主初始化函数
+	async function loadMermaid() {
+		if (typeof window.mermaid !== "undefined") {
+			return Promise.resolve();
+		}
+		return new Promise((resolve, reject) => {
+			const script = document.createElement("script");
+			script.src =
+				"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.12.0/mermaid.min.js";
+			script.onload = () => resolve();
+			script.onerror = () => {
+				const fallbackScript = document.createElement("script");
+				fallbackScript.src =
+					"https://unpkg.com/mermaid@11.12.0/dist/mermaid.min.js";
+				fallbackScript.onload = () => resolve();
+				fallbackScript.onerror = () =>
+					reject(new Error("Failed to load Mermaid from both CDNs"));
+				document.head.appendChild(fallbackScript);
+			};
+			document.head.appendChild(script);
+		});
+	}
+
+	async function loadSvgPanZoom() {
+		if (typeof window.svgPanZoom !== "undefined") {
+			return Promise.resolve();
+		}
+		return new Promise((resolve) => {
+			const script = document.createElement("script");
+			script.src =
+				"https://unpkg.com/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
+			script.onload = () => resolve();
+			script.onerror = () => {
+				const fallbackScript = document.createElement("script");
+				fallbackScript.src =
+					"https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.2/dist/svg-pan-zoom.min.js";
+				fallbackScript.onload = () => resolve();
+				fallbackScript.onerror = () => {
+					console.warn(
+						"Failed to load svg-pan-zoom, pan/zoom features unavailable",
+					);
+					resolve();
+				};
+				document.head.appendChild(fallbackScript);
+			};
+			document.head.appendChild(script);
+		});
+	}
+
+	async function initializeMermaid() {
+		try {
+			await waitForMermaid();
+			window.mermaid.initialize(getThemeConfig(currentTheme));
+			setupLazyRenderObserver();
+		} catch (error) {
+			console.error("Failed to initialize Mermaid:", error);
+			if (retryCount < MAX_RETRIES) {
+				retryCount++;
+				setTimeout(() => initializeMermaid(), RETRY_DELAY * retryCount);
+			}
+		}
+	}
+
+	function setupEventListeners() {
+		document.addEventListener("astro:page-load", () => {
+			retryCount = 0;
+			setupLazyRenderObserver();
+		});
+		document.addEventListener("mizuki:page:loaded", () => {
+			retryCount = 0;
+			setupLazyRenderObserver();
+		});
+	}
+
 	async function initialize() {
 		try {
-			setupMutationObserver();
-			setupEventListeners();
-			initializeThemeState();
 			injectSkeletons();
-
 			await Promise.all([loadMermaid(), loadSvgPanZoom()]);
+
+			// Subscribe to coordinator for theme changes
+			const coordinator = window.__diagramThemeCoordinator;
+			if (coordinator) {
+				currentTheme = coordinator.getTheme();
+				coordinator.subscribe(onThemeChange);
+			} else {
+				// Fallback: read theme directly
+				currentTheme = document.documentElement.classList.contains("dark")
+					? "dark"
+					: "default";
+			}
+
+			setupEventListeners();
 			await initializeMermaid();
 		} catch (error) {
 			console.error("Failed to initialize Mermaid system:", error);
 		}
 	}
 
-	// 启动初始化
 	if (document.readyState === "loading") {
 		document.addEventListener("DOMContentLoaded", initialize);
 	} else {

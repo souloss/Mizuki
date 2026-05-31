@@ -1,6 +1,7 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
+import diagramThemeCoordinator from "./diagram-theme-coordinator.js?raw";
 import plantumlRenderScript from "./plantuml-render-script.js?raw";
 
 /**
@@ -45,15 +46,15 @@ function generateId() {
 	return `plantuml-${rand}`;
 }
 
-/** 已注入客户端脚本的 tree 集合，用于避免同一 tree 多次注入 */
+/** 已注入协调器+渲染脚本的 tree 集合，用于避免同一 tree 多次注入 */
 const scriptInjectedTrees = new WeakSet();
 
 /**
  * rehype 插件：把 `div.plantuml-container`（由 remark-plantuml 标记）改写为
- * 可交互的 `.plantuml-diagram-container`，并在每棵 tree 末尾注入一次客户端
- * 渲染脚本，负责主题切换、加载失败降级与缩放/全屏控制。
+ * 可交互的 `.plantuml-diagram-container`，并在每棵 tree 末尾注入协调器脚本
+ * 和客户端渲染脚本，负责主题切换、加载失败降级与缩放/全屏控制。
  *
- * Dev 模式下跳过脚本注入，仅输出带虚线边框的静态占位符（可选附带 light 图片预览）。
+ * Dev 模式下跳过脚本注入，仅输出带虚线边框的静态占位符。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
  */
 export function rehypePlantuml(options = {}) {
@@ -164,12 +165,11 @@ export function rehypePlantuml(options = {}) {
 
 		if (foundAny && !scriptInjectedTrees.has(tree)) {
 			scriptInjectedTrees.add(tree);
-			const script = h(
-				"script",
-				{ type: "text/javascript" },
-				plantumlRenderScript,
-			);
-			tree.children = [...(tree.children || []), script];
+			tree.children = [
+				...(tree.children || []),
+				h("script", { type: "text/javascript" }, diagramThemeCoordinator),
+				h("script", { type: "text/javascript" }, plantumlRenderScript),
+			];
 		}
 	};
 }

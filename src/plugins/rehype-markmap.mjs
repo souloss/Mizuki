@@ -1,6 +1,7 @@
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 
+import diagramThemeCoordinator from "./diagram-theme-coordinator.js?raw";
 import markmapRenderScript from "./markmap-render-script.js?raw";
 
 /**
@@ -27,7 +28,7 @@ function generateId() {
 	return `markmap-${rand}`;
 }
 
-/** 已注入客户端脚本的 tree 集合，用于避免同一 tree 多次注入 */
+/** 已注入协调器+渲染脚本的 tree 集合，用于避免同一 tree 多次注入 */
 const scriptInjectedTrees = new WeakSet();
 
 /**
@@ -50,8 +51,8 @@ function isDevMode(options) {
 
 /**
  * rehype 插件：把 `div.markmap-container`（由 remark-markmap 标记）改写为
- * 可交互的 `.markmap-diagram-container`，并在每棵 tree 末尾注入一次客户端
- * 渲染脚本，负责主题切换、缩放/全屏控制等。
+ * 可交互的 `.markmap-diagram-container`，并在每棵 tree 末尾注入协调器脚本
+ * 和客户端渲染脚本，负责主题切换、缩放/全屏控制等。
  *
  * Dev 模式下跳过脚本注入，仅输出带虚线边框的代码占位符。
  * @returns {(tree: import('hast').Root) => void} rehype transformer
@@ -131,12 +132,11 @@ export function rehypeMarkmap(options = {}) {
 
 		if (foundAny && !scriptInjectedTrees.has(tree)) {
 			scriptInjectedTrees.add(tree);
-			const script = h(
-				"script",
-				{ type: "text/javascript" },
-				markmapRenderScript,
-			);
-			tree.children = [...(tree.children || []), script];
+			tree.children = [
+				...(tree.children || []),
+				h("script", { type: "text/javascript" }, diagramThemeCoordinator),
+				h("script", { type: "text/javascript" }, markmapRenderScript),
+			];
 		}
 	};
 }
