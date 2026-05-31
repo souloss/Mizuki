@@ -300,9 +300,7 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 		<IconifyLoader />
 
 		<div id="page-height-extend" class="hidden h-[300vh]"></div>
-	</body>
-</html>
-{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: '/pagefind/mizuki/pagefind.js'}}>
+	{import.meta.env.PROD && <script is:inline define:vars={{scriptUrl: '/pagefind/mizuki/pagefind.js'}}>
 	window.loadPagefindMizuki = async function() {
 		if (window.pagefindMizuki) {return;}
 		try {
@@ -332,6 +330,8 @@ const siteLang = (lang || siteConfig.lang).replace("_", "-");
 	};
 	window.loadPagefindMizuki();
 	</script>}
+	</body>
+</html>
 
 <script>
 	import { initSwupManager } from "../scripts/swup-manager";

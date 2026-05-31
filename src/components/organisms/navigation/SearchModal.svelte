@@ -33,6 +33,7 @@ let searchUnavailable = $state(false);
 let searchIndex: any = null;
 let debounceTimer: ReturnType<typeof setTimeout>;
 let isComposing = false;
+let ignoreNextInput = false;
 
 let portalContainer: HTMLDivElement | null = null;
 let overlayEl: HTMLDivElement | null = null;
@@ -145,22 +146,31 @@ async function doSearch(term: string) {
 
 function onInput(e: Event) {
 	if (isComposing) return;
+	if (ignoreNextInput) {
+		ignoreNextInput = false;
+		return;
+	}
+	const ie = e as InputEvent;
+	if (ie.isComposing) return;
 	const val = (e.target as HTMLInputElement).value;
 	query = val;
 	clearTimeout(debounceTimer);
-	debounceTimer = setTimeout(() => doSearch(val), 250);
+	const hasCJK = /[一-鿿぀-ゟ゠-ヿ가-힯]/.test(val);
+	debounceTimer = setTimeout(() => doSearch(val), hasCJK ? 500 : 200);
 }
 
 function onCompositionStart() {
 	isComposing = true;
+	ignoreNextInput = false;
 }
 
 function onCompositionEnd(e: Event) {
 	isComposing = false;
+	ignoreNextInput = true;
 	const val = (e.target as HTMLInputElement).value;
 	query = val;
 	clearTimeout(debounceTimer);
-	debounceTimer = setTimeout(() => doSearch(val), 250);
+	debounceTimer = setTimeout(() => doSearch(val), 300);
 }
 
 function navigate(index: number) {
