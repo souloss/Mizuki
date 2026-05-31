@@ -32,6 +32,7 @@ let searchUnavailable = $state(false);
 
 let searchIndex: any = null;
 let debounceTimer: ReturnType<typeof setTimeout>;
+let isComposing = false;
 
 let portalContainer: HTMLDivElement | null = null;
 let overlayEl: HTMLDivElement | null = null;
@@ -143,6 +144,19 @@ async function doSearch(term: string) {
 }
 
 function onInput(e: Event) {
+	if (isComposing) return;
+	const val = (e.target as HTMLInputElement).value;
+	query = val;
+	clearTimeout(debounceTimer);
+	debounceTimer = setTimeout(() => doSearch(val), 250);
+}
+
+function onCompositionStart() {
+	isComposing = true;
+}
+
+function onCompositionEnd(e: Event) {
+	isComposing = false;
 	const val = (e.target as HTMLInputElement).value;
 	query = val;
 	clearTimeout(debounceTimer);
@@ -230,6 +244,8 @@ function createModal() {
 	inputEl = inputRow.querySelector("input")!;
 	const closeBtn = inputRow.querySelector(".search-modal-close-btn")!;
 	inputEl.addEventListener("input", onInput);
+	inputEl.addEventListener("compositionstart", onCompositionStart);
+	inputEl.addEventListener("compositionend", onCompositionEnd);
 	inputEl.addEventListener("keydown", onKeyDown);
 	inputEl.value = query;
 	closeBtn.addEventListener("click", closeModal);
